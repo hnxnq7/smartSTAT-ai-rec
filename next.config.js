@@ -5,10 +5,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // If your repo name is not the root (e.g., username.github.io/repo-name)
-  // Uncomment and set the basePath:
-  // basePath: '/smartSTAT',
-  // assetPrefix: '/smartSTAT',
+  // Set base path for GitHub Pages subdirectory deployment
+  basePath: '/smartSTAT-ai-rec',
+  assetPrefix: '/smartSTAT-ai-rec',
 }
 
 module.exports = nextConfig

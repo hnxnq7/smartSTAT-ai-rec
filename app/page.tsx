@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AIRecommendations } from '@/components/AIRecommendations';
 import { generateSyntheticData } from '@/lib/data';
 
 export default function Home() {
-  const data = generateSyntheticData();
+  // Use useMemo to ensure data is generated once and remains stable
+  const data = useMemo(() => generateSyntheticData(), []);
 
   return (
     <main className="min-h-screen bg-gray-50">
