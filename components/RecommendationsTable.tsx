@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Recommendation, RiskFilter, ViewMode } from '@/types/inventory';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
-import { Info } from 'lucide-react';
+import { Info, ChevronUp, ChevronDown } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
 interface RecommendationsTableProps {
@@ -12,20 +12,68 @@ interface RecommendationsTableProps {
   onViewDetails: (recommendation: Recommendation) => void;
 }
 
+type SortColumn = 'name' | 'flag';
+type SortDirection = 'asc' | 'desc';
+
+// Severity order: high = 3, medium = 2, low = 1, none = 0
+const getSeverityValue = (flags: Recommendation['riskFlags']): number => {
+  if (flags.length === 0) return 0;
+  const highestSeverity = flags.reduce((max, flag) => {
+    const val = flag.severity === 'high' ? 3 : flag.severity === 'medium' ? 2 : 1;
+    return Math.max(max, val);
+  }, 0);
+  return highestSeverity;
+};
+
 export function RecommendationsTable({
   recommendations,
   riskFilter,
   viewMode,
   onViewDetails,
 }: RecommendationsTableProps) {
+  const [sortColumn, setSortColumn] = useState<SortColumn>('flag');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc'); // Default: high severity first
+
   // Filter recommendations based on risk filter
-  const filteredRecommendations = recommendations.filter((rec) => {
-    if (riskFilter === 'all') return true;
-    if (riskFilter === 'stockout') {
-      return rec.riskFlags.some((flag) => flag.type === 'stockout');
+  const filteredRecommendations = useMemo(() => {
+    let filtered = recommendations.filter((rec) => {
+      if (riskFilter === 'all') return true;
+      if (riskFilter === 'stockout') {
+        return rec.riskFlags.some((flag) => flag.type === 'stockout');
+      }
+      return true;
+    });
+
+    // Apply sorting
+    filtered = [...filtered].sort((a, b) => {
+      if (sortColumn === 'name') {
+        const comparison = a.medicationName.localeCompare(b.medicationName);
+        return sortDirection === 'asc' ? comparison : -comparison;
+      } else {
+        // Sort by flag severity
+        const aSeverity = getSeverityValue(a.riskFlags);
+        const bSeverity = getSeverityValue(b.riskFlags);
+        if (aSeverity === bSeverity) {
+          // If same severity, sort by name as tiebreaker
+          return a.medicationName.localeCompare(b.medicationName);
+        }
+        return sortDirection === 'desc' ? bSeverity - aSeverity : aSeverity - bSeverity;
+      }
+    });
+
+    return filtered;
+  }, [recommendations, riskFilter, sortColumn, sortDirection]);
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      // Toggle direction if clicking same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New column: default to asc for name, desc for flag (high first)
+      setSortColumn(column);
+      setSortDirection(column === 'name' ? 'asc' : 'desc');
     }
-    return true;
-  });
+  };
 
   const getRiskBadgeVariant = (severity: 'high' | 'medium' | 'low') => {
     switch (severity) {
@@ -40,14 +88,48 @@ export function RecommendationsTable({
     }
   };
 
+  const SortableHeader = ({ 
+    column, 
+    children 
+  }: { 
+    column: SortColumn; 
+    children: React.ReactNode;
+  }) => (
+    <th
+      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+      onClick={() => handleSort(column)}
+    >
+      <div className="flex items-center gap-1">
+        {children}
+        {sortColumn === column && (
+          sortDirection === 'asc' ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )
+        )}
+      </div>
+    </th>
+  );
+
   return (
     <div className="overflow-x-auto">
+      {/* Flag Color Explanation */}
+      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-gray-700">
+          <span className="font-semibold">Risk Flag Colors:</span>{' '}
+          <Badge variant="danger">Red</Badge> = High risk (urgent action needed),{' '}
+          <Badge variant="warning">Yellow</Badge> = Medium risk (attention required),{' '}
+          <Badge variant="info">Blue</Badge> = Low risk (monitor)
+        </p>
+      </div>
+
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <SortableHeader column="name">
               Medication
-            </th>
+            </SortableHeader>
             {viewMode === 'by-cart' && (
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Cart / Location
@@ -65,9 +147,9 @@ export function RecommendationsTable({
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Order Date
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <SortableHeader column="flag">
               Risk Flags
-            </th>
+            </SortableHeader>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
@@ -76,7 +158,7 @@ export function RecommendationsTable({
         <tbody className="bg-white divide-y divide-gray-200">
           {filteredRecommendations.length === 0 ? (
             <tr>
-              <td colSpan={9} className="px-6 py-4 text-center text-gray-500">
+              <td colSpan={viewMode === 'by-cart' ? 9 : 8} className="px-6 py-4 text-center text-gray-500">
                 No recommendations match the current filters.
               </td>
             </tr>

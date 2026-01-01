@@ -27,7 +27,7 @@ export function AIRecommendations({
   const [selectedDepartment, setSelectedDepartment] = useState<string | 'all'>('all');
   const [planningHorizon, setPlanningHorizon] = useState<PlanningHorizon>(14);
   const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
-  const [viewMode, setViewMode] = useState<ViewMode>('by-cart');
+  const [viewMode, setViewMode] = useState<ViewMode>('by-medication');
   const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [preferences, setPreferences] = useState<MedicationPreferences[]>(initialPreferences);
