@@ -41,16 +41,6 @@ export function FilterBar({
           </label>
           <div className="flex gap-2">
             <button
-              onClick={() => onViewModeChange('by-cart')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                viewMode === 'by-cart'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              By Cart
-            </button>
-            <button
               onClick={() => onViewModeChange('by-medication')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 viewMode === 'by-medication'
@@ -59,6 +49,16 @@ export function FilterBar({
               }`}
             >
               By Medication
+            </button>
+            <button
+              onClick={() => onViewModeChange('by-cart')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'by-cart'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              By Cart
             </button>
           </div>
         </div>

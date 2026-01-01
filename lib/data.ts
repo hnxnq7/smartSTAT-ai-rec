@@ -72,21 +72,37 @@ export function generateSyntheticData(): {
   medications.forEach((med) => {
     carts.forEach((cart) => {
       // Each medication-cart combo has a base usage rate
-      const baseDailyUsage = rng.next() * 5 + 0.5; // 0.5-5.5 units/day
+      const baseDailyUsage = rng.next() * 4 + 1; // 1-5 units/day (more realistic)
       
-      // Track running stock to ensure we have realistic restocks
-      let currentStock = Math.floor(rng.next() * 50) + 20; // Initial stock 20-70 units
+      // Start with varying initial stock levels - some carts low, some high
+      // Create variability: some carts are well-stocked, some need restocking
+      const initialStockType = rng.next();
+      let currentStock: number;
+      if (initialStockType < 0.3) {
+        // 30% start low (5-25 units) - will need orders soon
+        currentStock = Math.floor(rng.next() * 20) + 5;
+      } else if (initialStockType < 0.7) {
+        // 40% start medium (25-60 units)
+        currentStock = Math.floor(rng.next() * 35) + 25;
+      } else {
+        // 30% start high (60-100 units) - well stocked
+        currentStock = Math.floor(rng.next() * 40) + 60;
+      }
+      
+      // Restock frequency varies - some carts get restocked more often
+      const restockFrequency = Math.floor(rng.next() * 7) + 5; // 5-11 days between restocks
       
       // Generate events for each day
       for (let day = 0; day < 60; day++) {
         const date = addDays(startDate, day);
         
-        // Usage events (removals)
-        const eventsPerDay = rng.next() < 0.7 ? 1 : rng.next() < 0.9 ? 2 : 0;
+        // Usage events (removals) - more realistic pattern
+        const eventsPerDay = rng.next() < 0.6 ? 1 : rng.next() < 0.85 ? 2 : 0;
         
         for (let e = 0; e < eventsPerDay; e++) {
-          // Poisson-like distribution around baseDailyUsage
-          const quantity = Math.max(1, Math.floor(rng.next() * baseDailyUsage * 2));
+          // Usage quantities: typically 1-3 units per event, occasionally more
+          const usageMultiplier = rng.next() < 0.8 ? 1 : rng.next() < 0.95 ? 2 : 3;
+          const quantity = Math.max(1, Math.floor(baseDailyUsage * 0.4 * usageMultiplier + rng.next() * 2));
           const hour = Math.floor(rng.next() * 24);
           const minute = Math.floor(rng.next() * 60);
           const eventDate = new Date(date);
@@ -104,10 +120,18 @@ export function generateSyntheticData(): {
           currentStock -= quantity;
         }
         
-        // Restock events - restock when stock is low (every 3-7 days or when stock < 10)
-        const shouldRestock = (day % Math.floor(rng.next() * 5 + 3) === 0) || currentStock < 10;
+        // Restock events - less frequent, smaller quantities
+        // Restock when it's been enough days OR stock is critically low (< 5 units)
+        const daysSinceLastRestock = day % restockFrequency;
+        const shouldRestock = (daysSinceLastRestock === 0 && day > 0) || (currentStock < 5 && day > 0);
+        
         if (shouldRestock) {
-          const restockQuantity = Math.floor(rng.next() * 80) + 40; // 40-120 units
+          // Restock quantities: typically 30-80 units (more realistic for cart capacity)
+          // But vary based on usage rate - high usage carts get more
+          const baseRestock = Math.floor(baseDailyUsage * 10); // Enough for ~10 days
+          const restockQuantity = Math.floor(baseRestock * (0.8 + rng.next() * 0.4)); // ±20% variation
+          const restockQty = Math.max(20, Math.min(100, restockQuantity)); // Cap between 20-100 units
+          
           const hour = Math.floor(rng.next() * 8) + 6; // Restocks typically 6am-2pm
           const minute = Math.floor(rng.next() * 60);
           const eventDate = new Date(date);
@@ -118,11 +142,11 @@ export function generateSyntheticData(): {
             timestamp,
             cartId: cart.id,
             medicationId: med.id,
-            quantity: restockQuantity,
+            quantity: restockQty,
             eventType: 'restock',
           });
           
-          currentStock += restockQuantity;
+          currentStock += restockQty;
         }
       }
     });
