@@ -200,7 +200,7 @@ export function AIRecommendations({
 
       <SummaryCards recommendations={recommendations} planningHorizon={planningHorizon} />
 
-      <Card>
+      <Card className="overflow-hidden">
         <RecommendationsTable
           recommendations={recommendations}
           riskFilter={riskFilter}
