@@ -113,23 +113,7 @@ export function RecommendationsTable({
   );
 
   return (
-    <div className="relative">
-      {/* Flag Color Explanation - absolutely positioned as background overlay, above table right side */}
-      <div className="absolute -top-12 right-4 text-sm text-gray-600 flex items-center gap-3 pointer-events-none z-10">
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span>
-          <span>High Risk</span>
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300"></span>
-          <span>Medium Risk</span>
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>
-          <span>Low Risk</span>
-        </span>
-      </div>
-
+    <div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
