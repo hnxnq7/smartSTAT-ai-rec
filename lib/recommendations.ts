@@ -101,13 +101,16 @@ export function calculateCurrentStock(
   );
   
   // Sum restocks (positive) and subtract usages (negative)
-  return relevantEvents.reduce((stock, event) => {
+  // Ensure stock never goes negative
+  const stock = relevantEvents.reduce((stock, event) => {
     if (event.eventType === 'restock') {
       return stock + event.quantity;
     } else {
-      return stock - event.quantity;
+      return Math.max(0, stock - event.quantity); // Prevent negative stock
     }
   }, 0);
+  
+  return Math.max(0, stock); // Final safety check
 }
 
 /**

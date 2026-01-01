@@ -114,9 +114,8 @@ export function RecommendationsTable({
 
   return (
     <div>
-      {/* Flag Color Explanation */}
-      <div className="mb-3 text-sm text-gray-600 flex items-center gap-4">
-        <span className="font-medium">Risk Flags:</span>
+      {/* Flag Color Explanation - positioned above right side, outside table boundaries */}
+      <div className="flex justify-end mb-2 pr-2 text-sm text-gray-600 items-center gap-3">
         <span className="flex items-center gap-1">
           <span className="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span>
           <span>High Risk</span>
