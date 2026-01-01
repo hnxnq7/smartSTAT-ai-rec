@@ -35,34 +35,34 @@ export function FilterBar({
   return (
     <Card className="mb-6">
       <CardContent className="py-4">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            View Mode
-          </label>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onViewModeChange('by-medication')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                viewMode === 'by-medication'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              By Medication
-            </button>
-            <button
-              onClick={() => onViewModeChange('by-cart')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                viewMode === 'by-cart'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              By Cart
-            </button>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              View Mode
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => onViewModeChange('by-medication')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex-1 ${
+                  viewMode === 'by-medication'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                By Medication
+              </button>
+              <button
+                onClick={() => onViewModeChange('by-cart')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex-1 ${
+                  viewMode === 'by-cart'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                By Cart
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Cart
