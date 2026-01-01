@@ -200,32 +200,30 @@ export function AIRecommendations({
 
       <SummaryCards recommendations={recommendations} planningHorizon={planningHorizon} />
 
-      <div className="relative">
-        {/* Flag Color Explanation - absolutely positioned as background overlay, above table right side */}
-        <div className="absolute -top-12 right-4 text-sm text-gray-600 flex items-center gap-3 pointer-events-none z-10">
-          <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span>
-            <span>High Risk</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300"></span>
-            <span>Medium Risk</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>
-            <span>Low Risk</span>
-          </span>
-        </div>
-
-        <Card className="overflow-hidden">
-          <RecommendationsTable
-            recommendations={recommendations}
-            riskFilter={riskFilter}
-            viewMode={viewMode}
-            onViewDetails={handleViewDetails}
-          />
-        </Card>
+      {/* Flag Color Explanation - in margin between summary cards and table */}
+      <div className="flex justify-end mb-6 text-sm text-gray-600 items-center gap-3">
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span>
+          <span>High Risk</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300"></span>
+          <span>Medium Risk</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>
+          <span>Low Risk</span>
+        </span>
       </div>
+
+      <Card className="overflow-hidden">
+        <RecommendationsTable
+          recommendations={recommendations}
+          riskFilter={riskFilter}
+          viewMode={viewMode}
+          onViewDetails={handleViewDetails}
+        />
+      </Card>
 
       <RecommendationDetails
         recommendation={selectedRecommendation}
