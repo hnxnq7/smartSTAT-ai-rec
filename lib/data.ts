@@ -109,15 +109,20 @@ export function generateSyntheticData(): {
           eventDate.setHours(hour, minute, 0, 0);
           const timestamp = formatISO(eventDate);
           
-          usageEvents.push({
-            timestamp,
-            cartId: cart.id,
-            medicationId: med.id,
-            quantity,
-            eventType: 'usage',
-          });
-          
-          currentStock -= quantity;
+          // Only record usage if there's stock available (can't use more than available)
+          const actualUsage = Math.min(quantity, currentStock);
+          if (actualUsage > 0) {
+            usageEvents.push({
+              timestamp,
+              cartId: cart.id,
+              medicationId: med.id,
+              quantity: actualUsage,
+              eventType: 'usage',
+            });
+            
+            currentStock -= actualUsage;
+            currentStock = Math.max(0, currentStock); // Ensure never negative
+          }
         }
         
         // Restock events - less frequent, smaller quantities

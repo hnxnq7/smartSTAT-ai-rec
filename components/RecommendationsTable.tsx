@@ -113,18 +113,26 @@ export function RecommendationsTable({
   );
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       {/* Flag Color Explanation */}
-      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-        <p className="text-sm text-gray-700">
-          <span className="font-semibold">Risk Flag Colors:</span>{' '}
-          <Badge variant="danger">Red</Badge> = High risk (urgent action needed),{' '}
-          <Badge variant="warning">Yellow</Badge> = Medium risk (attention required),{' '}
-          <Badge variant="info">Blue</Badge> = Low risk (monitor)
-        </p>
+      <div className="mb-3 text-sm text-gray-600 flex items-center gap-4">
+        <span className="font-medium">Risk Flags:</span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-red-100 border border-red-300"></span>
+          <span>High Risk</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-yellow-100 border border-yellow-300"></span>
+          <span>Medium Risk</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-blue-100 border border-blue-300"></span>
+          <span>Low Risk</span>
+        </span>
       </div>
 
-      <table className="min-w-full divide-y divide-gray-200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <SortableHeader column="name">
@@ -218,6 +226,7 @@ export function RecommendationsTable({
           )}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
