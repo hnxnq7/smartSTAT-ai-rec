@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cart, RiskFilter, PlanningHorizon } from '@/types/inventory';
+import { Cart, RiskFilter, PlanningHorizon, ViewMode } from '@/types/inventory';
 import { Select } from './ui/Select';
 import { Card, CardContent } from './ui/Card';
 
@@ -9,10 +9,12 @@ interface FilterBarProps {
   selectedDepartment: string | 'all';
   planningHorizon: PlanningHorizon;
   riskFilter: RiskFilter;
+  viewMode: ViewMode;
   onCartChange: (cartId: string | 'all') => void;
   onDepartmentChange: (department: string | 'all') => void;
   onHorizonChange: (horizon: PlanningHorizon) => void;
   onRiskFilterChange: (filter: RiskFilter) => void;
+  onViewModeChange: (mode: ViewMode) => void;
 }
 
 export function FilterBar({
@@ -21,16 +23,45 @@ export function FilterBar({
   selectedDepartment,
   planningHorizon,
   riskFilter,
+  viewMode,
   onCartChange,
   onDepartmentChange,
   onHorizonChange,
   onRiskFilterChange,
+  onViewModeChange,
 }: FilterBarProps) {
   const departments = Array.from(new Set(carts.map((c) => c.department))).sort();
 
   return (
     <Card className="mb-6">
       <CardContent className="py-4">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            View Mode
+          </label>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onViewModeChange('by-cart')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'by-cart'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              By Cart
+            </button>
+            <button
+              onClick={() => onViewModeChange('by-medication')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'by-medication'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              By Medication
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -74,9 +105,10 @@ export function FilterBar({
               value={planningHorizon}
               onChange={(e) => onHorizonChange(Number(e.target.value) as PlanningHorizon)}
             >
-              <option value="7">7 days</option>
               <option value="14">14 days</option>
               <option value="30">30 days</option>
+              <option value="60">60 days</option>
+              <option value="90">90 days</option>
             </Select>
           </div>
 
@@ -90,7 +122,6 @@ export function FilterBar({
             >
               <option value="all">All</option>
               <option value="stockout">Stock-out Risk</option>
-              <option value="expiry">Expiry Risk</option>
             </Select>
           </div>
         </div>
@@ -98,4 +129,5 @@ export function FilterBar({
     </Card>
   );
 }
+
 

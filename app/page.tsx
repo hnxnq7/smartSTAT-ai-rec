@@ -13,7 +13,6 @@ export default function Home() {
       <AIRecommendations
         carts={data.carts}
         medications={data.medications}
-        batches={data.batches}
         usageEvents={data.usageEvents}
         preferences={data.preferences}
       />

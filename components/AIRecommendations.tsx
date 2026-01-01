@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { Cart, Medication, Batch, UsageEvent, MedicationPreferences, Recommendation, RiskFilter, PlanningHorizon } from '@/types/inventory';
+import { parseISO } from 'date-fns';
+import { Cart, Medication, UsageEvent, MedicationPreferences, Recommendation, RiskFilter, PlanningHorizon, ViewMode } from '@/types/inventory';
 import { generateAllRecommendations } from '@/lib/recommendations';
 import { FilterBar } from './FilterBar';
 import { SummaryCards } from './SummaryCards';
@@ -12,7 +13,6 @@ import { Card } from './ui/Card';
 interface AIRecommendationsProps {
   carts: Cart[];
   medications: Medication[];
-  batches: Batch[];
   usageEvents: UsageEvent[];
   preferences: MedicationPreferences[];
 }
@@ -20,7 +20,6 @@ interface AIRecommendationsProps {
 export function AIRecommendations({
   carts,
   medications,
-  batches,
   usageEvents,
   preferences: initialPreferences,
 }: AIRecommendationsProps) {
@@ -28,6 +27,7 @@ export function AIRecommendations({
   const [selectedDepartment, setSelectedDepartment] = useState<string | 'all'>('all');
   const [planningHorizon, setPlanningHorizon] = useState<PlanningHorizon>(14);
   const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>('by-cart');
   const [selectedRecommendation, setSelectedRecommendation] = useState<Recommendation | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [preferences, setPreferences] = useState<MedicationPreferences[]>(initialPreferences);
@@ -64,14 +64,13 @@ export function AIRecommendations({
     const allRecommendations = generateAllRecommendations(
       medications,
       carts,
-      batches,
       usageEvents,
       preferences,
       planningHorizon
     );
 
     // Apply filters
-    return allRecommendations.filter((rec) => {
+    let filtered = allRecommendations.filter((rec) => {
       if (selectedCartId !== 'all' && rec.cartId !== selectedCartId) {
         return false;
       }
@@ -80,7 +79,78 @@ export function AIRecommendations({
       }
       return true;
     });
-  }, [medications, carts, batches, usageEvents, preferences, planningHorizon, selectedCartId, selectedDepartment]);
+
+    // Aggregate by medication if view mode is 'by-medication'
+    if (viewMode === 'by-medication') {
+      const aggregated = new Map<string, Recommendation>();
+      
+      filtered.forEach((rec) => {
+        const key = rec.medicationId;
+        if (!aggregated.has(key)) {
+          // Create aggregated recommendation
+          const firstRec = rec;
+          aggregated.set(key, {
+            ...firstRec,
+            cartId: 'all',
+            cartName: 'All Carts',
+            department: 'All',
+            currentStock: 0,
+            recommendedOrderQuantity: 0,
+            recommendedOrderDate: firstRec.recommendedOrderDate,
+            riskFlags: [],
+            explanation: '',
+            usageStats: {
+              medicationId: firstRec.medicationId,
+              cartId: 'all',
+              dailyUsageRate: 0,
+              daysOfData: 0,
+              lastUpdated: firstRec.usageStats.lastUpdated,
+            },
+            calculatedValues: {
+              safetyStock: 0,
+              targetStock: 0,
+              daysUntilStockout: null,
+            },
+          });
+        }
+        
+          const agg = aggregated.get(key)!;
+          agg.currentStock += rec.currentStock;
+          agg.forecastDemand += rec.forecastDemand;
+        agg.recommendedOrderQuantity += rec.recommendedOrderQuantity;
+        agg.usageStats.dailyUsageRate += rec.usageStats.dailyUsageRate;
+        agg.usageStats.daysOfData = Math.max(agg.usageStats.daysOfData, rec.usageStats.daysOfData);
+        agg.calculatedValues.safetyStock += rec.calculatedValues.safetyStock;
+        agg.calculatedValues.targetStock += rec.calculatedValues.targetStock;
+        
+        // Combine risk flags
+        agg.riskFlags.push(...rec.riskFlags);
+        
+        // Use earliest order date
+        if (parseISO(rec.recommendedOrderDate) < parseISO(agg.recommendedOrderDate)) {
+          agg.recommendedOrderDate = rec.recommendedOrderDate;
+        }
+        
+        // Update days until stockout (use minimum)
+        if (rec.calculatedValues.daysUntilStockout !== null) {
+          if (agg.calculatedValues.daysUntilStockout === null || 
+              rec.calculatedValues.daysUntilStockout < agg.calculatedValues.daysUntilStockout) {
+            agg.calculatedValues.daysUntilStockout = rec.calculatedValues.daysUntilStockout;
+          }
+        }
+      });
+      
+      // Generate explanation for aggregated recommendations
+      Array.from(aggregated.values()).forEach((agg) => {
+        const carts = filtered.filter(r => r.medicationId === agg.medicationId);
+        agg.explanation = `Aggregated across ${carts.length} carts. Total daily usage: ${agg.usageStats.dailyUsageRate.toFixed(1)} units/day. Recommended total order: ${agg.recommendedOrderQuantity} units.`;
+      });
+      
+      filtered = Array.from(aggregated.values());
+    }
+    
+    return filtered;
+  }, [medications, carts, usageEvents, preferences, planningHorizon, selectedCartId, selectedDepartment, viewMode]);
 
   // Update selected recommendation when recommendations are recalculated
   useEffect(() => {
@@ -110,7 +180,7 @@ export function AIRecommendations({
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">AI Recommendations</h1>
         <p className="text-gray-600 mt-2">
-          Intelligent medication ordering recommendations based on usage patterns, expiration dates, and your preferences.
+          Intelligent medication ordering recommendations based on cart usage patterns and your preferences.
         </p>
       </div>
 
@@ -120,10 +190,12 @@ export function AIRecommendations({
         selectedDepartment={selectedDepartment}
         planningHorizon={planningHorizon}
         riskFilter={riskFilter}
+        viewMode={viewMode}
         onCartChange={setSelectedCartId}
         onDepartmentChange={setSelectedDepartment}
         onHorizonChange={setPlanningHorizon}
         onRiskFilterChange={setRiskFilter}
+        onViewModeChange={setViewMode}
       />
 
       <SummaryCards recommendations={recommendations} planningHorizon={planningHorizon} />
@@ -132,6 +204,7 @@ export function AIRecommendations({
         <RecommendationsTable
           recommendations={recommendations}
           riskFilter={riskFilter}
+          viewMode={viewMode}
           onViewDetails={handleViewDetails}
         />
       </Card>

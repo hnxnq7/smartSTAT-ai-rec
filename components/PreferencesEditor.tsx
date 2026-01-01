@@ -32,22 +32,6 @@ export function PreferencesEditor({ preferences, onChange }: PreferencesEditorPr
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Minimum Remaining Shelf Life (0-90 days)
-        </label>
-        <Input
-          type="number"
-          min="0"
-          max="90"
-          value={preferences.minRemainingShelfLife}
-          onChange={(e) => handleChange('minRemainingShelfLife', Number(e.target.value))}
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Minimum days of shelf life required at time of use
-        </p>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
           Lead Time (days)
         </label>
         <Input
@@ -80,4 +64,5 @@ export function PreferencesEditor({ preferences, onChange }: PreferencesEditorPr
     </div>
   );
 }
+
 

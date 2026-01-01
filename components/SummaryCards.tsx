@@ -13,14 +13,10 @@ export function SummaryCards({ recommendations, planningHorizon }: SummaryCardsP
     rec.riskFlags.some((flag) => flag.type === 'stockout')
   );
   
-  const expiryRisk = recommendations.filter((rec) =>
-    rec.riskFlags.some((flag) => flag.type === 'expiry')
-  );
-  
-  const projectedWaste = recommendations.reduce((sum, rec) => {
-    const expiryFlags = rec.riskFlags.filter((flag) => flag.type === 'expiry');
-    return sum + expiryFlags.reduce((flagSum, flag) => flagSum + flag.quantity, 0);
-  }, 0);
+  const totalRecommendedOrders = recommendations.reduce((sum, rec) => sum + rec.recommendedOrderQuantity, 0);
+  const highRiskCount = recommendations.filter((rec) =>
+    rec.riskFlags.some((flag) => flag.type === 'stockout' && flag.severity === 'high')
+  ).length;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -42,14 +38,14 @@ export function SummaryCards({ recommendations, planningHorizon }: SummaryCardsP
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-yellow-500" />
-            Expiry Risk
+            <AlertTriangle className="w-5 h-5 text-orange-500" />
+            High Risk
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-gray-900">{expiryRisk.length}</div>
+          <div className="text-3xl font-bold text-gray-900">{highRiskCount}</div>
           <p className="text-sm text-gray-500 mt-1">
-            Medications expiring soon
+            Medications with high stock-out risk
           </p>
         </CardContent>
       </Card>
@@ -57,18 +53,24 @@ export function SummaryCards({ recommendations, planningHorizon }: SummaryCardsP
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Package className="w-5 h-5 text-orange-500" />
-            Projected Waste
+            <Package className="w-5 h-5 text-blue-500" />
+            Total Recommended Orders
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold text-gray-900">{projectedWaste}</div>
+          <div className="text-3xl font-bold text-gray-900">{totalRecommendedOrders}</div>
           <p className="text-sm text-gray-500 mt-1">
-            Units at risk of expiry waste
+            Total units recommended for ordering
           </p>
         </CardContent>
       </Card>
     </div>
   );
 }
+
+
+
+
+
+
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Recommendation, RiskFilter } from '@/types/inventory';
+import { Recommendation, RiskFilter, ViewMode } from '@/types/inventory';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
 import { Info } from 'lucide-react';
@@ -8,12 +8,14 @@ import { format, parseISO } from 'date-fns';
 interface RecommendationsTableProps {
   recommendations: Recommendation[];
   riskFilter: RiskFilter;
+  viewMode: ViewMode;
   onViewDetails: (recommendation: Recommendation) => void;
 }
 
 export function RecommendationsTable({
   recommendations,
   riskFilter,
+  viewMode,
   onViewDetails,
 }: RecommendationsTableProps) {
   // Filter recommendations based on risk filter
@@ -21,9 +23,6 @@ export function RecommendationsTable({
     if (riskFilter === 'all') return true;
     if (riskFilter === 'stockout') {
       return rec.riskFlags.some((flag) => flag.type === 'stockout');
-    }
-    if (riskFilter === 'expiry') {
-      return rec.riskFlags.some((flag) => flag.type === 'expiry');
     }
     return true;
   });
@@ -49,14 +48,13 @@ export function RecommendationsTable({
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Medication
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Cart / Location
-            </th>
+            {viewMode === 'by-cart' && (
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Cart / Location
+              </th>
+            )}
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Current Stock
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Usable Stock
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Forecast Demand
@@ -88,15 +86,14 @@ export function RecommendationsTable({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">{rec.medicationName}</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{rec.cartName}</div>
-                  <div className="text-xs text-gray-500">{rec.department}</div>
-                </td>
+                {viewMode === 'by-cart' && (
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{rec.cartName}</div>
+                    <div className="text-xs text-gray-500">{rec.department}</div>
+                  </td>
+                )}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {rec.currentStock}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {rec.usableStock}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {rec.forecastDemand.toFixed(1)}
@@ -116,9 +113,7 @@ export function RecommendationsTable({
                         key={idx}
                         variant={getRiskBadgeVariant(flag.severity)}
                       >
-                        {flag.type === 'stockout'
-                          ? `Stockout (${flag.daysUntil}d)`
-                          : `Expiry (${flag.daysUntil}d)`}
+                        {`Stockout (${flag.daysUntil}d)`}
                       </Badge>
                     ))}
                     {rec.riskFlags.length === 0 && (

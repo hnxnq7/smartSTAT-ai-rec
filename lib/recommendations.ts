@@ -1,7 +1,6 @@
 import {
   Cart,
   Medication,
-  Batch,
   UsageEvent,
   MedicationPreferences,
   UsageStats,
@@ -9,7 +8,7 @@ import {
   RiskFlag,
   PlanningHorizon,
 } from '@/types/inventory';
-import { parseISO, addDays, differenceInDays, formatISO, isAfter, isBefore } from 'date-fns';
+import { parseISO, addDays, differenceInDays, formatISO } from 'date-fns';
 
 /**
  * Calculate usage statistics for a medication on a cart
@@ -23,10 +22,12 @@ export function calculateUsageStats(
   const now = new Date();
   const cutoffDate = addDays(now, -lookbackDays);
   
+  // Only count usage events (not restocks) for usage rate calculation
   const relevantEvents = usageEvents.filter(
     (event) =>
       event.medicationId === medicationId &&
       event.cartId === cartId &&
+      event.eventType === 'usage' &&
       parseISO(event.timestamp) >= cutoffDate
   );
 
@@ -80,47 +81,33 @@ export function getPreferences(
     medicationId,
     cartId,
     surplusDays: 5,
-    minRemainingShelfLife: 14,
     leadTime: 3,
     serviceLevel: 0.95,
   };
 }
 
 /**
- * Calculate usable stock (considering expiration dates and min remaining shelf life)
- */
-export function calculateUsableStock(
-  batches: Batch[],
-  medicationId: string,
-  cartId: string,
-  minRemainingShelfLife: number,
-  planningHorizon: PlanningHorizon
-): number {
-  const now = new Date();
-  const horizonEnd = addDays(now, planningHorizon);
-  const minExpiryDate = addDays(horizonEnd, minRemainingShelfLife);
-
-  return batches
-    .filter(
-      (batch) =>
-        batch.medicationId === medicationId &&
-        batch.cartId === cartId &&
-        isAfter(parseISO(batch.expirationDate), minExpiryDate)
-    )
-    .reduce((sum, batch) => sum + batch.quantity, 0);
-}
-
-/**
- * Calculate total current stock
+ * Calculate current stock from usage and restock events
  */
 export function calculateCurrentStock(
-  batches: Batch[],
+  usageEvents: UsageEvent[],
   medicationId: string,
   cartId: string
 ): number {
-  return batches
-    .filter((batch) => batch.medicationId === medicationId && batch.cartId === cartId)
-    .reduce((sum, batch) => sum + batch.quantity, 0);
+  const relevantEvents = usageEvents.filter(
+    (event) =>
+      event.medicationId === medicationId &&
+      event.cartId === cartId
+  );
+  
+  // Sum restocks (positive) and subtract usages (negative)
+  return relevantEvents.reduce((stock, event) => {
+    if (event.eventType === 'restock') {
+      return stock + event.quantity;
+    } else {
+      return stock - event.quantity;
+    }
+  }, 0);
 }
 
 /**
@@ -135,51 +122,13 @@ export function calculateDaysUntilStockout(
   return Math.floor(currentStock / dailyUsageRate);
 }
 
-/**
- * Find earliest expiring batch and calculate days until expiry
- */
-export function calculateDaysUntilExpiry(
-  batches: Batch[],
-  medicationId: string,
-  cartId: string
-): { days: number | null; quantity: number } {
-  const relevantBatches = batches.filter(
-    (batch) => batch.medicationId === medicationId && batch.cartId === cartId
-  );
-
-  if (relevantBatches.length === 0) {
-    return { days: null, quantity: 0 };
-  }
-
-  const now = new Date();
-  let earliestExpiry: Date | null = null;
-  let expiringQuantity = 0;
-
-  relevantBatches.forEach((batch) => {
-    const expiryDate = parseISO(batch.expirationDate);
-    if (!earliestExpiry || isBefore(expiryDate, earliestExpiry)) {
-      earliestExpiry = expiryDate;
-      expiringQuantity = batch.quantity;
-    } else if (expiryDate.getTime() === earliestExpiry.getTime()) {
-      expiringQuantity += batch.quantity;
-    }
-  });
-
-  if (!earliestExpiry) {
-    return { days: null, quantity: 0 };
-  }
-
-  const days = differenceInDays(earliestExpiry, now);
-  return { days: days > 0 ? days : 0, quantity: expiringQuantity };
-}
+// Expiration date logic removed - we no longer track shelf inventory with expiration dates
 
 /**
  * Generate risk flags for a medication-cart combination
  */
 export function generateRiskFlags(
   daysUntilStockout: number | null,
-  daysUntilExpiry: number | null,
-  expiringQuantity: number,
   planningHorizon: PlanningHorizon
 ): RiskFlag[] {
   const flags: RiskFlag[] = [];
@@ -201,24 +150,6 @@ export function generateRiskFlags(
     });
   }
 
-  // Expiry risk
-  if (daysUntilExpiry !== null && daysUntilExpiry <= planningHorizon * 1.5) {
-    let severity: 'high' | 'medium' | 'low';
-    if (daysUntilExpiry <= 7) {
-      severity = 'high';
-    } else if (daysUntilExpiry <= 14) {
-      severity = 'medium';
-    } else {
-      severity = 'low';
-    }
-    flags.push({
-      type: 'expiry',
-      severity,
-      daysUntil: daysUntilExpiry,
-      quantity: expiringQuantity,
-    });
-  }
-
   return flags;
 }
 
@@ -232,7 +163,6 @@ export function generateExplanation(
   preferences: MedicationPreferences,
   forecastDemand: number,
   currentStock: number,
-  usableStock: number,
   recommendedOrderQuantity: number,
   planningHorizon: PlanningHorizon
 ): string {
@@ -246,13 +176,7 @@ export function generateExplanation(
     `With a lead time of ${preferences.leadTime} days and your preference for ${preferences.surplusDays} surplus days, we plan for ${(forecastDemand + (usageStats.dailyUsageRate * preferences.surplusDays)).toFixed(0)} units total over the next ${planningHorizon} days.`
   );
   
-  if (usableStock < currentStock) {
-    parts.push(
-      `You currently have ${currentStock} total units, but only ${usableStock} are usable (considering expiration dates and minimum remaining shelf life of ${preferences.minRemainingShelfLife} days).`
-    );
-  } else {
-    parts.push(`You currently have ${currentStock} usable units.`);
-  }
+  parts.push(`Current stock in cart: ${currentStock} units.`);
   
   if (recommendedOrderQuantity > 0) {
     parts.push(`We recommend ordering ${recommendedOrderQuantity} units.`);
@@ -269,7 +193,6 @@ export function generateExplanation(
 export function generateRecommendation(
   medication: Medication,
   cart: Cart,
-  batches: Batch[],
   usageEvents: UsageEvent[],
   preferences: MedicationPreferences[],
   planningHorizon: PlanningHorizon
@@ -277,14 +200,8 @@ export function generateRecommendation(
   const usageStats = calculateUsageStats(medication.id, cart.id, usageEvents);
   const prefs = getPreferences(medication.id, cart.id, preferences);
   
-  const currentStock = calculateCurrentStock(batches, medication.id, cart.id);
-  const usableStock = calculateUsableStock(
-    batches,
-    medication.id,
-    cart.id,
-    prefs.minRemainingShelfLife,
-    planningHorizon
-  );
+  // Calculate current stock from events
+  const currentStock = calculateCurrentStock(usageEvents, medication.id, cart.id);
   
   // Forecast demand over planning horizon
   const forecastDemand = usageStats.dailyUsageRate * planningHorizon;
@@ -302,25 +219,22 @@ export function generateRecommendation(
   const targetStock = forecastDemand + safetyStock + preferredSurplus;
   
   // Recommended order quantity
-  const recommendedOrderQuantity = Math.max(0, Math.ceil(targetStock - usableStock));
+  const recommendedOrderQuantity = Math.max(0, Math.ceil(targetStock - currentStock));
   
   // Recommended order date: order when stock drops to reorder point
   // Reorder point = (lead time * daily usage) + safety stock
   const reorderPoint = prefs.leadTime * usageStats.dailyUsageRate + safetyStock;
   const daysUntilReorder = usageStats.dailyUsageRate > 0 
-    ? Math.max(0, Math.floor((usableStock - reorderPoint) / usageStats.dailyUsageRate))
+    ? Math.max(0, Math.floor((currentStock - reorderPoint) / usageStats.dailyUsageRate))
     : planningHorizon;
   
   const now = new Date();
   const recommendedOrderDate = formatISO(addDays(now, daysUntilReorder), { representation: 'date' });
   
   // Calculate risk metrics
-  const daysUntilStockout = calculateDaysUntilStockout(usableStock, usageStats.dailyUsageRate);
-  const expiryInfo = calculateDaysUntilExpiry(batches, medication.id, cart.id);
+  const daysUntilStockout = calculateDaysUntilStockout(currentStock, usageStats.dailyUsageRate);
   const riskFlags = generateRiskFlags(
     daysUntilStockout,
-    expiryInfo.days,
-    expiryInfo.quantity,
     planningHorizon
   );
   
@@ -332,7 +246,6 @@ export function generateRecommendation(
     prefs,
     forecastDemand,
     currentStock,
-    usableStock,
     recommendedOrderQuantity,
     planningHorizon
   );
@@ -344,7 +257,6 @@ export function generateRecommendation(
     cartName: cart.name,
     department: cart.department,
     currentStock,
-    usableStock,
     forecastDemand,
     preferredSurplus,
     recommendedOrderQuantity,
@@ -357,7 +269,6 @@ export function generateRecommendation(
       safetyStock,
       targetStock,
       daysUntilStockout,
-      daysUntilExpiry: expiryInfo.days,
     },
   };
 }
@@ -368,7 +279,6 @@ export function generateRecommendation(
 export function generateAllRecommendations(
   medications: Medication[],
   carts: Cart[],
-  batches: Batch[],
   usageEvents: UsageEvent[],
   preferences: MedicationPreferences[],
   planningHorizon: PlanningHorizon
@@ -380,7 +290,6 @@ export function generateAllRecommendations(
       const recommendation = generateRecommendation(
         medication,
         cart,
-        batches,
         usageEvents,
         preferences,
         planningHorizon
@@ -391,4 +300,5 @@ export function generateAllRecommendations(
   
   return recommendations;
 }
+
 

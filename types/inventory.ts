@@ -11,26 +11,25 @@ export interface Medication {
   maxCapacity?: number; // Optional: max units that can be stored
 }
 
-export interface Batch {
-  id: string;
-  medicationId: string;
-  cartId: string;
-  quantity: number;
-  expirationDate: string; // ISO date string
-}
-
 export interface UsageEvent {
   timestamp: string; // ISO datetime
   cartId: string;
   medicationId: string;
-  quantity: number; // Units used
+  quantity: number; // Units removed/used from cart (negative for restocks)
+  eventType: 'usage' | 'restock'; // Type of event
+}
+
+export interface RestockEvent {
+  timestamp: string; // ISO datetime
+  cartId: string;
+  medicationId: string;
+  quantity: number; // Units added to cart
 }
 
 export interface MedicationPreferences {
   medicationId: string;
   cartId?: string; // If undefined, applies to all carts for this medication
   surplusDays: number; // 0-14 days of surplus stock preferred
-  minRemainingShelfLife: number; // 0-90 days minimum remaining shelf life at time of use
   leadTime: number; // Days from order to arrival
   serviceLevel?: number; // Optional: 0.90, 0.95, 0.99 (90%, 95%, 99%)
 }
@@ -49,8 +48,7 @@ export interface Recommendation {
   cartId: string;
   cartName: string;
   department: string;
-  currentStock: number; // Total units across all batches
-  usableStock: number; // Units that won't expire before use (considering minRemainingShelfLife)
+  currentStock: number; // Current units in cart (calculated from events)
   forecastDemand: number; // Expected demand over planning horizon
   preferredSurplus: number; // Surplus stock in units (based on surplusDays)
   recommendedOrderQuantity: number; // How much to order
@@ -63,14 +61,19 @@ export interface Recommendation {
     safetyStock: number;
     targetStock: number;
     daysUntilStockout: number | null; // null if no risk
-    daysUntilExpiry: number | null; // null if no expiring batches
   };
 }
 
 export type RiskFlag = 
-  | { type: 'stockout'; severity: 'high' | 'medium' | 'low'; daysUntil: number }
-  | { type: 'expiry'; severity: 'high' | 'medium' | 'low'; daysUntil: number; quantity: number };
+  | { type: 'stockout'; severity: 'high' | 'medium' | 'low'; daysUntil: number };
 
-export type RiskFilter = 'all' | 'stockout' | 'expiry';
-export type PlanningHorizon = 7 | 14 | 30;
+export type RiskFilter = 'all' | 'stockout';
+export type PlanningHorizon = 14 | 30 | 60 | 90;
+export type ViewMode = 'by-cart' | 'by-medication';
+
+
+
+
+
+
 

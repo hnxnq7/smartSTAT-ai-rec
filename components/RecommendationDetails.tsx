@@ -108,10 +108,6 @@ export function RecommendationDetails({
                 <span className="font-medium">{recommendation.currentStock} units</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Usable Stock:</span>
-                <span className="font-medium">{recommendation.usableStock} units</span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-gray-500">Recommended Order:</span>
                 <span className="font-medium text-blue-600">{recommendation.recommendedOrderQuantity} units</span>
               </div>
@@ -120,14 +116,6 @@ export function RecommendationDetails({
                   <span className="text-gray-500">Days Until Stockout:</span>
                   <span className="font-medium text-red-600">
                     {recommendation.calculatedValues.daysUntilStockout} days
-                  </span>
-                </div>
-              )}
-              {recommendation.calculatedValues.daysUntilExpiry !== null && (
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Days Until Expiry:</span>
-                  <span className="font-medium text-yellow-600">
-                    {recommendation.calculatedValues.daysUntilExpiry} days
                   </span>
                 </div>
               )}
@@ -151,4 +139,5 @@ export function RecommendationDetails({
     </Sheet>
   );
 }
+
 

@@ -1,4 +1,4 @@
-import { Cart, Medication, Batch, UsageEvent, MedicationPreferences } from '@/types/inventory';
+import { Cart, Medication, UsageEvent, MedicationPreferences } from '@/types/inventory';
 import { addDays, subDays, formatISO, parseISO } from 'date-fns';
 
 // Synthetic data generation for demo
@@ -42,7 +42,6 @@ const DATA_SEED = 12345;
 export function generateSyntheticData(): {
   carts: Cart[];
   medications: Medication[];
-  batches: Batch[];
   usageEvents: UsageEvent[];
   preferences: MedicationPreferences[];
 } {
@@ -65,30 +64,8 @@ export function generateSyntheticData(): {
   }));
 
   const now = new Date();
-  const batches: Batch[] = [];
   
-  // Generate batches for each medication on each cart
-  medications.forEach((med) => {
-    carts.forEach((cart) => {
-      // 1-3 batches per medication per cart
-      const batchCount = Math.floor(rng.next() * 3) + 1;
-      for (let i = 0; i < batchCount; i++) {
-        const daysUntilExpiry = Math.floor(rng.next() * 60) + 5; // 5-65 days
-        const expirationDate = formatISO(addDays(now, daysUntilExpiry), { representation: 'date' });
-        const quantity = Math.floor(rng.next() * 50) + 10; // 10-60 units
-        
-        batches.push({
-          id: `batch-${med.id}-${cart.id}-${i}`,
-          medicationId: med.id,
-          cartId: cart.id,
-          quantity,
-          expirationDate,
-        });
-      }
-    });
-  });
-
-  // Generate usage events over the last 60 days
+  // Generate usage and restock events over the last 60 days
   const usageEvents: UsageEvent[] = [];
   const startDate = subDays(now, 60);
   
@@ -97,10 +74,14 @@ export function generateSyntheticData(): {
       // Each medication-cart combo has a base usage rate
       const baseDailyUsage = rng.next() * 5 + 0.5; // 0.5-5.5 units/day
       
+      // Track running stock to ensure we have realistic restocks
+      let currentStock = Math.floor(rng.next() * 50) + 20; // Initial stock 20-70 units
+      
       // Generate events for each day
       for (let day = 0; day < 60; day++) {
         const date = addDays(startDate, day);
-        // Some days have no usage, some have multiple events
+        
+        // Usage events (removals)
         const eventsPerDay = rng.next() < 0.7 ? 1 : rng.next() < 0.9 ? 2 : 0;
         
         for (let e = 0; e < eventsPerDay; e++) {
@@ -117,7 +98,31 @@ export function generateSyntheticData(): {
             cartId: cart.id,
             medicationId: med.id,
             quantity,
+            eventType: 'usage',
           });
+          
+          currentStock -= quantity;
+        }
+        
+        // Restock events - restock when stock is low (every 3-7 days or when stock < 10)
+        const shouldRestock = (day % Math.floor(rng.next() * 5 + 3) === 0) || currentStock < 10;
+        if (shouldRestock) {
+          const restockQuantity = Math.floor(rng.next() * 80) + 40; // 40-120 units
+          const hour = Math.floor(rng.next() * 8) + 6; // Restocks typically 6am-2pm
+          const minute = Math.floor(rng.next() * 60);
+          const eventDate = new Date(date);
+          eventDate.setHours(hour, minute, 0, 0);
+          const timestamp = formatISO(eventDate);
+          
+          usageEvents.push({
+            timestamp,
+            cartId: cart.id,
+            medicationId: med.id,
+            quantity: restockQuantity,
+            eventType: 'restock',
+          });
+          
+          currentStock += restockQuantity;
         }
       }
     });
@@ -130,7 +135,6 @@ export function generateSyntheticData(): {
   const preferences: MedicationPreferences[] = medications.map((med) => ({
     medicationId: med.id,
     surplusDays: Math.floor(rng.next() * 8) + 3, // 3-10 days
-    minRemainingShelfLife: Math.floor(rng.next() * 30) + 7, // 7-37 days
     leadTime: Math.floor(rng.next() * 5) + 2, // 2-6 days
     serviceLevel: 0.95, // 95% default
   }));
@@ -138,7 +142,6 @@ export function generateSyntheticData(): {
   return {
     carts,
     medications,
-    batches,
     usageEvents,
     preferences,
   };
