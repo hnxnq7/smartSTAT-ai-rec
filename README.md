@@ -120,9 +120,135 @@ The demo uses synthetic data generated in `lib/data.ts`. To customize:
 - **date-fns**: Date manipulation
 - **lucide-react**: Icons
 
+## ML Training
+
+This project includes a machine learning pipeline for training LightGBM demand forecasting models on synthetic medication usage datasets.
+
+### Setup
+
+1. **Install Python dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Data Location:**
+   - Training/test datasets are located in `lib/smartstat_synth_2023-2025/`
+   - Training sets: `Training_Sets_2023-2024/`
+   - Test sets: `Testing_Sets_2025/`
+   - Dataset manifest: `DATASET_MANIFEST.csv`
+
+### Training Models
+
+#### Interactive Training (Jupyter Notebook)
+
+The primary way to train models is through the Jupyter notebook:
+
+```bash
+# Launch Jupyter
+jupyter notebook
+
+# Open: ml/notebooks/lightgbm_training.ipynb
+```
+
+The notebook allows you to:
+- Configure dataset ID, forecast horizon, and model objective
+- Visualize data and model performance
+- Train models interactively
+- Save trained models, metrics, and predictions
+
+**Key Configuration Variables** (at top of notebook):
+- `DATA_DIR`: Path to data directory (default: `../lib/smartstat_synth_2023-2025`)
+- `DATASET_ID`: Dataset to train (e.g., "A1", "E10", or "all")
+- `HORIZON`: Forecast horizon in days (7, 14, or 30)
+- `OBJECTIVE`: Model objective ("l2" for regression, "quantile" for quantile regression)
+- `OUTPUT_DIR`: Where to save models and results (default: `../models`)
+
+#### Command Line Training
+
+For batch training across multiple datasets:
+
+```bash
+# Train single dataset
+python -m ml.train_lgbm --data_dir ./lib/smartstat_synth_2023-2025 --dataset_id A1 --horizon 14 --objective l2
+
+# Train all datasets
+python -m ml.train_lgbm --data_dir ./lib/smartstat_synth_2023-2025 --dataset_id all --horizon 14 --objective l2
+
+# Quantile regression
+python -m ml.train_lgbm --dataset_id A1 --horizon 14 --objective quantile --quantile_alpha 0.95
+
+# Exclude contemporaneous used_units from features
+python -m ml.train_lgbm --dataset_id A1 --horizon 14 --exclude_contemporaneous_used
+```
+
+### Project Structure
+
+```
+ml/
+├── notebooks/
+│   └── lightgbm_training.ipynb  # Main training notebook
+├── __init__.py
+├── config.py                     # Configuration defaults
+├── datasets.py                   # Dataset loading utilities
+├── features.py                   # Feature engineering and label creation
+├── evaluate.py                   # Evaluation metrics
+└── train_lgbm.py                # CLI training script
+
+models/                          # Output directory (created after training)
+├── {dataset_id}/
+│   ├── model_h{horizon}_{objective}.txt
+│   ├── feature_importance_h{horizon}_{objective}.csv
+│   ├── predictions_h{horizon}_{objective}.csv
+│   └── metrics_h{horizon}_{objective}.json
+```
+
+### Key Features
+
+- **No Data Leakage**: Labels are created using only future data within each split
+- **Time-based Validation**: Uses last 90 days of training data for validation
+- **Multi-horizon Forecasting**: Supports 7, 14, and 30-day forecast horizons
+- **Multiple Objectives**: L2 regression and quantile regression
+- **Reproducible**: Fixed random seeds and deterministic training
+- **Comprehensive Evaluation**: MAE, RMSE, and MAPE metrics
+- **Visualizations**: Interactive plots in notebook
+
+### Outputs
+
+After training, each model produces:
+
+1. **Model artifact** (`.txt`): Saved LightGBM model file
+2. **Metrics** (`.json`): Evaluation metrics and metadata
+3. **Predictions** (`.csv`): Predictions vs actuals on test set
+4. **Feature importance** (`.csv`): Feature importance rankings
+
+### Example Usage
+
+```python
+# In notebook or Python script
+from ml.datasets import load_dataset_files
+from ml.features import prepare_features_and_labels
+import lightgbm as lgb
+
+# Load data
+train_df, test_df = load_dataset_files(data_dir, "A1")
+
+# Prepare features
+X_train, y_train, X_test, y_test = prepare_features_and_labels(
+    train_df, test_df, horizon=14
+)
+
+# Train model (see notebook for full example)
+# ...
+
+# Load saved model
+model = lgb.Booster(model_file='models/A1/model_h14_l2.txt')
+predictions = model.predict(X_test)
+```
+
 ## License
 
 This is a demo project for demonstration purposes.
+
 
 
 
