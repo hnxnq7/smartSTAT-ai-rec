@@ -4,7 +4,7 @@ Evaluation metrics and utilities.
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 from pathlib import Path
 
 
@@ -12,17 +12,19 @@ def compute_metrics(
     y_true: pd.Series,
     y_pred: pd.Series,
     handle_zero: bool = True,
+    normalize_by_mean: bool = True,
 ) -> Dict[str, float]:
     """
-    Compute MAE, RMSE, and MAPE metrics.
+    Compute MAE, RMSE, MAPE, and normalized metrics.
     
     Args:
         y_true: True values
         y_pred: Predicted values
         handle_zero: If True, skip MAPE calculation for near-zero targets (< 1)
+        normalize_by_mean: If True, normalize errors by mean of y_true (for hospital size normalization)
     
     Returns:
-        Dictionary with metrics: mae, rmse, mape, mape_count
+        Dictionary with metrics: mae, rmse, mape, mape_count, normalized_mae, normalized_rmse
     """
     # Ensure same length
     if len(y_true) != len(y_pred):
@@ -34,13 +36,25 @@ def compute_metrics(
     y_pred_clean = y_pred[mask]
     
     if len(y_true_clean) == 0:
-        return {"mae": np.nan, "rmse": np.nan, "mape": np.nan, "mape_count": 0}
+        return {
+            "mae": np.nan, "rmse": np.nan, "mape": np.nan, "mape_count": 0,
+            "normalized_mae": np.nan, "normalized_rmse": np.nan
+        }
     
     # MAE
     mae = np.mean(np.abs(y_true_clean - y_pred_clean))
     
     # RMSE
     rmse = np.sqrt(np.mean((y_true_clean - y_pred_clean) ** 2))
+    
+    # Normalized errors (by mean of true values - normalizes by hospital size)
+    mean_true = np.mean(y_true_clean)
+    if mean_true > 0 and normalize_by_mean:
+        normalized_mae = mae / mean_true
+        normalized_rmse = rmse / mean_true
+    else:
+        normalized_mae = np.nan
+        normalized_rmse = np.nan
     
     # MAPE (handle near-zero targets)
     if handle_zero:
@@ -67,6 +81,8 @@ def compute_metrics(
         "rmse": float(rmse),
         "mape": float(mape) if not np.isnan(mape) else None,
         "mape_count": int(mape_count),
+        "normalized_mae": float(normalized_mae) if not np.isnan(normalized_mae) else None,
+        "normalized_rmse": float(normalized_rmse) if not np.isnan(normalized_rmse) else None,
         "total_samples": int(len(y_true_clean)),
     }
 
@@ -165,4 +181,74 @@ def save_metrics(
         json.dump(metadata, f, indent=2)
     
     print(f"Saved metrics to {output_path}")
+
+
+def compute_stockout_rate(
+    dates: pd.Series,
+    actual_used: pd.Series,
+    predicted_used: pd.Series,
+    initial_stock: float,
+    lead_time: int = 3,
+    reorder_point_ratio: float = 0.3,
+    order_quantity_multiplier: float = 1.5,
+) -> Dict[str, float]:
+    """
+    Simulate inventory and calculate stockout rate based on predictions vs actuals.
+    
+    Args:
+        dates: Date series
+        actual_used: Actual daily usage (true values)
+        predicted_used: Predicted daily usage (forecasts)
+        initial_stock: Starting inventory level
+        lead_time: Days between ordering and receiving
+        reorder_point_ratio: Reorder when stock <= this ratio * avg_daily_usage * days_of_coverage
+        order_quantity_multiplier: Order quantity = avg_daily_usage * days_of_coverage * multiplier
+    
+    Returns:
+        Dictionary with stockout_rate, avg_stock, stockout_days
+    """
+    if len(actual_used) != len(predicted_used):
+        raise ValueError("actual_used and predicted_used must have same length")
+    
+    # Simulate inventory based on predictions
+    stock = initial_stock
+    stockout_days = 0
+    total_stock = 0
+    pending_orders = {}  # {arrival_day: quantity}
+    
+    avg_predicted = np.mean(predicted_used[predicted_used > 0]) if (predicted_used > 0).any() else np.mean(actual_used)
+    days_of_coverage = 30  # Order to cover ~30 days
+    reorder_point = avg_predicted * days_of_coverage * reorder_point_ratio
+    order_quantity = avg_predicted * days_of_coverage * order_quantity_multiplier
+    
+    for i, (date, actual_usage) in enumerate(zip(dates, actual_used)):
+        # Process pending orders that arrive today
+        if i in pending_orders:
+            stock += pending_orders.pop(i)
+        
+        # Check if stockout occurs (before applying usage)
+        if stock <= 0:
+            stockout_days += 1
+        
+        # Apply actual usage (we simulate with predicted, but evaluate with actual)
+        stock = max(0, stock - actual_usage)
+        total_stock += stock
+        
+        # Check reorder point (based on predicted demand pattern)
+        if stock <= reorder_point:
+            order_arrival = i + lead_time
+            if order_arrival < len(actual_used):
+                if order_arrival not in pending_orders:
+                    pending_orders[order_arrival] = 0
+                pending_orders[order_arrival] += order_quantity
+    
+    stockout_rate = (stockout_days / len(actual_used)) * 100 if len(actual_used) > 0 else 0
+    avg_stock = total_stock / len(actual_used) if len(actual_used) > 0 else 0
+    
+    return {
+        "stockout_rate": float(stockout_rate),
+        "stockout_days": int(stockout_days),
+        "avg_stock": float(avg_stock),
+        "total_days": int(len(actual_used)),
+    }
 

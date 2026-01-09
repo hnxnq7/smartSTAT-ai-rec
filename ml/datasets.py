@@ -71,10 +71,12 @@ def get_all_dataset_ids(data_dir: Path) -> List[str]:
         data_dir: Root directory containing DATASET_MANIFEST.csv
     
     Returns:
-        List of dataset IDs (e.g., ["A1", "A2", ..., "E10"])
+        List of dataset IDs (e.g., ["A1", "A2", ..., "E10"] or ["A001", "A002", ...])
     """
     manifest = load_dataset_manifest(data_dir)
-    return sorted(manifest["dataset_id"].unique().tolist())
+    # Support both "dataset_id" (old) and "scenario_id" (new) column names
+    id_column = "scenario_id" if "scenario_id" in manifest.columns else "dataset_id"
+    return sorted(manifest[id_column].unique().tolist())
 
 
 def load_dataset_files(data_dir: Path, dataset_id: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -107,12 +109,14 @@ def get_dataset_info(data_dir: Path, dataset_id: str) -> Dict:
     
     Args:
         data_dir: Root directory containing DATASET_MANIFEST.csv
-        dataset_id: Dataset ID
+        dataset_id: Dataset ID (or scenario_id in new format)
     
     Returns:
         Dictionary with dataset metadata
     """
     manifest = load_dataset_manifest(data_dir)
-    info = manifest[manifest["dataset_id"] == dataset_id].iloc[0].to_dict()
+    # Support both "dataset_id" (old) and "scenario_id" (new) column names
+    id_column = "scenario_id" if "scenario_id" in manifest.columns else "dataset_id"
+    info = manifest[manifest[id_column] == dataset_id].iloc[0].to_dict()
     return info
 

@@ -101,3 +101,4 @@ The algorithm is now **simpler and more focused** - it treats all cart stock as 
 
 No expiration date complexity, no shelf inventory tracking - just cart-level usage intelligence.
 
+

@@ -35,6 +35,7 @@ from ml.evaluate import (
     compute_metrics,
     save_predictions,
     save_metrics,
+    compute_stockout_rate,
 )
 
 
@@ -159,9 +160,53 @@ def train_and_evaluate_dataset(
     print("\nEvaluating on test set...")
     y_pred = model.predict(X_test, num_iteration=model.best_iteration)
     
-    # Compute metrics
-    metrics = compute_metrics(y_test, pd.Series(y_pred))
-    print(f"MAE: {metrics['mae']:.2f}, RMSE: {metrics['rmse']:.2f}, MAPE: {metrics['mape']:.1f}%" if metrics['mape'] else f"MAE: {metrics['mae']:.2f}, RMSE: {metrics['rmse']:.2f}")
+    # Compute metrics (with normalization)
+    metrics = compute_metrics(y_test, pd.Series(y_pred), normalize_by_mean=True)
+    
+    # Compute stockout rate
+    # Get dates and actual daily usage for test set
+    # We need actual daily usage, not horizon-sum
+    # Use the original test_df 'used_units' column (daily)
+    test_dates_for_stockout = test_df["date"].iloc[:len(y_test)]
+    daily_actual = test_df["used_units"].iloc[:len(y_test)]
+    
+    # We forecast horizon-sum (y_pred is sum over H days)
+    # For stockout simulation, we need daily forecasts
+    # Convert by dividing by horizon to get average daily forecast
+    # Note: This assumes uniform distribution over horizon, which is a simplification
+    # A more sophisticated approach would back-cast daily from horizon-sum, but this is reasonable
+    daily_predicted = pd.Series(y_pred) / horizon
+    
+    # Get initial stock from test data (first day's non_expired_inventory)
+    # If not available, estimate from average usage
+    if 'non_expired_inventory' in test_df.columns and len(test_df) > 0:
+        initial_stock = float(test_df["non_expired_inventory"].iloc[0])
+    else:
+        # Estimate: enough for 30 days at average usage
+        initial_stock = float(np.mean(daily_actual) * 30)
+    
+    # Get lead time from dataset info if available
+    try:
+        from ml.datasets import get_dataset_info
+        dataset_info = get_dataset_info(data_dir, dataset_id)
+        lead_time = int(dataset_info.get('lead_time', 3))
+    except:
+        lead_time = 3
+    
+    stockout_metrics = compute_stockout_rate(
+        test_dates_for_stockout,
+        daily_actual,
+        daily_predicted,
+        initial_stock,
+        lead_time=lead_time,
+    )
+    metrics.update(stockout_metrics)
+    
+    print(f"Normalized MAE: {metrics['normalized_mae']:.4f}, "
+          f"Stockout Rate: {metrics['stockout_rate']:.2f}%, "
+          f"MAPE: {metrics['mape']:.1f}%" if metrics['mape'] else 
+          f"Normalized MAE: {metrics['normalized_mae']:.4f}, "
+          f"Stockout Rate: {metrics['stockout_rate']:.2f}%")
     
     # Save model
     model_dir = output_dir / dataset_id
@@ -306,17 +351,21 @@ def main():
     print(f"\n{'='*80}")
     print("SUMMARY")
     print(f"{'='*80}")
-    print(f"{'Dataset':<10} {'Horizon':<8} {'MAE':<10} {'RMSE':<10} {'MAPE':<10}")
+    print(f"{'Dataset':<10} {'Horizon':<8} {'Norm MAE':<12} {'Stockout %':<12} {'MAPE':<10}")
     print("-" * 80)
     
     for result in results:
         m = result["metrics"]
+        norm_mae = m.get('normalized_mae', np.nan)
+        stockout_rate = m.get('stockout_rate', np.nan)
         mape_str = f"{m['mape']:.1f}%" if m.get("mape") else "N/A"
+        norm_mae_str = f"{norm_mae:.4f}" if not np.isnan(norm_mae) else "N/A"
+        stockout_str = f"{stockout_rate:.2f}%" if not np.isnan(stockout_rate) else "N/A"
         print(
             f"{result['dataset_id']:<10} "
             f"{result['horizon']:<8} "
-            f"{m['mae']:<10.2f} "
-            f"{m['rmse']:<10.2f} "
+            f"{norm_mae_str:<12} "
+            f"{stockout_str:<12} "
             f"{mape_str:<10}"
         )
     
