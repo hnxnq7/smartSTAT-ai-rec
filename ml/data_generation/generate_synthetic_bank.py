@@ -11,7 +11,7 @@ import numpy as np
 from pathlib import Path
 import zipfile
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 from tqdm import tqdm
 import random
 
@@ -50,28 +50,49 @@ def assign_hospital_sizes(n_scenarios: int, rng_seed: int = 42) -> List[str]:
 def generate_all_scenarios(
     output_dir: Path,
     base_seed: int = 12345,
+    archetypes: List[str] = None,
     verbose: bool = True
 ) -> pd.DataFrame:
     """
-    Generate all scenarios and save to disk.
+    Generate all scenarios and save to disk with organized structure.
+    
+    Organized structure:
+    - output_dir/
+      - A/
+        - A001_train.csv
+        - A001_test.csv
+        - ...
+      - B/
+        - B001_train.csv
+        - B001_test.csv
+        - ...
+    
+    Args:
+        output_dir: Root output directory
+        base_seed: Base random seed
+        archetypes: List of archetypes to generate (default: all ARCHETYPES)
+        verbose: Show progress bars
     
     Returns:
         DataFrame with manifest information
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    train_dir = output_dir / "Training_Sets_2023-2024"
-    test_dir = output_dir / "Testing_Sets_2025"
-    train_dir.mkdir(exist_ok=True)
-    test_dir.mkdir(exist_ok=True)
+    
+    if archetypes is None:
+        archetypes = ARCHETYPES
     
     manifest_rows = []
     scenario_counter = 0
     
     # Progress tracking
-    total_scenarios = len(ARCHETYPES) * SCENARIOS_PER_ARCHETYPE
+    total_scenarios = len(archetypes) * SCENARIOS_PER_ARCHETYPE
     pbar = tqdm(total=total_scenarios, desc="Generating scenarios") if verbose else None
     
-    for archetype in ARCHETYPES:
+    for archetype in archetypes:
+        # Create archetype-specific directory
+        archetype_dir = output_dir / archetype
+        archetype_dir.mkdir(exist_ok=True)
+        
         # Assign hospital sizes for this archetype
         sizes = assign_hospital_sizes(SCENARIOS_PER_ARCHETYPE, base_seed + ord(archetype))
         
@@ -97,12 +118,12 @@ def generate_all_scenarios(
                 df_train = df_full[df_full['date'] < '2025-01-01'].copy()
                 df_test = df_full[df_full['date'] >= '2025-01-01'].copy()
                 
-                # Save files
-                train_filename = f"{scenario_id}_{hospital_size}_train_2023_2024.csv"
-                test_filename = f"{scenario_id}_{hospital_size}_test_2025.csv"
+                # Save files with simplified naming
+                train_filename = f"{scenario_id}_train.csv"
+                test_filename = f"{scenario_id}_test.csv"
                 
-                train_path = train_dir / train_filename
-                test_path = test_dir / test_filename
+                train_path = archetype_dir / train_filename
+                test_path = archetype_dir / test_filename
                 
                 df_train.to_csv(train_path, index=False)
                 df_test.to_csv(test_path, index=False)
@@ -113,8 +134,8 @@ def generate_all_scenarios(
                     'archetype': archetype,
                     'hospital_size': hospital_size,
                     'seed': scenario_seed,
-                    'train_file': train_filename,
-                    'test_file': test_filename,
+                    'train_file': f"{archetype}/{train_filename}",
+                    'test_file': f"{archetype}/{test_filename}",
                     'lead_time': metadata['lead_time'],
                     'avg_used_train': round(metadata['avg_used_train'], 4),
                     'avg_used_test': round(metadata['avg_used_test'], 4),
@@ -186,17 +207,22 @@ def print_summary(manifest_df: pd.DataFrame, output_dir: Path) -> None:
     print("\nBy Archetype and Size:")
     print(manifest_df.groupby(['archetype', 'hospital_size']).size().unstack(fill_value=0))
     
-    # Count files
-    train_dir = output_dir / "Training_Sets_2023-2024"
-    test_dir = output_dir / "Testing_Sets_2025"
-    train_files = len(list(train_dir.glob("*.csv"))) if train_dir.exists() else 0
-    test_files = len(list(test_dir.glob("*.csv"))) if test_dir.exists() else 0
+    # Count files (organized by archetype)
+    total_train = 0
+    total_test = 0
+    for archetype in ARCHETYPES:
+        archetype_dir = output_dir / archetype
+        if archetype_dir.exists():
+            train_count = len(list(archetype_dir.glob("*_train.csv")))
+            test_count = len(list(archetype_dir.glob("*_test.csv")))
+            total_train += train_count
+            total_test += test_count
     
     print(f"\nFiles generated:")
-    print(f"  Train files: {train_files}")
-    print(f"  Test files: {test_files}")
+    print(f"  Train files: {total_train}")
+    print(f"  Test files: {total_test}")
     print(f"  Manifest: 1")
-    print(f"  Total: {train_files + test_files + 1}")
+    print(f"  Total: {total_train + total_test + 1}")
 
 
 def main():
@@ -230,6 +256,12 @@ def main():
         action='store_true',
         help='Suppress progress bars'
     )
+    parser.add_argument(
+        '--archetypes',
+        nargs='+',
+        choices=ARCHETYPES,
+        help='Specific archetypes to generate (default: all). Example: --archetypes D E'
+    )
     
     args = parser.parse_args()
     
@@ -237,18 +269,24 @@ def main():
     random.seed(args.base_seed)
     np.random.seed(args.base_seed)
     
+    # Determine archetypes to generate
+    archetypes_to_generate = args.archetypes if args.archetypes else ARCHETYPES
+    
     print("=" * 70)
     print("SYNTHETIC DATASET GENERATION")
     print("=" * 70)
     print(f"Output directory: {args.output_dir}")
-    print(f"Scenarios: {len(ARCHETYPES)} archetypes × {SCENARIOS_PER_ARCHETYPE} scenarios = {len(ARCHETYPES) * SCENARIOS_PER_ARCHETYPE} total")
+    print(f"Archetypes: {', '.join(archetypes_to_generate)}")
+    print(f"Scenarios: {len(archetypes_to_generate)} archetypes × {SCENARIOS_PER_ARCHETYPE} scenarios = {len(archetypes_to_generate) * SCENARIOS_PER_ARCHETYPE} total")
     print(f"Period: 2023-2025 (Train: 2023-2024, Test: 2025)")
+    print(f"Structure: Organized by archetype (A/, B/, C/, D/, E/)")
     print()
     
     # Generate all scenarios
     manifest_df = generate_all_scenarios(
         output_dir=args.output_dir,
         base_seed=args.base_seed,
+        archetypes=archetypes_to_generate,
         verbose=not args.quiet
     )
     

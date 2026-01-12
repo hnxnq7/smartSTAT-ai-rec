@@ -12,9 +12,13 @@ def find_dataset_files(data_dir: Path, dataset_id: str) -> Tuple[Path, Path]:
     """
     Find train and test CSV files for a given dataset ID.
     
+    Supports two directory structures:
+    1. Organized structure (new): data_dir/A/A001_train.csv, data_dir/A/A001_test.csv
+    2. Flat structure (legacy): data_dir/Training_Sets_2023-2024/A001_*_train_2023_2024.csv
+    
     Args:
-        data_dir: Root directory containing Training_Sets and Testing_Sets folders
-        dataset_id: Dataset ID (e.g., "A1", "E10")
+        data_dir: Root directory containing datasets
+        dataset_id: Dataset ID (e.g., "A001", "E010")
     
     Returns:
         Tuple of (train_file_path, test_file_path)
@@ -22,28 +26,46 @@ def find_dataset_files(data_dir: Path, dataset_id: str) -> Tuple[Path, Path]:
     Raises:
         FileNotFoundError: If files cannot be found
     """
+    # Extract archetype from dataset_id (first character)
+    archetype = dataset_id[0] if dataset_id else None
+    
+    # Try organized structure first (new structure: A/A001_train.csv)
+    archetype_dir = data_dir / archetype if archetype else None
+    if archetype_dir and archetype_dir.exists():
+        train_file = archetype_dir / f"{dataset_id}_train.csv"
+        test_file = archetype_dir / f"{dataset_id}_test.csv"
+        
+        if train_file.exists() and test_file.exists():
+            return train_file, test_file
+    
+    # Fall back to legacy flat structure
     train_dir = data_dir / "Training_Sets_2023-2024"
     test_dir = data_dir / "Testing_Sets_2025"
     
-    # Find train file
-    train_pattern = f"{dataset_id}_*_train_2023_2024.csv"
-    train_files = list(train_dir.glob(train_pattern))
-    if not train_files:
-        raise FileNotFoundError(f"Train file not found for dataset {dataset_id} in {train_dir}")
-    if len(train_files) > 1:
-        raise ValueError(f"Multiple train files found for dataset {dataset_id}: {train_files}")
-    train_file = train_files[0]
+    if train_dir.exists() and test_dir.exists():
+        # Find train file
+        train_pattern = f"{dataset_id}_*_train_2023_2024.csv"
+        train_files = list(train_dir.glob(train_pattern))
+        if train_files:
+            if len(train_files) > 1:
+                raise ValueError(f"Multiple train files found for dataset {dataset_id}: {train_files}")
+            train_file = train_files[0]
+            
+            # Find test file
+            test_pattern = f"{dataset_id}_*_test_2025.csv"
+            test_files = list(test_dir.glob(test_pattern))
+            if test_files:
+                if len(test_files) > 1:
+                    raise ValueError(f"Multiple test files found for dataset {dataset_id}: {test_files}")
+                test_file = test_files[0]
+                return train_file, test_file
     
-    # Find test file
-    test_pattern = f"{dataset_id}_*_test_2025.csv"
-    test_files = list(test_dir.glob(test_pattern))
-    if not test_files:
-        raise FileNotFoundError(f"Test file not found for dataset {dataset_id} in {test_dir}")
-    if len(test_files) > 1:
-        raise ValueError(f"Multiple test files found for dataset {dataset_id}: {test_files}")
-    test_file = test_files[0]
-    
-    return train_file, test_file
+    # If neither structure found files, raise error
+    raise FileNotFoundError(
+        f"Dataset files not found for {dataset_id}. "
+        f"Tried: {archetype_dir / f'{dataset_id}_train.csv' if archetype_dir else 'N/A'} "
+        f"and {train_dir / train_pattern if train_dir.exists() else 'N/A'}"
+    )
 
 
 def load_dataset_manifest(data_dir: Path) -> pd.DataFrame:

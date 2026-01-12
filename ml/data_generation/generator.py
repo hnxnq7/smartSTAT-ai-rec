@@ -377,6 +377,61 @@ def add_time_series_features(
         0.0
     )
     
+    # TREND DETECTION FEATURES (for Category D improvement)
+    # Linear regression slope over rolling windows (trend direction and strength)
+    # Using shifted data to avoid leakage
+    shifted_used = df['used_units'].shift(1).fillna(0)
+    
+    def calculate_trend_slope(series: pd.Series, window: int) -> pd.Series:
+        """Calculate linear regression slope over rolling window."""
+        slopes = []
+        for i in range(len(series)):
+            if i < window:
+                slopes.append(0.0)
+            else:
+                y = series.iloc[i-window+1:i+1].values
+                x = np.arange(len(y))
+                if len(y) > 1 and np.std(y) > 1e-6:
+                    # Use polyfit for linear regression slope
+                    slope = np.polyfit(x, y, 1)[0]
+                    slopes.append(slope)
+                else:
+                    slopes.append(0.0)
+        return pd.Series(slopes, index=series.index)
+    
+    # Trend slopes over different windows
+    df['trend_slope_7d'] = calculate_trend_slope(shifted_used, window=7)
+    df['trend_slope_14d'] = calculate_trend_slope(shifted_used, window=14)
+    df['trend_slope_30d'] = calculate_trend_slope(shifted_used, window=30)
+    
+    # Momentum indicators (rate of change)
+    df['momentum_7d'] = (df['used_lag_1'] - df['used_units'].shift(8).fillna(0)) / 7.0
+    df['momentum_14d'] = (df['used_lag_1'] - df['used_units'].shift(15).fillna(0)) / 14.0
+    df['momentum_30d'] = (df['used_lag_1'] - df['used_units'].shift(31).fillna(0)) / 30.0
+    
+    # Trend direction indicators (positive/negative trend)
+    df['trend_up_7d'] = (df['trend_slope_7d'] > 0).astype(int)
+    df['trend_up_14d'] = (df['trend_slope_14d'] > 0).astype(int)
+    df['trend_up_30d'] = (df['trend_slope_30d'] > 0).astype(int)
+    
+    # Normalized trend strength (slope relative to average level)
+    avg_used = df['rolling_used_30d_avg'].fillna(1.0)  # Avoid division by zero
+    df['trend_strength_7d'] = np.where(
+        avg_used > 1e-6,
+        df['trend_slope_7d'] / (avg_used + 1e-6),
+        0.0
+    )
+    df['trend_strength_14d'] = np.where(
+        avg_used > 1e-6,
+        df['trend_slope_14d'] / (avg_used + 1e-6),
+        0.0
+    )
+    df['trend_strength_30d'] = np.where(
+        avg_used > 1e-6,
+        df['trend_slope_30d'] / (avg_used + 1e-6),
+        0.0
+    )
+    
     # Days until stockout estimate (based on current stock and recent usage rate)
     recent_avg = df['rolling_used_7d_avg'].fillna(0)
     df['days_until_stockout_est'] = np.where(

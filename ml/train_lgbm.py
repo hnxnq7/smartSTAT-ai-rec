@@ -202,11 +202,10 @@ def train_and_evaluate_dataset(
     )
     metrics.update(stockout_metrics)
     
-    print(f"Normalized MAE: {metrics['normalized_mae']:.4f}, "
-          f"Stockout Rate: {metrics['stockout_rate']:.2f}%, "
-          f"MAPE: {metrics['mape']:.1f}%" if metrics['mape'] else 
-          f"Normalized MAE: {metrics['normalized_mae']:.4f}, "
-          f"Stockout Rate: {metrics['stockout_rate']:.2f}%")
+    norm_mae_str = f"{metrics['normalized_mae']:.4f}" if metrics.get('normalized_mae') is not None else "N/A"
+    stockout_str = f"{metrics['stockout_rate']:.2f}%" if metrics.get('stockout_rate') is not None else "N/A"
+    mape_str = f"{metrics['mape']:.1f}%" if metrics.get('mape') else "N/A"
+    print(f"Normalized MAE: {norm_mae_str}, Stockout Rate: {stockout_str}, MAPE: {mape_str}")
     
     # Save model
     model_dir = output_dir / dataset_id
@@ -356,11 +355,11 @@ def main():
     
     for result in results:
         m = result["metrics"]
-        norm_mae = m.get('normalized_mae', np.nan)
-        stockout_rate = m.get('stockout_rate', np.nan)
-        mape_str = f"{m['mape']:.1f}%" if m.get("mape") else "N/A"
-        norm_mae_str = f"{norm_mae:.4f}" if not np.isnan(norm_mae) else "N/A"
-        stockout_str = f"{stockout_rate:.2f}%" if not np.isnan(stockout_rate) else "N/A"
+        norm_mae = m.get('normalized_mae')
+        stockout_rate = m.get('stockout_rate')
+        mape_str = f"{m['mape']:.1f}%" if m.get("mape") is not None else "N/A"
+        norm_mae_str = f"{norm_mae:.4f}" if norm_mae is not None and not (isinstance(norm_mae, float) and np.isnan(norm_mae)) else "N/A"
+        stockout_str = f"{stockout_rate:.2f}%" if stockout_rate is not None and not (isinstance(stockout_rate, float) and np.isnan(stockout_rate)) else "N/A"
         print(
             f"{result['dataset_id']:<10} "
             f"{result['horizon']:<8} "
