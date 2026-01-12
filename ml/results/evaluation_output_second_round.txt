@@ -1,0 +1,29 @@
+Loading metrics from ml/models...
+
+======================================================================
+AGGREGATE MODEL PERFORMANCE SUMMARY
+======================================================================
+
+Total Datasets: 550
+
+Metric Summary (Normalized by Hospital Size):
+  MAPE - Mean: 46.63%, Std: 293.59%, Min: 2.54%, Max: 5111.64%
+
+======================================================================
+TOP 5 BEST PERFORMING (by STOCKOUT_RATE)
+======================================================================
+No data available
+
+======================================================================
+PERFORMANCE BY CATEGORY
+======================================================================
+         category normalized_mae     stockout_rate          mape          
+            count           mean std          mean std      mean       std
+category                                                                  
+A             110            NaN NaN           NaN NaN    4.1778    0.5998
+B             110            NaN NaN           NaN NaN   42.8095   21.3724
+C             110            NaN NaN           NaN NaN    5.1269    0.9880
+D             110            NaN NaN           NaN NaN  173.4279  655.1451
+E             110            NaN NaN           NaN NaN   13.3618    4.6770
+
+✓ Exported summary to ml/results_second_round.csv
