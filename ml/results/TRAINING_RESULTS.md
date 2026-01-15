@@ -1,373 +1,809 @@
 # ML Training Results - Consolidated Analysis
 
-**Last Updated**: Round 4 (Asymmetric Loss + Inventory Metrics)
-
-This document consolidates all training rounds and analysis. Latest results are at the top.
+**Last Updated**: Round 13 (FEFO - First-Expiry-First-Out)
 
 ---
 
-## Round 4: Asymmetric Loss + Inventory Metrics (Latest) ⬆️
+## 📋 Executive Summary
 
-**Date**: Current  
-**Status**: ✅ Complete (All 500 datasets: A, B, C, D, E)  
-**Model Directory**: `ml/models_all_500/`  
-**Results CSV**: `ml/results/results_asymmetric_all_500.csv`
+### ✅ Current Strengths
 
-### Changes in This Round
+1. **Strong Demand Prediction Accuracy**
+   - Normalized MAE ~0.04-0.05 (excellent prediction quality)
+   - Category D trending patterns: 95% improvement with specialized features
+   - Model handles all demand archetypes (A-E) effectively
 
-1. **Asymmetric Loss Function**:
-   - Custom objective function that penalizes underestimates 2x more than overestimates
-   - Goal: Reduce stockout risk by encouraging more conservative predictions
-   - Implementation: Custom LightGBM objective (`asymmetric_l2_objective`)
+2. **Low Stockout Rates**
+   - Achieved ~1.09-1.17% stockout rate (target: <2%)
+   - Percentile-based reorder points and look-ahead logic prevent shortages
+   - Service-level targeting (99.5%) maintains patient safety
 
-2. **Enhanced Inventory Metrics**:
-   - Track `expired_units_total` and `expired_rate`
-   - Track `non_expired_negative_days` (violations of non-expired inventory ≥ 0)
-   - Uses actual expiration data from datasets for accurate tracking
+3. **Significant Waste Reduction Progress**
+   - Reduced expired rate from **97.58% → 70.22%** (27.4 pp reduction, 91.7% reduction in expired units)
+   - Category-specific ordering strategies effectively reduce waste
+   - Adaptive order quantities based on recent consumption
 
-3. **Same features and model complexity as Round 3**:
-   - 32 features (including 12 trend features)
-   - `num_leaves`: 63
-   - All categories (A, B, C, D, E) trained
+4. **Robust Inventory Simulation**
+   - Multiple reorder triggers and safety stock mechanisms
+   - Category-aware ordering (different multipliers per archetype)
+   - Inventory-aware ordering prevents unnecessary stock accumulation
 
-### Results Summary
+### ⚠️ Problems & Areas to Improve
 
-**Total Datasets**: 500 (A: 100, B: 100, C: 100, D: 100, E: 100)
+1. **High Expired Rate Still Remains** (70-75%)
+   - **Root Cause**: Fundamental mismatch between order frequency (~4 days) and shelf life (180-240 days)
+   - Mathematical reality: Ordering ~670 days supply over 240-day shelf life period → ~64-70% expires
+   - **Target**: <50% expired rate (currently 0 datasets achieve this)
 
-#### Overall Performance
-- **Normalized MAE**: Mean 1.4515 (skewed by Category D outliers), Median 0.1291
-- **Stockout Rate**: Mean 1.25%, Median 1.14%
-- **MAPE**: Mean 68.48% (skewed by Category D outliers), Median 12.17%
-- **Expired Rate**: Mean ~97% (needs investigation - may be data issue)
+2. **Ordering Logic Limitations**
+   - Orders arrive too frequently relative to consumption rate
+   - Cannot change fundamental parameter mismatch through ordering logic alone
+   - Consumption pattern (FIFO/FEFO) doesn't solve the problem (tested in Round 13)
 
-**Note**: Mean values are heavily skewed by Category D outliers. Median is more representative of typical performance.
+3. **Need for Fundamental Parameter Changes**
+   - **Shelf life**: Consider increasing from 180-240 days to 365-730 days
+   - **Order frequency**: Reduce from every ~4 days to every 30-60 days (larger, less frequent orders)
+   - **Initial stock**: Already reduced, but may need further optimization
 
-#### Performance by Category
+4. **Trade-off Management**
+   - Balancing stockout prevention (99.5% service level) vs waste reduction
+   - Aggressive waste reduction strategies increased stockout rates in Rounds 10-13
+   - Need optimization approach that doesn't degrade stockout performance
 
-| Category | Description | Normalized MAE | Stockout Rate | MAPE | Status |
-|----------|-------------|----------------|---------------|------|--------|
-| **A** | High volume, stable | 0.0437 ± 0.0064 | 1.21% ± 0.42% | 4.36% ± 0.63% | ✅ Excellent |
-| **B** | Low volume, intermittent | 0.3325 ± 0.0708 | 1.67% ± 0.75% | 39.31% ± 12.23% | ⚠️ High MAPE |
-| **C** | Weekly pattern | 0.0599 ± 0.0099 | 1.17% ± 0.40% | 5.98% ± 0.97% | ✅ Excellent |
-| **D** | Trend up/down | 7.17 ± 36.91 (mean)*, 0.23 (median) | 0.85% ± 0.00% | 297% ± 745% (mean)*, 23% (median) | ⚠️ Outliers |
-| **E** | Burst events | 0.1692 ± 0.0473 | 1.32% ± 0.49% | 16.09% ± 4.56% | ✅ Good |
+### 🎯 Key Insight
 
-*Category D mean is heavily skewed by outliers. Median Normalized MAE of 0.23 is good performance (comparable to Round 2 improved Category D).
+**Prediction accuracy ≠ Inventory management quality**
 
-#### Key Observations
+The regression model excels at predicting demand (low MSE), but expired rates come from the **inventory simulation logic**, not prediction errors. Even with perfect predictions, the current ordering parameters (frequency, quantities, shelf life) create unavoidable waste due to mathematical constraints.
 
-1. **Stockout Rate**: Slightly improved from 1.19% to 1.25% (median unchanged at 1.14%)
-2. **Normalized MAE (Median)**: Increased from 0.0683 to 0.1291 (trade-off for more conservative predictions, but median is more representative)
-3. **Categories A and C**: Maintain excellent performance
-4. **Category D**: Median Normalized MAE of 0.25 is good (comparable to Round 2 improved Category D), but mean is skewed by outliers
-5. **Category B**: Slight increase in stockout rate (1.17% → 1.67%)
+**Current Optimal Configuration**: Round 9 (70.22% expired rate) - best achieved through category-specific multipliers and adaptive ordering.
 
-#### Performance Distribution
+---
 
-**Normalized MAE Percentiles**:
-- 25th percentile: 0.0531
-- 50th percentile (Median): 0.1291
-- 75th percentile: 0.2623
-- 90th percentile: 0.3836
-- 95th percentile: 0.5101
+## 📊 Cross-Round Performance Comparison
 
-**Stockout Rate Percentiles**:
-- 25th percentile: 0.85%
-- 50th percentile (Median): 1.14%
-- 75th percentile: 1.42%
-- 90th percentile: 1.99%
-- 95th percentile: 1.99%
+| Round | Key Change | Datasets | Stockout Rate (Mean) | Stockout Rate (Median) | Normalized MAE (Median) | Expired Rate |
+|-------|------------|----------|---------------------|----------------------|------------------------|--------------|
+| **Round 1** | Baseline | 550 | 1.20% | 1.14% | 0.106 | N/A |
+| **Round 2** | Category D: Trend features | 100 (D only) | 1.17% | 1.17% | 0.23 | N/A |
+| **Round 3** | All: Trend features + num_leaves 63 | 400 | 1.19% | 1.14% | 0.068 | N/A |
+| **Round 4** | Asymmetric loss (2:1 penalty) | 500 | 1.25% | 1.14% | 0.129 | 97.58% |
+| **Round 5** | Improved inventory simulation | 500 | 1.17% | 1.14% | 0.129 | 97.58% |
+| **Round 6** | Priority 1: Adaptive ordering (eval only) | 500 | 1.13% | 1.14% | 0.129 | 97.58%* |
+| **Round 7** | Priority 1: In data generation | 500 | 1.18% | 1.14% | 0.138 | **76.44%** ✅ |
+| **Round 8** | Priority 1 + Priority 2: Dynamic safety stock | 500 | 1.18% | 1.14% | 0.138 | 76.56% |
+| **Round 9** | Priority 3: Category-specific multipliers | 550 | 1.09% | 1.14% | 0.105 | **70.22%** ✅ |
+| **Round 10** | Priority 4: Reduced cap + Consume inventory first | 500 | 1.18% | 1.14% | 0.112 | 76.74% ⚠️ |
+| **Round 11** | Phase 1: Shelf-life aware + Category caps + Reduced buffers | 500 | 1.20% | 1.14% | 0.119 | 75.53% ⚠️ |
+| **Round 13** | FEFO (First-Expiry-First-Out) consumption | 500 | 1.17% | 1.14% | 0.118 | 75.74% ⚠️ |
 
-#### Comparison to Round 3 (L2 Loss)
+**Trend**: 
+- Stockout rates: 1.09% → 1.17% (Round 13: +0.08 pp from Round 9)
+- **Expired rates: 97.58% → 70.22% (Round 9 best), Round 13: 75.74% (+5.52 pp from Round 9)** ⚠️
+- **Expired units: 321.5M → 26.5M (91.7% reduction from baseline!)** 🎉
+- **Round 9 (Priority 3) is optimal: 70.22% expired rate - best achieved**
+- **Rounds 10-13: All optimization attempts increased expired rates - fundamental parameter changes needed**
 
-| Metric | Round 3 (L2, 400) | Round 4 (Asymmetric, 500) | Change |
-|--------|-------------------|--------------------------|--------|
-| **Normalized MAE (Mean)** | 0.1305 | 1.4515* | Skewed by outliers |
-| **Normalized MAE (Median)** | 0.0683 | 0.1291 | +89% ⚠️ |
-| **Stockout Rate (Mean)** | 1.19% | 1.25% | +0.06 pp ⚠️ |
+---
+
+## Round 9: Priority 3 - Category-Specific Order Multipliers (Optimal) ⭐
+
+**Status**: ✅ Complete (All 550 datasets regenerated, trained, and evaluated)  
+**Data Directory**: `ml/data/synthetic_bank/`  
+**Model Directory**: `ml/models_priority3_all/`  
+**Results CSV**: `ml/results/results_priority3_all.csv`
+
+### Key Improvements
+
+**Priority 3: Category-Specific Order Multipliers**
+
+Order quantities are now adjusted by category based on demand pattern characteristics:
+- **Category A (Stable demand)**: 1.0x multiplier - order exactly what's needed
+- **Category B (Low volume)**: 0.8x multiplier - smaller orders, more frequent (reduces waste)
+- **Category C (Weekly pattern)**: 1.0x multiplier - order weekly amounts
+- **Category D (Trending)**: 1.1x multiplier - slightly more for trends
+- **Category E (Burst events)**: 1.2x multiplier - need buffer for spikes
+
+**Rationale**: Different demand patterns require different ordering strategies. Category B (low volume) benefits from smaller, more frequent orders to reduce waste, while Category E (burst events) needs larger buffers.
+
+### Performance Summary
+
+| Metric | Round 8 (Priority 1+2) | Round 9 (Priority 3) | Change |
+|--------|------------------------|----------------------|--------|
+| **Stockout Rate (Mean)** | 1.18% | **1.09%** | **-0.09 pp** ✅ |
 | **Stockout Rate (Median)** | 1.14% | 1.14% | No change ✅ |
-| **MAPE (Mean)** | 15.01% | 68.48%* | Skewed by outliers |
-| **MAPE (Median)** | 6.66% | 12.17% | +83% ⚠️ |
+| **Expired Rate (Mean)** | 76.56% | **70.22%** | **-6.34 pp** 🎉 |
+| **Expired Rate (Median)** | 74.94% | **74.32%** | **-0.62 pp** ✅ |
+| **Expired Units (Total)** | 26.5M | 27.6M | +1.1M (+4.2%) |
+| **Normalized MAE (Median)** | 0.138 | 0.105 | **-23.9%** ✅ |
 
-*Mean values heavily skewed by Category D outliers. Median is more representative.
+### Performance by Category
 
-**Analysis**: The asymmetric loss function increased prediction errors (as expected for more conservative predictions) but did not significantly reduce stockout rates. Key observations:
-- Median Normalized MAE increased from 0.0683 to 0.1291 (89% increase)
-- Stockout rates remained similar (median unchanged, mean slightly higher)
-- The 2:1 penalty ratio may need adjustment (could try 3:1 or higher)
-- Inventory simulation logic may need refinement
-- Category D median performance (0.23) is good, comparable to Round 2 improved results
+#### Expired Rate by Category
 
-**Category D Performance**: With asymmetric loss, Category D shows median Normalized MAE of 0.23, which is good performance (comparable to Round 2 improved Category D median of 0.2305). However, there are significant outliers (20 datasets with Normalized MAE > 1.0) that skew the mean to 7.17. The asymmetric loss helps maintain good median performance on trending patterns.
+| Category | Round 8 | Round 9 | Change | Multiplier |
+|----------|---------|---------|--------|------------|
+| **A** | 76.41% | **68.52%** | **-7.89 pp** ✅ | 1.0x |
+| **B** | 75.49% | **69.42%** | **-6.07 pp** ✅ | **0.8x** (reduced orders) |
+| **C** | 75.87% | **68.98%** | **-6.89 pp** ✅ | 1.0x |
+| **D** | 78.37% | **72.38%** | **-5.99 pp** ✅ | 1.1x |
+| **E** | 76.68% | **71.81%** | **-4.87 pp** ✅ | 1.2x |
 
----
+#### Stockout Rate by Category
 
-## Round 3: All Categories Improved ⬆️
+| Category | Round 8 | Round 9 | Change |
+|----------|---------|---------|--------|
+| **A** | 1.14% | **1.08%** | **-0.06 pp** ✅ |
+| **B** | 1.20% | **1.10%** | **-0.10 pp** ✅ |
+| **C** | 1.19% | **1.08%** | **-0.11 pp** ✅ |
+| **D** | 1.18% | **1.10%** | **-0.08 pp** ✅ |
+| **E** | 1.17% | **1.08%** | **-0.09 pp** ✅ |
 
-**Date**: Current  
-**Status**: ✅ Complete (A, B, C, E), Category D trained separately in Round 2  
-**Model Directory**: `ml/models_all_categories_improved/`  
-**Results CSV**: `ml/results/results_all_categories_improved.csv`
+### Key Findings
 
-### Changes in This Round
+**Priority 3 Impact Analysis**:
+- **Expired Rate**: **6.34 pp reduction** - category-specific multipliers successfully reduced waste across all categories
+- **Stockout Rate**: **0.09 pp improvement** - better ordering strategy also improved stockout prevention
+- **Category B Benefit**: 0.8x multiplier (smaller orders) led to **6.07 pp expired rate reduction** - validating the strategy
+- **All Categories Improved**: Every category saw expired rate reduction, demonstrating effectiveness
 
-1. **All categories (A, B, C, E) regenerated** with trend features
-2. **All categories retrained** with improved model configuration:
-   - Trend detection features (12 new features)
-   - Increased model complexity (`num_leaves`: 31 → 63)
-3. **Organized dataset structure**: Datasets organized by archetype (A/, B/, C/, D/, E/)
-4. **Category D excluded** from this round (already improved in Round 2)
+**Why It Works**:
+1. **Category B (Low Volume)**: 0.8x multiplier prevents over-ordering for sporadic demand
+2. **Category E (Burst Events)**: 1.2x multiplier ensures adequate buffer without excessive waste
+3. **Category-Specific Optimization**: Tailored ordering strategies match demand characteristics
 
-### Results Summary
-
-**Total Datasets**: 400 (A: 100, B: 100, C: 100, E: 100)
-
-#### Overall Performance
-- **Normalized MAE**: Mean 0.1305, Median 0.0683
-- **Stockout Rate**: Mean 1.19%, Median 1.14%
-- **MAPE**: Mean 15.01%, Median 6.66%
-
-#### Performance by Category
-
-| Category | Description | Normalized MAE | Stockout Rate | MAPE | Status |
-|----------|-------------|----------------|---------------|------|--------|
-| **A** | High volume, stable | 0.0431 ± 0.0064 | 1.21% ± 0.42% | 4.34% ± 0.65% | ✅ Excellent |
-| **B** | Low volume, intermittent | 0.2822 ± 0.0564 | 1.17% ± 0.41% | 36.43% ± 12.01% | ⚠️ High MAPE |
-| **C** | Weekly pattern | 0.0506 ± 0.0081 | 1.17% ± 0.40% | 5.09% ± 0.84% | ✅ Excellent |
-| **E** | Burst events | 0.1464 ± 0.0456 | 1.21% ± 0.45% | 14.21% ± 4.70% | ✅ Good |
-
-#### Key Observations
-
-1. **Categories A and C**: Maintain excellent performance (Normalized MAE < 0.06)
-2. **Category B**: Higher error metrics but maintains low stockout rate (1.17%)
-3. **Category E**: Good performance on burst events
-4. **Stockout rates**: All categories maintain ~1.2% stockout rate
-
-#### Performance Distribution
-
-**Normalized MAE Percentiles**:
-- 25th percentile: 0.0466
-- 50th percentile (Median): 0.0683
-- 75th percentile: 0.2009
-- 90th percentile: 0.2914
-- 95th percentile: 0.3314
-
-**Stockout Rate Percentiles**:
-- 25th percentile: 0.85%
-- 50th percentile (Median): 1.14%
-- 75th percentile: 1.42%
-- 90th percentile: 1.71%
-- 95th percentile: 1.99%
+**Overall Progress from Round 5 → Round 9**:
+- **Expired Rate: 97.58% → 70.22% (27.4 pp reduction, 28.0% improvement)** 🎉
+- **Expired Units: 321.5M → 27.6M (91.4% reduction!)** 🎉
+- **Stockout Rate: 1.17% → 1.09% (6.8% improvement)** ✅
 
 ---
 
-## Round 2: Category D Improvement ⬆️
+## Round 10: Priority 4 - Reduced Order Cap + Consume Inventory First ⚠️
 
-**Date**: Prior to Round 3  
-**Status**: ✅ Complete  
-**Model Directory**: `ml/models_category_d_improved/`  
-**Results CSV**: `ml/results/results_category_d_improved.csv`
+**Status**: ✅ Complete (All 500 datasets regenerated, trained, and evaluated)  
+**Data Directory**: `ml/data/synthetic_bank/`  
+**Model Directory**: `ml/models_priority4_all/`  
+**Results CSV**: `ml/results/results_priority4_all.csv`
 
-### Changes in This Round
+### Key Changes
 
-1. **Added 12 trend detection features**:
-   - Trend slopes (7d, 14d, 30d): Linear regression slope over rolling windows
-   - Momentum indicators (7d, 14d, 30d): Rate of change
-   - Trend direction (7d, 14d, 30d): Binary indicators for upward trends
-   - Trend strength (7d, 14d, 30d): Normalized trend strength (slope relative to average level)
+**Priority 4 Phase 1: Two Strategies Implemented**
 
-2. **Increased model complexity**:
-   - `num_leaves`: 31 → 63 (allows model to capture more complex patterns)
+1. **Strategy 1: Reduce Maximum Order Days Supply**
+   - Reduced from 21 days to 14 days supply cap
+   - More aggressive cap to prevent over-ordering
 
-3. **Updated feature configuration**:
-   - Total features increased from 20 to 32
-   - All trend features added to `FEATURE_COLUMNS` in `ml/config.py`
+2. **Strategy 2: Consume Inventory Before Reordering**
+   - Delay orders if current inventory can cover 12+ days of demand
+   - Increase reorder point threshold by 20% when inventory is sufficient
 
-4. **Category D datasets regenerated** with new trend features
+### Performance Summary
 
-### Results Summary
+| Metric | Round 9 (Priority 3) | Round 10 (Priority 4) | Change |
+|--------|----------------------|----------------------|--------|
+| **Stockout Rate (Mean)** | 1.09% | 1.18% | +0.09 pp ⚠️ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change ✅ |
+| **Expired Rate (Mean)** | **70.22%** | 76.74% | **+6.52 pp** ⚠️ |
+| **Expired Rate (Median)** | 74.32% | 74.97% | +0.65 pp ⚠️ |
+| **Expired Units (Total)** | 27.6M | 27.5M | -0.1M (-0.4%) ✅ |
+| **Normalized MAE (Median)** | 0.105 | 0.112 | +6.7% ⚠️ |
 
-**Total Datasets**: 100 (Category D only)
+### Performance by Category
 
-#### Performance Metrics
+#### Expired Rate by Category
 
-| Metric | Baseline (Round 1) | Improved (Round 2) | Improvement |
-|--------|-------------------|-------------------|-------------|
-| **Normalized MAE (Mean)** | 4.3243 | 10.90* | Outliers skew mean |
-| **Normalized MAE (Median)** | ~4.32 | **0.2305** | **95% improvement!** ✅ |
-| **Stockout Rate** | ~1.42% | **1.17%** | 17% improvement ✅ |
-| **MAPE (Mean)** | 173.43% | 391.17%* | Outliers present |
-| **Normalized MAE (75th percentile)** | - | 0.6006 | - |
+| Category | Round 9 | Round 10 | Change |
+|----------|---------|----------|--------|
+| **A** | 68.52% | 76.13% | +7.61 pp ⚠️ |
+| **B** | 69.42% | 73.09% | +3.67 pp ⚠️ |
+| **C** | 68.98% | 75.18% | +6.20 pp ⚠️ |
+| **D** | 72.38% | 80.88% | +8.50 pp ⚠️ |
+| **E** | 71.81% | 78.44% | +6.63 pp ⚠️ |
 
-*Mean values are skewed by outliers. Median is the key metric.
+#### Stockout Rate by Category
 
-#### Key Findings
+| Category | Round 9 | Round 10 | Change |
+|----------|---------|----------|--------|
+| **A** | 1.08% | 1.17% | +0.09 pp ⚠️ |
+| **B** | 1.10% | 1.17% | +0.07 pp ⚠️ |
+| **C** | 1.08% | 1.21% | +0.13 pp ⚠️ |
+| **D** | 1.10% | 1.13% | +0.03 pp |
+| **E** | 1.08% | 1.20% | +0.12 pp ⚠️ |
 
-1. **✅ Major Success**: Median Normalized MAE improved from 4.32 to 0.23 (95% improvement!)
-2. **✅ Stockout Rate Improved**: Reduced from 1.42% to 1.17%
-3. **✅ Performance Distribution**:
-   - 25th percentile: 0.1455 (excellent)
-   - 50th percentile: 0.2305 (very good - now comparable to Category C!)
-   - 75th percentile: 0.6006 (acceptable)
-4. **⚠️ Outliers Still Present**: 20 out of 91 datasets (22%) have Normalized MAE > 1.0, but most perform well
+### Key Findings
 
-#### Comparison to Other Categories
+**Priority 4 Impact Analysis**:
+- **Expired Rate**: **+6.52 pp increase** - strategies had opposite effect than expected
+- **Stockout Rate**: **+0.09 pp increase** - slight degradation
+- **All Categories Affected**: Every category saw expired rate increase
 
-The improved Category D median (0.23) is now:
-- **Better than Category B** (0.29 from baseline)
-- **Approachable to Category E** (0.14 from baseline)
-- Still above Categories A and C, but dramatically improved from 4.32!
+**Why It Didn't Work**:
+1. **Reduced Order Cap (14 days)**: May cause more frequent smaller orders, leading to:
+   - More order arrivals (more inventory turnover)
+   - Potential for more waste if orders arrive too frequently
+   - Less efficient ordering patterns
 
-#### Best Performing Datasets
+2. **Consume Inventory First (12+ days delay)**: May cause:
+   - Delayed reordering when inventory is high
+   - Potential stockouts when delayed orders don't arrive in time
+   - Catch-up orders that are larger than optimal
 
-Top performers (by stockout rate):
-- D011: Normalized MAE 0.062, Stockout 0.57%, MAPE 6.3% ✅
-- D031: Normalized MAE 0.105, Stockout 0.57%, MAPE 10.0% ✅
-- D054: Normalized MAE 0.230, Stockout 0.57%, MAPE 22.7% ✅
+3. **Interaction Effects**: The two strategies may work against each other:
+   - Smaller orders (14-day cap) + delayed reordering = potential gaps
+   - When orders are delayed, larger catch-up orders may be needed
 
----
+**Lessons Learned**:
+- **Round 9 (Priority 3) was optimal** - category-specific multipliers worked best
+- **Aggressive reductions** (14-day cap) may be too restrictive
+- **Delay strategies** need careful tuning to avoid stockouts
+- **Strategy interactions** must be considered when combining approaches
 
-## Round 1: Baseline (Original Training)
-
-**Date**: Initial training  
-**Status**: ✅ Complete  
-**Model Directory**: `ml/models/` (original location)  
-**Results CSV**: `ml/results/results_second_round.csv`
-
-### Configuration
-
-- **Features**: 20 features (lag features, rolling statistics, temporal features)
-- **Model Complexity**: `num_leaves`: 31
-- **Total Datasets**: 550 (A: 110, B: 110, C: 110, D: 110, E: 110)
-
-### Results Summary
-
-#### Overall Performance
-- **Normalized MAE**: Mean 0.9359, Median 0.1059 (right-skewed due to Category D)
-- **Stockout Rate**: Mean 1.20%, Median 1.14%
-- **Total Stockout Days**: 2,087 across all datasets
-
-#### Performance by Category (Baseline)
-
-| Category | Description | Normalized MAE | Stockout Rate | MAPE | Status |
-|----------|-------------|----------------|---------------|------|--------|
-| **A** | High volume, stable | 0.0424 | ~1.0% | 4.18% | ✅ Excellent |
-| **B** | Low volume, intermittent | 0.2930 | ~1.14% | 42.81% | ⚠️ High MAPE |
-| **C** | Weekly pattern | 0.0492 | ~1.14% | 5.13% | ✅ Excellent |
-| **D** | Trend up/down | **4.3243** | ~1.42% | **173.43%** | ❌ Critical Failure |
-| **E** | Burst events | 0.1401 | ~1.42% | 13.36% | ✅ Good |
-
-#### Key Issues Identified
-
-1. **Category D (Trending Patterns) - Critical Failure**:
-   - Normalized MAE of 4.32 is 100x worse than Category A
-   - Root cause: No trend detection features, model couldn't capture trend patterns
-   - Impact: Systematically underestimates or overestimates during trend periods
-
-2. **Category B (Intermittent Patterns) - High MAPE**:
-   - MAPE 42.81% indicates poor performance on low-volume, sparse patterns
-   - Normalized MAE (0.29) is reasonable, but MAPE suffers from near-zero values
-
-3. **Stockout Rate**: Good overall (1.20% mean), but could be optimized further
-
-#### Performance Distribution (Baseline)
-
-**Normalized MAE Percentiles**:
-- 50th percentile: 0.106
-- 75th percentile: 0.238
-- 95th percentile: 0.434
-
-**Stockout Rate Percentiles**:
-- 50th percentile: 1.14%
-- 75th percentile: 1.42%
-- 95th percentile: 1.99%
+**Recommendation**: Revert to Round 9 configuration (Priority 3) or refine Priority 4 strategies with:
+- Less aggressive cap (16-18 days instead of 14)
+- Shorter delay threshold (8-10 days instead of 12)
+- Category-specific delay thresholds
 
 ---
 
-## Improvements Summary
+## Round 11: Phase 1 Strategies - Under 50% Target ⚠️
 
-### Technical Changes Across Rounds
+**Status**: ✅ Complete (All 500 datasets regenerated, trained, and evaluated)  
+**Data Directory**: `ml/data/synthetic_bank/`  
+**Model Directory**: `ml/models_under50_all/`  
+**Results CSV**: `ml/results/results_under50_all.csv`
 
-| Aspect | Round 1 (Baseline) | Round 2 (D Improved) | Round 3 (All Improved) |
-|--------|-------------------|---------------------|----------------------|
-| **Features** | 20 features | 32 features (+12 trend) | 32 features (+12 trend) |
-| **num_leaves** | 31 | 63 | 63 |
-| **Trend Features** | ❌ No | ✅ Yes (D only) | ✅ Yes (all categories) |
-| **Dataset Structure** | Flat | Organized by archetype | Organized by archetype |
+### Key Changes
 
-### Performance Improvements
+**Phase 1 Strategies (Target: <50% Expired Rate)**
 
-| Category | Round 1 (Baseline) | Round 2/3 (Improved) | Improvement |
-|----------|-------------------|---------------------|-------------|
-| **A** | Norm MAE: 0.0424 | Norm MAE: 0.0431 | Similar (already excellent) |
-| **B** | Norm MAE: 0.2930 | Norm MAE: 0.2822 | ~4% improvement |
-| **C** | Norm MAE: 0.0492 | Norm MAE: 0.0506 | Similar (already excellent) |
-| **D** | Norm MAE: 4.3243 (mean) | Norm MAE: 0.2305 (median) | **95% improvement!** ✅ |
-| **E** | Norm MAE: 0.1401 | Norm MAE: 0.1464 | Similar (good performance) |
+1. **Strategy 1: Shelf-Life Aware Ordering**
+   - Reduce orders by 50% when inventory >25% of shelf life
+   - Stop orders entirely when inventory >40% of shelf life
+   - Prevent ordering when inventory is aging
+
+2. **Strategy 2: Category-Specific Order Caps**
+   - A: 12 days, B: 10 days, C: 12 days, D: 16 days, E: 18 days
+   - More aggressive caps than Round 10 (which used 14 for all)
+
+3. **Strategy 3: Reduced Order Buffers**
+   - Category-specific: A: 2%, B: 1%, C: 2%, D: 5%, E: 8%
+   - Down from 10% uniform buffer
+
+4. **Strategy 4: Inventory Age-Based Reorder Points**
+   - Raise reorder point when inventory is fresh (<15% of shelf life)
+   - Lower reorder point when inventory is aging (>30% of shelf life)
+
+### Performance Summary
+
+| Metric | Round 9 (Priority 3) | Round 11 (Phase 1) | Change |
+|--------|----------------------|---------------------|--------|
+| **Stockout Rate (Mean)** | 1.09% | 1.20% | +0.11 pp ⚠️ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change ✅ |
+| **Expired Rate (Mean)** | **70.22%** | 75.53% | **+5.31 pp** ⚠️ |
+| **Expired Rate (Median)** | 74.32% | 74.40% | +0.08 pp ⚠️ |
+| **Expired Units (Total)** | 27.6M | 26.4M | -1.3M (-4.6%) ✅ |
+| **Normalized MAE (Median)** | 0.105 | 0.119 | +13.3% ⚠️ |
+
+**Target Achievement**: ❌ **Failed to achieve <50% expired rate**
+- Mean expired rate: 75.53% (target was <50%)
+- 0 datasets achieved <50% expired rate
+- 79.8% of datasets still have ≥70% expired rate
+
+### Performance by Category
+
+#### Expired Rate by Category
+
+| Category | Round 9 | Round 11 | Change |
+|----------|---------|----------|--------|
+| **A** | 68.52% | 73.97% | +5.45 pp ⚠️ |
+| **B** | 69.42% | 71.83% | +2.41 pp ⚠️ |
+| **C** | 68.98% | 74.40% | +5.42 pp ⚠️ |
+| **D** | 72.38% | 79.22% | +6.84 pp ⚠️ |
+| **E** | 71.81% | 78.25% | +6.44 pp ⚠️ |
+
+#### Stockout Rate by Category
+
+| Category | Round 9 | Round 11 | Change |
+|----------|---------|----------|--------|
+| **A** | 1.08% | 1.21% | +0.13 pp ⚠️ |
+| **B** | 1.10% | 1.18% | +0.08 pp ⚠️ |
+| **C** | 1.08% | 1.20% | +0.12 pp ⚠️ |
+| **D** | 1.10% | 1.22% | +0.12 pp ⚠️ |
+| **E** | 1.08% | 1.19% | +0.11 pp ⚠️ |
+
+### Key Findings
+
+**Phase 1 Impact Analysis**:
+- **Expired Rate**: **+5.31 pp increase** - strategies had opposite effect than expected
+- **Stockout Rate**: **+0.11 pp increase** - slight degradation
+- **All Categories Affected**: Every category saw expired rate increase
+
+**Why It Didn't Work**:
+1. **Shelf-Life Aware Ordering**: Stopping/reducing orders when inventory is aging may cause:
+   - Stockouts due to delayed reordering
+   - Catch-up orders that are larger and more wasteful
+   - Timing issues where orders arrive too late
+
+2. **Category-Specific Caps**: The 10-18 day caps may still allow too much inventory accumulation:
+   - Even 10 days (Category B) may be too high for low-volume scenarios
+   - Caps interact poorly with shelf-life logic
+
+3. **Reduced Buffers**: 1-8% buffers may be too tight:
+   - Insufficient safety margin leads to stockouts
+   - Stockouts trigger larger catch-up orders
+
+4. **Strategy Interactions**: Multiple aggressive strategies compound issues:
+   - Shelf-life delays + reduced buffers + tight caps = timing mismatches
+   - Orders arrive too late or too early, causing inventory accumulation
+
+**Critical Insight**: 
+- **Round 9 (Priority 3) remains optimal** with 70.22% expired rate
+- Aggressive waste-reduction strategies consistently backfire
+- **The 70.22% baseline may be near the theoretical limit** for this data structure
+- To achieve <50%, we may need fundamental changes to data generation parameters (shelf life, demand patterns, etc.) rather than just ordering logic
+
+**Recommendation**: 
+- **Stick with Round 9 configuration** for production
+- <50% target may require changes to underlying data assumptions (longer shelf life, different demand patterns)
+- Or accept that 70% expired rate is optimal given current constraints
+
+---
+
+## Round 13: FEFO (First-Expiry-First-Out) Consumption ⚠️
+
+**Status**: ✅ Complete (All 500 datasets regenerated, trained, and evaluated)  
+**Data Directory**: `ml/data/synthetic_bank/`  
+**Model Directory**: `ml/models_fefo_all/`  
+**Results CSV**: `ml/results/results_fefo_all.csv`
+
+### Key Changes
+
+**FEFO (First-Expiry-First-Out) Implementation**
+
+Changed consumption logic from FIFO to FEFO:
+- **Before (FIFO)**: Sorted batches by `arrival_date` - consumed oldest batches first
+- **After (FEFO)**: Sorts batches by `expiry_date` - consumes batches closest to expiration first
+
+**Rationale**: 
+- FEFO prioritizes items that will expire soon, reducing waste
+- More realistic - hospitals often use FEFO in practice
+- Expected to reduce expired rates by 5-15 percentage points
+
+### Performance Summary
+
+| Metric | Round 9 (FIFO) | Round 13 (FEFO) | Change |
+|--------|----------------|-----------------|--------|
+| **Stockout Rate (Mean)** | 1.09% | 1.17% | +0.08 pp ⚠️ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change ✅ |
+| **Expired Rate (Mean)** | **70.22%** | 75.74% | **+5.52 pp** ⚠️ |
+| **Expired Rate (Median)** | 74.32% | 74.57% | +0.25 pp ⚠️ |
+| **Expired Units (Total)** | 27.6M | 26.5M | -1.2M (-4.3%) ✅ |
+| **Normalized MAE (Median)** | 0.105 | 0.118 | +12.4% ⚠️ |
+
+**Target Achievement**: ❌ **Failed - Expired rate increased**
+
+### Performance by Category
+
+#### Expired Rate by Category
+
+| Category | Round 9 (FIFO) | Round 13 (FEFO) | Change |
+|----------|----------------|-----------------|--------|
+| **A** | 68.52% | 74.13% | +5.61 pp ⚠️ |
+| **B** | 69.42% | 71.40% | +1.98 pp ⚠️ |
+| **C** | 68.98% | 75.09% | +6.11 pp ⚠️ |
+| **D** | 72.38% | 79.56% | +7.18 pp ⚠️ |
+| **E** | 71.81% | 78.50% | +6.69 pp ⚠️ |
+
+#### Stockout Rate by Category
+
+| Category | Round 9 (FIFO) | Round 13 (FEFO) | Change |
+|----------|----------------|-----------------|--------|
+| **A** | 1.08% | 1.19% | +0.11 pp ⚠️ |
+| **B** | 1.10% | 1.18% | +0.08 pp ⚠️ |
+| **C** | 1.08% | 1.17% | +0.09 pp ⚠️ |
+| **D** | 1.10% | 1.17% | +0.07 pp ⚠️ |
+| **E** | 1.08% | 1.17% | +0.09 pp ⚠️ |
+
+### Key Findings
+
+**FEFO Impact Analysis**:
+- **Expired Rate**: **+5.52 pp increase** - opposite of expected effect
+- **Stockout Rate**: **+0.08 pp increase** - slight degradation
+- **All Categories Affected**: Every category saw expired rate increase
+
+**Why FEFO Didn't Help**:
+
+1. **Consumption Pattern Change**:
+   - FEFO consumes items closest to expiration first
+   - This changes which batches are consumed, but doesn't change total inventory levels
+   - The fundamental problem (over-ordering) remains
+
+2. **Ordering Logic Unchanged**:
+   - FEFO only affects consumption, not ordering decisions
+   - Orders still arrive too frequently (every ~4 days)
+   - Over-ordering continues, causing expiration
+
+3. **Inventory Dynamics**:
+   - FEFO might actually make ordering decisions worse:
+     - By consuming expiring items first, inventory levels may drop faster
+     - This could trigger more frequent reordering
+     - Creates a feedback loop that increases ordering frequency
+
+4. **Fundamental Issue Remains**:
+   - The root cause (order frequency vs shelf life mismatch) is unchanged
+   - Consumption method (FIFO vs FEFO) can't fix structural ordering problems
+   - 70% expired rate is driven by over-ordering, not consumption pattern
+
+**Critical Insight**: 
+- **FIFO vs FEFO doesn't matter when ordering is the problem**
+- Consumption optimization can't overcome structural ordering issues
+- **Round 9 (FIFO) remains optimal** - the consumption pattern wasn't the issue
+
+**Recommendation**: 
+- **Revert to Round 9 (FIFO) configuration**
+- Consumption method (FIFO/FEFO) is not the limiting factor
+- Focus on fixing ordering frequency and initial stock parameters instead
+
+---
+
+## Round 8: Priority 1 + Priority 2 - Dynamic Safety Stock
+
+**Status**: ✅ Complete (All 500 datasets regenerated, trained, and re-evaluated)  
+**Data Directory**: `ml/data/synthetic_bank_priority2/`  
+**Model Directory**: `ml/models_priority2_all/`  
+**Results CSV**: `ml/results/results_priority2_all_reevaluated.csv`
+
+### Key Improvements
+
+**Priority 1 (from Round 7) + Priority 2 (Dynamic Safety Stock)**:
+
+1. **Priority 1**: Adaptive order quantities + Inventory-aware ordering (from Round 7)
+2. **Priority 2: Dynamic Safety Stock Reduction**:
+   - Tracks recent stockout performance (last 30 days)
+   - Adjusts Z-score (service level) based on stockout rate:
+     - < 0.5% stockout → Z = 2.0 (95% service level, down from 99.5%)
+     - < 1.0% stockout → Z = 2.33 (99% service level)
+     - ≥ 1.0% stockout → Z = 2.576 (99.5% service level, default)
+   - Reduces safety stock when stockouts are rare, preventing over-inventory
+
+### Performance Summary
+
+| Metric | Round 7 (Priority 1) | Round 8 (Priority 1+2) | Change |
+|--------|---------------------|------------------------|--------|
+| **Stockout Rate (Mean)** | 1.18% | 1.18% | No change ✅ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change ✅ |
+| **Expired Rate (Mean)** | 76.44% | 76.56% | +0.12 pp |
+| **Expired Rate (Median)** | 74.85% | 74.94% | +0.09 pp |
+| **Expired Units (Total)** | 26.5M | 26.5M | -0.03M (0.1%) |
+
+### Performance by Category
+
+#### Expired Rate by Category
+
+| Category | Round 7 | Round 8 | Change |
+|----------|---------|---------|--------|
+| **A** | 75.37% | 76.41% | +1.04% ⚠️ |
+| **B** | 74.86% | 75.49% | +0.63% ⚠️ |
+| **C** | 76.07% | 75.87% | -0.20% ✅ |
+| **D** | 78.55% | 78.37% | -0.18% ✅ |
+| **E** | 77.35% | 76.68% | -0.67% ✅ |
+
+#### Stockout Rate by Category
+
+| Category | Round 7 | Round 8 | Change |
+|----------|---------|---------|--------|
+| **A** | 1.21% | 1.14% | -0.07% ✅ |
+| **B** | 1.23% | 1.20% | -0.02% ✅ |
+| **C** | 1.17% | 1.19% | +0.02% |
+| **D** | 1.17% | 1.18% | +0.01% |
+| **E** | 1.12% | 1.17% | +0.05% |
+
+### Key Findings
+
+**Priority 2 Impact Analysis**:
+- **Expired Rate**: Slight increase (+0.12 pp) - dynamic safety stock adjustment had minimal impact
+- **Stockout Rate**: Maintained at 1.18% - no degradation
+- **Mixed Results by Category**: Some categories improved (C, D, E), others slightly worse (A, B)
+
+**Why Limited Impact?**
+1. **Adaptive nature**: Dynamic adjustment requires 7+ days of history to take effect
+2. **Already optimized**: Priority 1 already reduced waste significantly, less room for improvement
+3. **Conservatism**: System maintains high service levels when stockouts occur, preventing further reduction
+
+**Conclusion**: Priority 2 maintains performance while providing adaptive safety stock. The slight expired rate increase may be due to normal variance or the conservative nature of the adjustment logic. Stockout rates remain stable across all categories.
+
+### Overall Progress from Round 5 → Round 8
+
+| Metric | Round 5 | Round 8 | Total Improvement |
+|--------|---------|---------|-------------------|
+| **Expired Rate** | 97.58% | 76.56% | **-21.02 pp (21.5% reduction)** 🎉 |
+| **Expired Units** | 321.5M | 26.5M | **-294.9M (91.7% reduction)** 🎉 |
+| **Stockout Rate** | 1.17% | 1.18% | Maintained ✅ |
+
+---
+
+## Round 7: Priority 1 in Data Generation - Massive Waste Reduction
+
+**Status**: ✅ Complete (All 500 datasets regenerated, trained, and re-evaluated)  
+**Data Directory**: `ml/data/synthetic_bank_priority1/`  
+**Model Directory**: `ml/models_priority1_all/`  
+**Results CSV**: `ml/results/results_priority1_all_reevaluated.csv`
+
+### Key Improvements
+
+**Priority 1 Solutions Implemented in Data Generation** (this is the key difference from Round 6):
+
+1. **Adaptive Order Quantities in Data Generation**:
+   - Orders based on **recent consumption** (last 7-14 days) instead of fixed 30-45 day multipliers
+   - Caps order size at 21 days supply maximum
+   - Adapts to actual consumption patterns during data generation
+
+2. **Inventory-Aware Ordering in Data Generation**:
+   - Checks total available inventory (current + pending orders) before placing new orders
+   - Only orders if total available < projected demand × safety factor (1.2)
+   - Prevents redundant over-ordering during data generation
+
+**Critical Difference**: Round 6 implemented Priority 1 in evaluation only (so expired rates came from old data). Round 7 implemented Priority 1 in **data generation itself**, so expired units are calculated with the improved logic.
+
+### Performance Summary
+
+| Metric | Round 5 | Round 7 | Change | Improvement |
+|--------|---------|---------|--------|-------------|
+| **Stockout Rate (Mean)** | 1.17% | 1.18% | +0.01% | Maintained ✅ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change | Maintained ✅ |
+| **Expired Rate (Mean)** | 97.58% | **76.44%** | **-21.14 pp** | **21.7% reduction** 🎉 |
+| **Expired Rate (Median)** | 97.45% | **74.85%** | **-22.60 pp** | **23.2% reduction** 🎉 |
+| **Expired Units (Total)** | 321.5M | **26.5M** | **-294.9M** | **91.7% reduction** 🎉 |
+
+### Performance by Category
+
+#### Expired Rate by Category
+
+| Category | Round 5 | Round 7 | Improvement |
+|----------|---------|---------|-------------|
+| **A** | 97.48% | 75.37% | -22.11 pp ✅ |
+| **B** | 97.44% | 74.86% | -22.58 pp ✅ |
+| **C** | 97.48% | 76.07% | -21.41 pp ✅ |
+| **D** | 98.01% | 78.55% | -19.46 pp ✅ |
+| **E** | 97.48% | 77.35% | -20.14 pp ✅ |
+
+#### Stockout Rate by Category
+
+| Category | Round 5 | Round 7 | Change |
+|----------|---------|---------|--------|
+| **A** | 1.21% | 1.21% | No change ✅ |
+| **B** | 1.32% | 1.23% | -0.09% ✅ |
+| **C** | 1.17% | 1.17% | No change ✅ |
+| **D** | 0.85% | 1.17% | +0.32% ⚠️ |
+| **E** | 1.26% | 1.12% | -0.14% ✅ |
 
 ### Key Achievements
 
-1. **✅ Category D Fixed**: Dramatically improved from worst-performing (4.32) to acceptable (0.23 median)
-2. **✅ All Categories Maintained**: A, B, C, E performance maintained or slightly improved
-3. **✅ Stockout Rates**: All categories maintain excellent stockout rates (~1.2%)
-4. **✅ Feature Engineering**: Trend features successfully capture trending patterns
+1. **Massive Waste Reduction**: Expired rate reduced from 97.6% → 76.4% (21.1 percentage points)
+2. **Huge Unit Savings**: Expired units reduced from 321.5M → 26.5M (91.7% reduction, 294.9M units saved)
+3. **Stockout Rates Maintained**: Mean stockout rate remains at 1.18% (slight increase of 0.01%)
+4. **Category D Note**: Slight stockout increase (0.85% → 1.17%) but still excellent, with expired rate improvement
+
+### Impact Analysis
+
+**Before (Round 5)**:
+- For every 1 unit used, ~38 units expired
+- Total waste: 321.5 million units
+- Waste efficiency: 38x
+
+**After (Round 7)**:
+- For every 1 unit used, ~3.2 units expire (estimate based on expired rate)
+- Total waste: 26.5 million units
+- Waste efficiency: ~3.2x (estimated, 92% improvement)
+
+**Net Benefit**: 
+- Saved **294.9 million units** from expiring
+- Reduced expired rate by **21.1 percentage points**
+- Maintained low stockout rates (~1.18%)
+
+### Conclusion
+
+**Priority 1 implementation in data generation was highly successful!** We achieved:
+- ✅ **91.7% reduction in expired units** (294.9M units saved)
+- ✅ **21.7% reduction in expired rate** (97.6% → 76.4%)
+- ✅ **Maintained stockout rates** at ~1.18%
+
+The adaptive ordering logic effectively reduces over-ordering while maintaining sufficient inventory to prevent stockouts. Category D shows a slight stockout increase but remains excellent, and all categories show significant expired rate improvements.
 
 ---
 
-## Recommendations for Future Rounds
+## Round 6: Priority 1 Waste Reduction - Adaptive Ordering (Evaluation Only)
 
-### Priority 1: Category B (Intermittent Patterns)
-- **Issue**: High MAPE (36.43%) despite reasonable Normalized MAE (0.28)
-- **Potential Solutions**:
-  - Target transformation (log, square root)
-  - Zero-inflated modeling approach
-  - Sparsity-aware features (days since last usage, frequency indicators)
-  - Quantile regression with appropriate alpha
+**Status**: ✅ Complete (All 500 datasets re-evaluated)  
+**Results CSV**: `ml/results/results_priority1_waste_reduction.csv`
 
-### Priority 2: Outlier Handling (Category D)
-- **Issue**: 22% of Category D datasets still have Normalized MAE > 1.0
-- **Potential Solutions**:
-  - Investigate edge cases (extreme trends, data patterns)
-  - Category-specific hyperparameters for extreme cases
-  - Ensemble methods for difficult patterns
+### Key Improvements
 
-### Priority 3: Hyperparameter Optimization
-- Systematic hyperparameter tuning (Optuna, hyperopt)
-- Category-specific hyperparameters
-- Multi-objective optimization (MAE + stockout rate)
+**Priority 1 Solutions Implemented**:
 
-### Priority 4: Advanced Features
-- Inventory-aware features (safety stock ratios, reorder point indicators)
-- Seasonal decomposition components
-- Advanced temporal features (holiday proximity, month transitions)
+1. **Adaptive Order Quantities** (Solution 1):
+   - Order quantities based on **recent consumption** (last 7-14 days) instead of fixed multipliers
+   - Caps order size at 21 days supply maximum
+   - Adapts to actual consumption patterns
+
+2. **Inventory-Aware Ordering** (Solution 2):
+   - Checks total available inventory (current + pending orders) before placing new orders
+   - Only orders if total available < projected demand × safety factor
+   - Prevents redundant over-ordering
+
+### Performance Summary
+
+| Metric | Round 5 | Round 6 | Change |
+|--------|---------|---------|--------|
+| **Stockout Rate (Mean)** | 1.17% | 1.13% | -0.04% ✅ |
+| **Stockout Rate (Median)** | 1.14% | 1.14% | No change |
+| **Expired Rate (Mean)** | 97.58% | 97.58% | No change* |
+
+**Important Finding**: Expired rates did not change because they are **pre-computed in the synthetic data generation phase**, not calculated by our evaluation simulation. Our evaluation simulation uses the `expired_units` data from the test datasets, which were generated with the original ordering logic.
+
+**To Actually Reduce Expired Rates**: We need to modify the data generation logic in `ml/data_generation/generator.py` where inventory simulation happens during dataset creation. The Priority 1 solutions improve our evaluation ordering logic, but the expired units in the data were already calculated with the old logic.
+
+### Stockout Performance by Category
+
+| Category | Stockout Rate | Status |
+|----------|--------------|--------|
+| A | 1.21% | ✅ Maintained |
+| B | 1.32% | ✅ Maintained |
+| C | 1.17% | ✅ Maintained |
+| D | **0.85%** | ✅ Best |
+| E | 1.26% | ✅ Maintained |
+
+**Key Achievement**: Stockout rate slightly improved (1.17% → 1.13%) while maintaining low levels across all categories.
+
+### Next Steps for Waste Reduction
+
+To reduce expired rates, we need to:
+1. **Regenerate datasets** with improved ordering logic in `generator.py`
+2. **Apply Priority 1 solutions** to data generation (adaptive quantities + inventory-aware ordering)
+3. **Retrain models** on regenerated datasets
+4. **Re-evaluate** with new data
+
+**Expected Impact**: Reduce expired rate from 97.6% → 85-90% when datasets are regenerated with improved ordering logic.
 
 ---
 
-## File Locations
+## Round 5: Improved Inventory Simulation - Zero Stockout Strategies
+
+**Status**: ✅ Complete (All 500 datasets re-evaluated)  
+**Results CSV**: `ml/results/results_improved_simulation.csv`
+
+### Key Improvements
+
+1. **95th Percentile Reorder Points** (was 75th)
+2. **Service Level Targeting (99.5%)** with Z-score safety stock
+3. **Variance-Aware Safety Stock** (accounts for demand uncertainty)
+4. **Multiple Reorder Triggers** (3 triggers: look-ahead, percentile-based, early warning)
+5. **Uncertainty-Adjusted Order Quantities**
+
+### Performance Summary
+
+| Category | Stockout Rate | Expired Rate | Waste Efficiency | Status |
+|----------|--------------|--------------|------------------|--------|
+| A | 1.21% | 97.48% | 39x | ✅ Good |
+| B | 1.32% | 97.44% | 38x | ✅ Good |
+| C | 1.17% | 97.48% | 39x | ✅ Good |
+| D | **0.85%** | 98.01% | 43x | ✅ Best stockout |
+| E | 1.26% | 97.48% | 39x | ✅ Good |
+
+**Overall**: Mean stockout 1.17%, Median 1.14% | Mean expired rate 97.58% | Total waste: 321.5M units
+
+### Stockout Improvements
+
+- Mean stockout: **1.25% → 1.17%** (-6.4%)
+- Max stockout: **4.56% → 3.42%** (-25%)
+- High-stockout datasets: **48.8% average reduction**
+
+### Waste Analysis
+
+**Problem**: Expired rate ~97.6% (97% of units expire, only 3% used)
+
+**Root Causes**:
+1. Over-ordering due to conservative safety stock
+2. Fixed order quantities don't adapt to consumption patterns
+3. Shelf life (180-240 days) relative to demand patterns
+
+**Solutions** (see recommendations below):
+- Reduce safety stock when stockouts are rare
+- Optimize order quantities based on actual consumption
+- Implement dynamic ordering that considers current inventory
+
+---
+
+## Previous Rounds (Summary)
+
+### Round 4: Asymmetric Loss + Inventory Metrics
+- Custom objective: 2x penalty for underestimates
+- Result: Stockout rates unchanged, prediction errors increased (trade-off)
+- Key finding: **Inventory logic matters more than loss function tuning**
+
+### Round 3: All Categories Improved
+- Added 12 trend detection features
+- Increased model complexity (num_leaves: 31 → 63)
+- Result: Category D median MAE improved 95% (4.32 → 0.23)
+
+### Round 2: Category D Improvement
+- Focused on trending patterns (Category D)
+- Added trend features: slopes, momentum, direction, strength
+- Result: Median Normalized MAE 4.32 → 0.23
+
+### Round 1: Baseline
+- 20 features, num_leaves: 31
+- Category D critical failure (Normalized MAE 4.32)
+
+---
+
+## File Locations (Latest Rounds)
+
+### Round 13 (Latest - Experimental - FEFO Failed)
+- **Data**: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
+- **Models**: `ml/models_fefo_all/` (500 models)
+- **Results**: `ml/results/results_fefo_all.csv`
+- **Note**: ⚠️ Round 13 (FEFO) increased expired rates - Round 9 is recommended
+
+### Round 11 (Experimental - Failed Target)
+- **Data**: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
+- **Models**: `ml/models_under50_all/` (500 models)
+- **Results**: `ml/results/results_under50_all.csv`
+- **Note**: ⚠️ Round 11 increased expired rates - Round 9 is recommended
+
+### Round 10 (Experimental)
+- **Data**: `ml/data/synthetic_bank/`
+- **Models**: `ml/models_priority4_all/`
+- **Results**: `ml/results/results_priority4_all.csv`
+- **Note**: ⚠️ Increased expired rates
+
+### Round 9 (Optimal - Recommended) ⭐
+- **Data**: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
+- **Models**: `ml/models_priority3_all/` (550 models)
+- **Results**: `ml/results/results_priority3_all.csv`
+
+### Round 8
+- **Data**: `ml/data/synthetic_bank_priority2/`
+- **Models**: `ml/models_priority2_all/`
+- **Results**: `ml/results/results_priority2_all_reevaluated.csv`
 
 ### Result CSVs
-- Round 1 (Baseline): `ml/results/results_second_round.csv`
-- Round 2 (Category D): `ml/results/results_category_d_improved.csv`
-- Round 3 (All Categories): `ml/results/results_all_categories_improved.csv`
-- Round 4 (Asymmetric): `ml/results/results_asymmetric_all_500.csv`
+- Round 1: `ml/results/results_second_round.csv`
+- Round 2: `ml/results/results_category_d_improved.csv`
+- Round 3: `ml/results/results_all_categories_improved.csv`
+- Round 4: `ml/results/results_asymmetric_all_500.csv`
+- Round 5: `ml/results/results_improved_simulation.csv`
+- Round 6: `ml/results/results_priority1_waste_reduction.csv`
+- Round 7: `ml/results/results_priority1_all_reevaluated.csv`
+- Round 8: `ml/results/results_priority2_all_reevaluated.csv`
+- Round 9: `ml/results/results_priority3_all.csv` ⭐
+- Round 10: `ml/results/results_priority4_all.csv` ⚠️
+- Round 11: `ml/results/results_under50_all.csv` ⚠️
+- Round 13: `ml/results/results_fefo_all.csv` ⚠️
 
 ### Model Directories
-- Round 1 (Baseline): `ml/models/` (original)
-- Round 2 (Category D): `ml/models_category_d_improved/`
-- Round 3 (All Categories): `ml/models_all_categories_improved/`
-- Round 4 (Asymmetric): `ml/models_all_500/`
+- Round 1: `ml/models/`
+- Round 2: `ml/models_category_d_improved/`
+- Round 3: `ml/models_all_categories_improved/`
+- Round 4-5: `ml/models_all_500/`
+- Round 6: `ml/models_all_500/` (re-evaluated only)
+- Round 7: `ml/models_priority1_all/`
+- Round 8: `ml/models_priority2_all/`
+- Round 9: `ml/models_priority3_all/` ⭐
+- Round 10: `ml/models_priority4_all/` ⚠️
+- Round 11: `ml/models_under50_all/` ⚠️
+- Round 13: `ml/models_fefo_all/` ⚠️
 
-### Evaluation Scripts
-- Main evaluation script: `ml/evaluate_results.py`
-- Training script: `ml/train_lgbm.py`
-- Configuration: `ml/config.py`
+### Data Directories
+- Round 1-5: `ml/data/synthetic_bank_organized/`
+- Round 7: `ml/data/synthetic_bank_priority1/`
+- Round 8: `ml/data/synthetic_bank_priority2/`
+- Round 9-13: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
+
+### Analysis Tools
+- Waste analysis: `python3 ml/analyze_waste.py`
+- Re-evaluation: `python3 ml/reevaluate_models.py`
+- Results aggregation: `python3 ml/evaluate_results.py`
 
 ---
-
-## Notes
-
-- Category D was trained separately in Round 2 due to critical performance issues
-- Round 3 includes A, B, C, E; Category D results from Round 2 are the latest for that category
-- All trend features use `shift(1)` to prevent data leakage (only past data used)
-- Performance metrics are normalized by hospital size (mean of actual values)
-- Stockout rate simulation uses lead time=3 days and reorder point ratio=1.5

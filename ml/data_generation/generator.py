@@ -225,7 +225,8 @@ def simulate_inventory(
     hospital_size: str,
     lead_time: int = 3,
     reorder_point_ratio: float = 0.3,
-    initial_stock_ratio: float = 2.0
+    initial_stock_ratio: float = 2.0,
+    archetype: Optional[str] = None  # PRIORITY 3: Category-specific multipliers
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Simulate inventory flow based on usage.
@@ -264,8 +265,14 @@ def simulate_inventory(
     total_onsite[0] = initial_stock
     non_expired[0] = initial_stock
     
-    reorder_point = int(avg_daily_usage * reorder_point_ratio * 30)
-    order_quantity = int(avg_daily_usage * params["order_size_multiplier"] * 30)
+    # Initial reorder point (will be calculated dynamically)
+    base_reorder_point = int(avg_daily_usage * reorder_point_ratio * 30)
+    base_order_quantity = int(avg_daily_usage * params["order_size_multiplier"] * 30)
+    
+    # PRIORITY 2: Dynamic safety stock - track stockout history
+    stockout_history = []  # Track stockouts for dynamic adjustment
+    lookback_window = 30
+    dynamic_reorder_point_ratio = reorder_point_ratio  # Will adjust based on stockouts
     
     for day in range(n_days):
         # Process arrivals (newly_added from pending orders)
@@ -298,12 +305,13 @@ def simulate_inventory(
         total_onsite[day] -= expired_today
         non_expired[day] -= expired_today
         
-        # Apply usage (reduce from non-expired, remove oldest batches first)
+        # Apply usage (reduce from non-expired) - FEFO (First-Expiry-First-Out)
+        # Consume batches closest to expiration first to minimize waste
         usage_today = used_units[day]
         remaining_usage = usage_today
         
-        # Sort batches by arrival (FIFO)
-        batches_sorted = sorted(batches, key=lambda x: x[0])
+        # Sort batches by expiry_date (FEFO) - batches expiring soonest consumed first
+        batches_sorted = sorted(batches, key=lambda x: x[2])  # x[2] = expiry_date
         
         for batch in batches_sorted:
             if remaining_usage <= 0:
@@ -325,14 +333,164 @@ def simulate_inventory(
         total_onsite[day] = max(0, total_onsite[day])
         non_expired[day] = max(0, non_expired[day])
         
-        # Check reorder point (place order if stock is low)
-        if non_expired[day] <= reorder_point:
+        # PRIORITY 2: Track stockout history for dynamic safety stock adjustment
+        had_stockout = (non_expired[day] <= 0)
+        stockout_history.append(1 if had_stockout else 0)
+        # Keep only last lookback_window days
+        if len(stockout_history) > lookback_window:
+            stockout_history.pop(0)
+        
+        # PRIORITY 2: Dynamic reorder point ratio adjustment based on recent stockout rate
+        if len(stockout_history) >= 7:  # Need at least 7 days of history
+            recent_stockout_rate = sum(stockout_history) / len(stockout_history)
+            
+            # Adjust reorder_point_ratio based on recent performance
+            # Lower stockout rate → lower reorder point (less safety stock needed)
+            if recent_stockout_rate < 0.005:  # < 0.5% stockout rate
+                # Reduce reorder point ratio by ~30% (equivalent to ~95% service level vs 99.5%)
+                dynamic_reorder_point_ratio = reorder_point_ratio * 0.7
+            elif recent_stockout_rate < 0.01:  # < 1% stockout rate
+                # Reduce reorder point ratio by ~10% (equivalent to ~99% service level)
+                dynamic_reorder_point_ratio = reorder_point_ratio * 0.9
+            else:
+                # Keep original ratio if stockouts are higher
+                dynamic_reorder_point_ratio = reorder_point_ratio
+        else:
+            # Use original ratio for first few days
+            dynamic_reorder_point_ratio = reorder_point_ratio
+        
+        # PRIORITY 1: Adaptive Order Quantities & Inventory-Aware Ordering
+        # Calculate recent consumption for adaptive ordering
+        if day >= 14:
+            # Use last 14 days of actual consumption for more accurate ordering
+            recent_consumption = np.mean(used_units[max(0, day-14):day])
+        elif day >= 7:
+            # Use last 7 days if 14 days not available
+            recent_consumption = np.mean(used_units[max(0, day-7):day])
+        else:
+            # Fall back to average for early days
+            recent_consumption = avg_daily_usage
+        
+        # Adaptive reorder point based on recent consumption and dynamic ratio
+        expected_days_until_reorder = max(lead_time + 3, 7)  # At least 7 days
+        # Use dynamic_reorder_point_ratio (Priority 2: dynamic safety stock)
+        adaptive_reorder_point = int(recent_consumption * dynamic_reorder_point_ratio * expected_days_until_reorder)
+        
+        # UNDER_50_PERCENT: Strategy 1 - Shelf-Life Aware Ordering
+        # Calculate inventory age risk relative to shelf life
+        shelf_life_days = params["shelf_life_days"]
+        if recent_consumption > 0:
+            current_inventory_days = non_expired[day] / (recent_consumption + 1e-6)
+            inventory_age_ratio = current_inventory_days / shelf_life_days if shelf_life_days > 0 else 0
+        else:
+            inventory_age_ratio = 0
+        
+        # UNDER_50_PERCENT: Strategy 3 - Category-Specific Buffers (reduced from 10%)
+        category_buffers = {
+            'A': 1.02,  # 2% buffer - stable demand
+            'B': 1.01,  # 1% buffer - low volume, minimize waste
+            'C': 1.02,  # 2% buffer - weekly pattern
+            'D': 1.05,  # 5% buffer - trending, need some buffer
+            'E': 1.08,  # 8% buffer - burst events, need safety
+        }
+        buffer_multiplier = category_buffers.get(archetype, 1.02) if archetype else 1.02
+        
+        # UNDER_50_PERCENT: Strategy 2 - Category-Specific Order Caps
+        category_order_caps = {
+            'A': 12,  # Stable - can order less
+            'B': 10,  # Low volume - even smaller orders
+            'C': 12,  # Weekly pattern - smaller orders
+            'D': 16,  # Trending - need slightly more buffer
+            'E': 18,  # Burst events - need buffer but not too much
+        }
+        max_order_days_supply = category_order_caps.get(archetype, 12) if archetype else 12
+        
+        # PRIORITY 3: Category-Specific Order Multipliers (keep for compatibility)
+        category_multipliers = {
+            'A': 1.0,   # Stable demand - order exactly what's needed
+            'B': 0.8,   # Low volume - smaller orders, more frequent
+            'C': 1.0,   # Weekly pattern - order weekly amounts
+            'D': 1.1,   # Trending - slightly more for trends
+            'E': 1.2,   # Burst events - need buffer for spikes
+        }
+        category_multiplier = category_multipliers.get(archetype, 1.0) if archetype else 1.0
+        
+        # Adaptive order quantity with reduced buffer
+        order_quantity_base = recent_consumption * expected_days_until_reorder * buffer_multiplier
+        # Apply category-specific multiplier
+        adaptive_order_quantity = int(order_quantity_base * category_multiplier)
+        
+        # Apply shelf-life aware reduction
+        if inventory_age_ratio > 0.25:
+            # If inventory represents >25% of shelf life, reduce orders by 50%
+            adaptive_order_quantity = int(adaptive_order_quantity * 0.5)
+        elif inventory_age_ratio > 0.15:
+            # If inventory represents >15% of shelf life, reduce orders by 25%
+            adaptive_order_quantity = int(adaptive_order_quantity * 0.75)
+        
+        # Apply category-specific order cap
+        max_order = int(recent_consumption * max_order_days_supply)
+        adaptive_order_quantity = min(adaptive_order_quantity, max_order)
+        
+        # Ensure minimum order quantity (at least lead_time days)
+        min_order = int(recent_consumption * lead_time)
+        adaptive_order_quantity = max(adaptive_order_quantity, min_order)
+        
+        # PRIORITY 1: Inventory-Aware Ordering
+        # Calculate total available inventory (current + pending orders)
+        total_pending = sum(pending_orders.values()) if pending_orders else 0
+        total_available = non_expired[day] + total_pending
+        
+        # Projected demand over next period (lead_time + buffer)
+        lookahead_days = lead_time + 7
+        lookahead_end = min(day + 1 + lookahead_days, n_days)
+        if lookahead_end > day + 1:
+            projected_demand = int(np.sum(used_units[day+1:lookahead_end]))
+        else:
+            projected_demand = int(recent_consumption * lookahead_days)
+        
+        # UNDER_50_PERCENT: Strategy 1 - Shelf-Life Aware Ordering (stop orders if inventory too old)
+        # If inventory represents >40% of shelf life, stop ordering entirely
+        if inventory_age_ratio > 0.40:
+            should_order = False  # Don't order - consume existing inventory first
+        else:
+            # UNDER_50_PERCENT: Strategy 5 - Inventory Age-Based Reorder Points
+            # Adjust reorder point based on inventory age
+            if inventory_age_ratio < 0.15:
+                # If inventory is relatively new (<15% of shelf life), raise reorder point
+                # This delays ordering when inventory is fresh
+                adjusted_reorder_point = int(adaptive_reorder_point * 1.3)
+            elif inventory_age_ratio > 0.30:
+                # If inventory is aging (>30% of shelf life), lower reorder point
+                # This orders earlier to avoid expiration
+                adjusted_reorder_point = int(adaptive_reorder_point * 0.8)
+            else:
+                adjusted_reorder_point = adaptive_reorder_point
+            
+            # PRIORITY 4: Strategy 2 - Consume Inventory Before Reordering (refined)
+            # Calculate days of coverage with current inventory
+            if recent_consumption > 0:
+                days_coverage = non_expired[day] / (recent_consumption + 1e-6)
+            else:
+                days_coverage = 0
+            
+            # If inventory can cover 10+ days, delay reorder (reduced from 12 days)
+            if days_coverage > 10:
+                # Increase reorder point threshold by 20% (order later)
+                adjusted_reorder_point = max(adjusted_reorder_point, int(adaptive_reorder_point * 1.2))
+            
+            # Only order if total available inventory < projected demand * safety_factor
+            safety_factor = 1.2  # 20% safety buffer
+            should_order = (non_expired[day] <= adjusted_reorder_point) and (total_available < projected_demand * safety_factor)
+        
+        # Check reorder point (with inventory-aware logic)
+        if should_order:
             order_date = day + lead_time
             if order_date < n_days:
-                ordered_units[day] = order_quantity
+                ordered_units[day] = adaptive_order_quantity
                 if order_date not in pending_orders:
                     pending_orders[order_date] = 0
-                pending_orders[order_date] += order_quantity
+                pending_orders[order_date] += adaptive_order_quantity
         
         # Update for next iteration
         if day < n_days - 1:
@@ -520,9 +678,9 @@ def generate_scenario(
     lead_time_range = size_lead_times[hospital_size]
     lead_time = rng.randint(lead_time_range[0], lead_time_range[1])
     
-    # Simulate inventory
+    # Simulate inventory (PRIORITY 3: Pass archetype for category-specific multipliers)
     total_onsite, expired, newly_added, ordered, non_expired = simulate_inventory(
-        dates, used_units, rng, hospital_size, lead_time
+        dates, used_units, rng, hospital_size, lead_time, archetype=archetype
     )
     
     # Create base DataFrame
