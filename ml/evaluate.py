@@ -252,3 +252,135 @@ def compute_stockout_rate(
         "total_days": int(len(actual_used)),
     }
 
+
+def compute_inventory_metrics_simple(
+    dates: pd.Series,
+    actual_used: pd.Series,
+    predicted_used: pd.Series,
+    initial_stock: float,
+    lead_time: int = 3,
+    reorder_point_ratio: float = 1.5,
+    order_quantity_ratio: float = 3.0,
+    expired_units_actual: Optional[pd.Series] = None,
+    non_expired_inventory_actual: Optional[pd.Series] = None,
+) -> Dict[str, float]:
+    """
+    Compute inventory metrics using actual expiration data if available.
+    
+    Simulates inventory ordering based on predictions, but uses actual expired_units
+    and non_expired_inventory data for accurate tracking.
+    
+    Enhanced version that uses percentile-based reorder points and look-ahead logic.
+    
+    Args:
+        dates: Date series
+        actual_used: Actual daily usage
+        predicted_used: Predicted daily usage (for ordering decisions)
+        initial_stock: Starting inventory level
+        lead_time: Days between ordering and receiving
+        reorder_point_ratio: Reorder when stock covers this ratio * lead_time days of predicted usage
+        order_quantity_ratio: Order enough for this ratio * lead_time days of predicted usage
+        expired_units_actual: Actual expired units per day (from data)
+        non_expired_inventory_actual: Actual non-expired inventory per day (from data)
+    
+    Returns:
+        Dictionary with metrics including stockout_rate, expired_units_total, etc.
+    """
+    if len(actual_used) != len(predicted_used):
+        raise ValueError("actual_used and predicted_used must have same length")
+    
+    # Use actual data if available
+    use_actual_data = (expired_units_actual is not None and 
+                      non_expired_inventory_actual is not None and
+                      len(expired_units_actual) == len(actual_used) and
+                      len(non_expired_inventory_actual) == len(actual_used))
+    
+    if use_actual_data:
+        # Use actual expiration and inventory data
+        total_expired = float(expired_units_actual.sum())
+        non_expired_negative_days = int((non_expired_inventory_actual < 0).sum())
+        avg_non_expired = float(non_expired_inventory_actual.mean())
+    else:
+        # Fallback: simple simulation (original compute_stockout_rate logic)
+        total_expired = 0.0
+        non_expired_negative_days = 0
+        avg_non_expired = 0.0
+    
+    # Stockout simulation (based on predictions for ordering, actual usage for consumption)
+    stock = initial_stock
+    stockout_days = 0
+    pending_orders = {}
+    
+    # Enhanced ordering parameters: Use percentile-based reorder point to account for variance
+    use_percentile_reorder = True
+    reorder_percentile = 0.75
+    use_lookahead = True
+    lookahead_days = 7
+    
+    if use_percentile_reorder:
+        # Use percentile-based reorder point to account for variance and spikes
+        percentile_value = np.percentile(predicted_used[predicted_used > 0], reorder_percentile * 100) if (predicted_used > 0).any() else np.percentile(actual_used, reorder_percentile * 100)
+        avg_predicted_for_order = percentile_value
+        reorder_point = percentile_value * lead_time * reorder_point_ratio
+    else:
+        # Original logic: use average
+        avg_predicted = np.mean(predicted_used[predicted_used > 0]) if (predicted_used > 0).any() else max(np.mean(actual_used), 0.1)
+        avg_predicted_for_order = avg_predicted
+        reorder_point = avg_predicted * lead_time * reorder_point_ratio
+    
+    order_quantity = avg_predicted_for_order * lead_time * order_quantity_ratio
+    
+    # Convert to numpy array for easier indexing
+    predicted_array = np.array(predicted_used)
+    
+    for i, (date, actual_usage) in enumerate(zip(dates, actual_used)):
+        # Process pending orders
+        if i in pending_orders:
+            stock += pending_orders.pop(i)
+        
+        # Check stockout (before usage)
+        if stock <= 0:
+            stockout_days += 1
+        
+        # Apply usage
+        stock = max(0, stock - actual_usage)
+        
+        # Enhanced reorder logic
+        should_reorder = False
+        
+        if use_lookahead:
+            # Look ahead logic: Check if predicted demand in next (lead_time + lookahead) days exceeds current stock
+            lookahead_end = min(i + lead_time + lookahead_days, len(predicted_array))
+            predicted_demand_ahead = np.sum(predicted_array[i:lookahead_end])
+            
+            # Safety buffer: order if predicted demand ahead > current stock * safety_factor
+            safety_factor = 1.2  # 20% safety buffer
+            if predicted_demand_ahead > stock * safety_factor:
+                should_reorder = True
+        else:
+            # Original logic: reorder if stock <= reorder_point
+            if stock <= reorder_point:
+                should_reorder = True
+        
+        if should_reorder:
+            order_arrival = i + lead_time
+            if order_arrival < len(actual_used):
+                if order_arrival not in pending_orders:
+                    pending_orders[order_arrival] = 0
+                pending_orders[order_arrival] += order_quantity
+    
+    total_days = len(actual_used)
+    stockout_rate = (stockout_days / total_days) * 100 if total_days > 0 else 0
+    total_usage = float(actual_used.sum())
+    expired_rate = (total_expired / (total_expired + total_usage)) * 100 if (total_expired + total_usage) > 0 else 0
+    
+    return {
+        "stockout_rate": float(stockout_rate),
+        "stockout_days": int(stockout_days),
+        "expired_units_total": float(total_expired),
+        "expired_rate": float(expired_rate),
+        "non_expired_negative_days": int(non_expired_negative_days),
+        "avg_non_expired_inventory": float(avg_non_expired),
+        "total_days": int(total_days),
+    }
+

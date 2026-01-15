@@ -17,7 +17,8 @@ SUPPORTED_HORIZONS = [7, 14, 30]
 # Supported objectives
 OBJECTIVE_L2 = "l2"
 OBJECTIVE_QUANTILE = "quantile"
-SUPPORTED_OBJECTIVES = [OBJECTIVE_L2, OBJECTIVE_QUANTILE]
+OBJECTIVE_ASYMMETRIC = "asymmetric"
+SUPPORTED_OBJECTIVES = [OBJECTIVE_L2, OBJECTIVE_QUANTILE, OBJECTIVE_ASYMMETRIC]
 
 # Default LightGBM hyperparameters
 # Updated: Increased num_leaves from 31 to 63 to better capture complex patterns (especially trends)

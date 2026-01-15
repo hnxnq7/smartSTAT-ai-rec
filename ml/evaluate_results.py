@@ -218,7 +218,7 @@ def main():
         '--objective',
         type=str,
         default='l2',
-        choices=['l2', 'quantile'],
+        choices=['l2', 'quantile', 'asymmetric'],
         help='Model objective (default: l2)'
     )
     parser.add_argument(

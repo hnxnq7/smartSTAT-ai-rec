@@ -36,7 +36,9 @@ from ml.evaluate import (
     save_predictions,
     save_metrics,
     compute_stockout_rate,
+    compute_inventory_metrics_simple,
 )
+from ml.custom_objective import asymmetric_l2_objective
 
 
 def train_model(
@@ -72,6 +74,10 @@ def train_model(
     if objective == "quantile":
         params["objective"] = "quantile"
         params["alpha"] = quantile_alpha
+    elif objective == "asymmetric":
+        # Use custom objective function - pass as callable to objective parameter
+        params["objective"] = asymmetric_l2_objective
+        params["metric"] = "rmse"
     else:
         params["objective"] = "regression"
         params["metric"] = "rmse"
@@ -193,14 +199,20 @@ def train_and_evaluate_dataset(
     except:
         lead_time = 3
     
-    stockout_metrics = compute_stockout_rate(
+    # Use enhanced inventory metrics with expiration tracking
+    expired_units_data = test_df["expired_units"].iloc[:len(y_test)] if 'expired_units' in test_df.columns else None
+    non_expired_data = test_df["non_expired_inventory"].iloc[:len(y_test)] if 'non_expired_inventory' in test_df.columns else None
+    
+    inventory_metrics = compute_inventory_metrics_simple(
         test_dates_for_stockout,
         daily_actual,
         daily_predicted,
         initial_stock,
         lead_time=lead_time,
+        expired_units_actual=expired_units_data,
+        non_expired_inventory_actual=non_expired_data,
     )
-    metrics.update(stockout_metrics)
+    metrics.update(inventory_metrics)
     
     norm_mae_str = f"{metrics['normalized_mae']:.4f}" if metrics.get('normalized_mae') is not None else "N/A"
     stockout_str = f"{metrics['stockout_rate']:.2f}%" if metrics.get('stockout_rate') is not None else "N/A"
