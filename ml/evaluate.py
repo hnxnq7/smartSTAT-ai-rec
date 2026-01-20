@@ -7,6 +7,12 @@ import numpy as np
 from typing import Dict, Tuple, Optional
 from pathlib import Path
 
+try:
+    from scipy import stats
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+
 
 def compute_metrics(
     y_true: pd.Series,
@@ -263,6 +269,14 @@ def compute_inventory_metrics_simple(
     order_quantity_ratio: float = 3.0,
     expired_units_actual: Optional[pd.Series] = None,
     non_expired_inventory_actual: Optional[pd.Series] = None,
+    use_percentile_reorder: bool = True,
+    reorder_percentile: float = 0.95,  # 95th percentile for aggressive stockout prevention
+    use_lookahead: bool = True,
+    lookahead_days: int = 7,
+    service_level_target: float = 0.995,  # Target 99.5% service level (stockout rate < 0.5%)
+    use_variance_safety_stock: bool = True,  # Use demand variance for safety stock calculation
+    category: Optional[str] = None,  # PRIORITY 3: Category for category-specific multipliers
+    shelf_life_days: Optional[int] = None,  # Shelf life for inventory age calculations (default: 210)
 ) -> Dict[str, float]:
     """
     Compute inventory metrics using actual expiration data if available.
@@ -311,27 +325,71 @@ def compute_inventory_metrics_simple(
     stockout_days = 0
     pending_orders = {}
     
-    # Enhanced ordering parameters: Use percentile-based reorder point to account for variance
-    use_percentile_reorder = True
-    reorder_percentile = 0.75
-    use_lookahead = True
-    lookahead_days = 7
+    # Enhanced ordering parameters: Aggressive zero-stockout strategy
+    # Use 95th percentile for reorder point to account for variance and spikes
+    predicted_series = pd.Series(predicted_used)
+    actual_series = pd.Series(actual_used)
+    
+    # Calculate demand statistics for safety stock
+    mean_demand = float(predicted_series[predicted_series > 0].mean()) if (predicted_series > 0).any() else float(np.mean(actual_series))
+    std_demand = float(predicted_series[predicted_series > 0].std()) if (predicted_series > 0).any() and len(predicted_series[predicted_series > 0]) > 1 else float(np.std(actual_series))
+    
+    if mean_demand <= 0:
+        mean_demand = max(float(np.mean(actual_series)), 0.1)
+    if std_demand <= 0 or np.isnan(std_demand):
+        std_demand = mean_demand * 0.3  # Default to 30% coefficient of variation
+    
+    # Coefficient of variation for demand uncertainty
+    cv_demand = std_demand / mean_demand if mean_demand > 0 else 0.3
     
     if use_percentile_reorder:
-        # Use percentile-based reorder point to account for variance and spikes
-        percentile_value = np.percentile(predicted_used[predicted_used > 0], reorder_percentile * 100) if (predicted_used > 0).any() else np.percentile(actual_used, reorder_percentile * 100)
+        # Use percentile-based reorder point (95th percentile by default for aggressive prevention)
+        percentile_value = np.percentile(predicted_series[predicted_series > 0], reorder_percentile * 100) if (predicted_series > 0).any() else np.percentile(actual_series, reorder_percentile * 100)
         avg_predicted_for_order = percentile_value
-        reorder_point = percentile_value * lead_time * reorder_point_ratio
     else:
         # Original logic: use average
-        avg_predicted = np.mean(predicted_used[predicted_used > 0]) if (predicted_used > 0).any() else max(np.mean(actual_used), 0.1)
-        avg_predicted_for_order = avg_predicted
-        reorder_point = avg_predicted * lead_time * reorder_point_ratio
+        avg_predicted_for_order = mean_demand
     
-    order_quantity = avg_predicted_for_order * lead_time * order_quantity_ratio
+    # PRIORITY 2: Dynamic Safety Stock
+    # Initial safety stock calculation (will be adjusted dynamically)
+    # Base Z-score for target service level (99.5% = 2.576 standard deviations)
+    if HAS_SCIPY:
+        try:
+            base_z_score = stats.norm.ppf(service_level_target)
+        except:
+            base_z_score = 2.576
+    else:
+        if service_level_target >= 0.995:
+            base_z_score = 2.576  # 99.5%
+        elif service_level_target >= 0.99:
+            base_z_score = 2.326  # 99%
+        elif service_level_target >= 0.95:
+            base_z_score = 1.645  # 95%
+        else:
+            base_z_score = 1.282  # 90%
+    
+    # Track stockout history for dynamic adjustment
+    stockout_history = []  # Track last 30 days of stockouts
+    lookback_window = 30  # Days to look back for stockout rate calculation
+    
+    # Initial safety stock calculation (will be recalculated during loop)
+    if use_variance_safety_stock:
+        initial_safety_stock = base_z_score * std_demand * np.sqrt(lead_time)
+    else:
+        initial_safety_stock = mean_demand * lead_time * 0.5
+    
+    # Initial reorder point
+    expected_demand_leadtime = avg_predicted_for_order * lead_time
+    reorder_point = expected_demand_leadtime + initial_safety_stock
+    
+    # Order quantity: base quantity + additional buffer based on demand uncertainty
+    # Higher uncertainty (CV) leads to larger orders
+    # NOTE: This is now calculated dynamically in the loop (Priority 1: Adaptive Order Quantities)
+    base_order_quantity = (avg_predicted_for_order * lead_time * order_quantity_ratio)
     
     # Convert to numpy array for easier indexing
     predicted_array = np.array(predicted_used)
+    actual_array = np.array(actual_used)
     
     for i, (date, actual_usage) in enumerate(zip(dates, actual_used)):
         # Process pending orders
@@ -339,27 +397,197 @@ def compute_inventory_metrics_simple(
             stock += pending_orders.pop(i)
         
         # Check stockout (before usage)
-        if stock <= 0:
+        had_stockout = (stock <= 0)
+        if had_stockout:
             stockout_days += 1
+        
+        # PRIORITY 2: Track stockout history for dynamic safety stock adjustment
+        stockout_history.append(1 if had_stockout else 0)
+        # Keep only last lookback_window days
+        if len(stockout_history) > lookback_window:
+            stockout_history.pop(0)
+        
+        # PRIORITY 2: Dynamic Z-score adjustment based on recent stockout rate
+        if len(stockout_history) >= 7:  # Need at least 7 days of history
+            recent_stockout_rate = sum(stockout_history) / len(stockout_history)
+            
+            # Adjust Z-score based on recent performance
+            if recent_stockout_rate < 0.005:  # < 0.5% stockout rate
+                dynamic_z_score = 2.0  # 95% service level (down from 99.5%)
+            elif recent_stockout_rate < 0.01:  # < 1% stockout rate
+                dynamic_z_score = 2.33  # 99% service level
+            else:
+                dynamic_z_score = base_z_score  # Keep at 99.5% if stockouts are higher
+            
+            # Recalculate safety stock and reorder point with dynamic Z-score
+            if use_variance_safety_stock:
+                dynamic_safety_stock = dynamic_z_score * std_demand * np.sqrt(lead_time)
+            else:
+                dynamic_safety_stock = mean_demand * lead_time * 0.5
+            reorder_point = expected_demand_leadtime + dynamic_safety_stock
+        else:
+            # Use initial values for first few days
+            dynamic_z_score = base_z_score
         
         # Apply usage
         stock = max(0, stock - actual_usage)
         
-        # Enhanced reorder logic
+        # PRIORITY 1: Adaptive Order Quantities (Solution 1)
+        # Calculate order quantity based on recent consumption instead of fixed multiplier
+        if i >= 14:
+            # Use last 14 days of actual consumption for more accurate ordering
+            recent_consumption = np.mean(actual_array[max(0, i-14):i])
+        elif i >= 7:
+            # Use last 7 days if 14 days not available
+            recent_consumption = np.mean(actual_array[max(0, i-7):i])
+        else:
+            # Fall back to predicted average
+            recent_consumption = avg_predicted_for_order
+        
+        # Expected days until next reorder (lead time + buffer)
+        expected_days_until_reorder = max(lead_time + 3, 7)  # At least 7 days
+        
+        # UNDER_50_PERCENT: Strategy 3 - Category-Specific Buffers (reduced from 10%)
+        category_buffers = {
+            'A': 1.02,  # 2% buffer - stable demand
+            'B': 1.01,  # 1% buffer - low volume, minimize waste
+            'C': 1.02,  # 2% buffer - weekly pattern
+            'D': 1.05,  # 5% buffer - trending, need some buffer
+            'E': 1.08,  # 8% buffer - burst events, need safety
+        }
+        buffer_multiplier = category_buffers.get(category, 1.02) if category else 1.02
+        
+        # UNDER_50_PERCENT: Strategy 2 - Category-Specific Order Caps
+        category_order_caps = {
+            'A': 12,  # Stable - can order less
+            'B': 10,  # Low volume - even smaller orders
+            'C': 12,  # Weekly pattern - smaller orders
+            'D': 16,  # Trending - need slightly more buffer
+            'E': 18,  # Burst events - need buffer but not too much
+        }
+        max_order_days_supply = category_order_caps.get(category, 12) if category else 12
+        
+        # PRIORITY 3: Category-Specific Order Multipliers (keep for compatibility)
+        category_multipliers = {
+            'A': 1.0,   # Stable demand - order exactly what's needed
+            'B': 0.8,   # Low volume - smaller orders, more frequent
+            'C': 1.0,   # Weekly pattern - order weekly amounts
+            'D': 1.1,   # Trending - slightly more for trends
+            'E': 1.2,   # Burst events - need buffer for spikes
+        }
+        category_multiplier = category_multipliers.get(category, 1.0) if category else 1.0
+        
+        # Adaptive order quantity with reduced buffer
+        order_quantity_base = recent_consumption * expected_days_until_reorder * buffer_multiplier
+        # Apply category-specific multiplier
+        adaptive_order_quantity = order_quantity_base * category_multiplier
+        
+        # Apply category-specific order cap
+        max_order = recent_consumption * max_order_days_supply
+        adaptive_order_quantity = min(adaptive_order_quantity, max_order)
+        
+        # Ensure minimum order quantity (at least lead_time days)
+        min_order = recent_consumption * lead_time
+        adaptive_order_quantity = max(adaptive_order_quantity, min_order)
+        
+        # UNDER_50_PERCENT: Strategy 1 - Apply shelf-life aware order quantity reduction
+        # Calculate inventory age ratio first to apply reductions
+        # Use shelf_life_days parameter if provided, otherwise default to 210 (medium hospital size)
+        estimated_shelf_life_days = shelf_life_days if shelf_life_days is not None else 210
+        if recent_consumption > 0:
+            current_inventory_days = stock / (recent_consumption + 1e-6)
+            inventory_age_ratio = current_inventory_days / estimated_shelf_life_days
+        else:
+            inventory_age_ratio = 0
+        
+        # Reduce order quantity based on inventory age
+        if inventory_age_ratio > 0.25:
+            # If inventory represents >25% of shelf life, reduce orders by 50%
+            adaptive_order_quantity = adaptive_order_quantity * 0.5
+        elif inventory_age_ratio > 0.15:
+            # If inventory represents >15% of shelf life, reduce orders by 25%
+            adaptive_order_quantity = adaptive_order_quantity * 0.75
+        
+        # Enhanced reorder logic: Multiple triggers for aggressive stockout prevention
         should_reorder = False
         
+        # PRIORITY 1: Inventory-Aware Ordering (Solution 2)
+        # Calculate total available inventory (current + pending orders)
+        total_pending = sum(pending_orders.values()) if pending_orders else 0
+        total_available = stock + total_pending
+        
+        # Calculate days coverage (for reorder delay logic)
+        if recent_consumption > 0:
+            days_coverage = stock / (recent_consumption + 1e-6)
+        else:
+            days_coverage = 0
+        
+        # Adjust reorder point based on inventory age
+        if inventory_age_ratio < 0.15:
+            # If inventory is relatively new (<15% of shelf life), raise reorder point
+            adjusted_reorder_point = reorder_point * 1.3
+        elif inventory_age_ratio > 0.30:
+            # If inventory is aging (>30% of shelf life), lower reorder point
+            adjusted_reorder_point = reorder_point * 0.8
+        else:
+            adjusted_reorder_point = reorder_point
+        
+        # UNDER_50_PERCENT: Strategy 1 - Stop orders if inventory too old (>40% of shelf life)
+        # Also consume inventory before reordering (refined threshold: 10 days instead of 12)
+        if inventory_age_ratio > 0.40:
+            should_reorder = False  # Don't order - consume existing inventory first
+        elif days_coverage > 10:
+            # If inventory can cover 10+ days, delay reorder (refined from 12 days)
+            adjusted_reorder_point = max(adjusted_reorder_point, reorder_point * 1.2)
+        
+        # UNDER_50_PERCENT: Strategy 1 - Apply shelf-life aware order quantity reduction
+        if inventory_age_ratio > 0.25:
+            # If inventory represents >25% of shelf life, reduce orders by 50%
+            adaptive_order_quantity = adaptive_order_quantity * 0.5
+        elif inventory_age_ratio > 0.15:
+            # If inventory represents >15% of shelf life, reduce orders by 25%
+            adaptive_order_quantity = adaptive_order_quantity * 0.75
+        
         if use_lookahead:
-            # Look ahead logic: Check if predicted demand in next (lead_time + lookahead) days exceeds current stock
-            lookahead_end = min(i + lead_time + lookahead_days, len(predicted_array))
-            predicted_demand_ahead = np.sum(predicted_array[i:lookahead_end])
+            # Strategy 1: Look-ahead logic with aggressive safety buffer
+            # Check predicted demand over (lead_time + lookahead) period
+            lookahead_start = i + 1
+            lookahead_end = min(lookahead_start + lead_time + lookahead_days, len(predicted_array))
+            if lookahead_end > lookahead_start:
+                predicted_demand_ahead = np.sum(predicted_array[lookahead_start:lookahead_end])
+            else:
+                predicted_demand_ahead = 0
             
-            # Safety buffer: order if predicted demand ahead > current stock * safety_factor
-            safety_factor = 1.2  # 20% safety buffer
-            if predicted_demand_ahead > stock * safety_factor:
+            # Aggressive safety buffer: 50% buffer for near-zero stockouts
+            # This ensures we reorder well before stock might run out
+            safety_factor = 1.5  # 50% safety buffer (increased from 20%)
+            
+            # INVENTORY-AWARE: Only reorder if total available inventory < projected demand * safety_factor
+            # This prevents over-ordering when current stock + pending orders are sufficient
+            if total_available < predicted_demand_ahead * safety_factor:
+                # Trigger 1: If total available inventory < predicted demand ahead * safety_factor
+                should_reorder = True
+            
+            # Trigger 2: If stock is below adjusted reorder point (Priority 4: consume inventory first)
+            # But still check total_available to avoid redundant orders
+            if stock <= adjusted_reorder_point and total_available < predicted_demand_ahead * 1.2:
+                should_reorder = True
+            
+            # Trigger 3: Early warning - if stock is getting low relative to upcoming demand
+            # Reorder if current stock can't cover next few days with buffer
+            early_warning_days = max(lead_time, 5)  # At least lead_time or 5 days
+            early_warning_start = i + 1
+            early_warning_end = min(early_warning_start + early_warning_days, len(predicted_array))
+            if early_warning_end > early_warning_start:
+                short_term_demand = np.sum(predicted_array[early_warning_start:early_warning_end])
+            else:
+                short_term_demand = 0
+            if total_available < short_term_demand * 1.3:  # 30% buffer for early warning
                 should_reorder = True
         else:
-            # Original logic: reorder if stock <= reorder_point
-            if stock <= reorder_point:
+            # Fallback: Original logic - reorder if stock <= adjusted_reorder_point (Priority 4)
+            # But still check total_available
+            if stock <= adjusted_reorder_point and total_available < avg_predicted_for_order * lead_time * 1.5:
                 should_reorder = True
         
         if should_reorder:
@@ -367,7 +595,8 @@ def compute_inventory_metrics_simple(
             if order_arrival < len(actual_used):
                 if order_arrival not in pending_orders:
                     pending_orders[order_arrival] = 0
-                pending_orders[order_arrival] += order_quantity
+                # Use adaptive order quantity instead of fixed order_quantity
+                pending_orders[order_arrival] += adaptive_order_quantity
     
     total_days = len(actual_used)
     stockout_rate = (stockout_days / total_days) * 100 if total_days > 0 else 0

@@ -1,0 +1,14 @@
+scenario,expired_rate,data_dir
+baseline,60.86,ml/data/scenario_baseline
+S1,57.99,ml/data/scenario_s1
+S2,57.07,ml/data/scenario_s2
+S3,45.82,ml/data/scenario_s3
+S4,46.11,ml/data/scenario_s4
+S5,68.03,ml/data/scenario_s5
+S6,25.42,ml/data/scenario_s6
+S7,45.64,ml/data/scenario_s7
+S8,45.3,ml/data/scenario_s8
+S9,46.16,ml/data/scenario_s9
+S10,45.43,ml/data/scenario_s10
+S11,45.77,ml/data/scenario_s11
+S12,56.13,ml/data/scenario_s12

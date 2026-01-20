@@ -11,11 +11,14 @@ import numpy as np
 from pathlib import Path
 import zipfile
 import json
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from tqdm import tqdm
 import random
 
 from ml.data_generation.generator import generate_scenario
+from ml.data_generation.config_loader import (
+    load_params_config, load_scenario_config, merge_configs, get_category_params
+)
 
 
 # Archetype definitions
@@ -51,7 +54,8 @@ def generate_all_scenarios(
     output_dir: Path,
     base_seed: int = 12345,
     archetypes: List[str] = None,
-    verbose: bool = True
+    verbose: bool = True,
+    config_params: Optional[Dict[str, Any]] = None  # Optional config parameters per category
 ) -> pd.DataFrame:
     """
     Generate all scenarios and save to disk with organized structure.
@@ -104,6 +108,11 @@ def generate_all_scenarios(
             scenario_seed = base_seed + scenario_counter * 1001 + hash(scenario_id) % 10000
             
             try:
+                # Get category-specific config params if provided
+                category_config = None
+                if config_params and archetype in config_params:
+                    category_config = config_params[archetype]
+                
                 # Generate full time series (2023-2025)
                 df_full, metadata = generate_scenario(
                     scenario_id=scenario_id,
@@ -111,7 +120,8 @@ def generate_all_scenarios(
                     hospital_size=hospital_size,
                     seed=scenario_seed,
                     start_date="2023-01-01",
-                    end_date="2025-12-31"
+                    end_date="2025-12-31",
+                    config_params=category_config
                 )
                 
                 # Split into train (2023-2024) and test (2025)
@@ -262,6 +272,16 @@ def main():
         choices=ARCHETYPES,
         help='Specific archetypes to generate (default: all). Example: --archetypes D E'
     )
+    parser.add_argument(
+        '--params',
+        type=str,
+        help='Path to realistic_params.yaml config file (default: ml/config/realistic_params.yaml)'
+    )
+    parser.add_argument(
+        '--scenario',
+        type=str,
+        help='Scenario name from sensitivity_scenarios.yaml (e.g., S1, S9). Overrides params.'
+    )
     
     args = parser.parse_args()
     
@@ -271,6 +291,41 @@ def main():
     
     # Determine archetypes to generate
     archetypes_to_generate = args.archetypes if args.archetypes else ARCHETYPES
+    
+    # Load config if provided
+    config_params_by_category = None
+    if args.params or args.scenario:
+        # Load base realistic params
+        params_path = args.params or 'ml/config/realistic_params.yaml'
+        base_config = load_params_config(params_path)
+        
+        # Load scenario override if provided
+        scenario_config = None
+        if args.scenario:
+            scenario_path = 'ml/config/sensitivity_scenarios.yaml'
+            scenario_config = load_scenario_config(scenario_path, args.scenario)
+            print(f"\nUsing scenario: {args.scenario}")
+            print(f"  Description: {scenario_config.get('description', 'N/A')}")
+            if 'expected_result' in scenario_config:
+                exp = scenario_config['expected_result']
+                print(f"  Expected expired rate: {exp.get('expired_rate', 'N/A')}")
+                print(f"  Expected stockout rate: {exp.get('stockout_rate', 'N/A')}")
+        
+        # Merge configs
+        merged_config = merge_configs(base_config, scenario_config) if scenario_config else base_config
+        
+        # Extract category-specific parameters
+        config_params_by_category = {}
+        for archetype in archetypes_to_generate:
+            config_params_by_category[archetype] = get_category_params(
+                merged_config, archetype, hospital_size="medium"  # Default, will vary by scenario
+            )
+        
+        print(f"\nConfig loaded from: {params_path}")
+        if scenario_config:
+            print(f"Scenario override: {args.scenario}")
+    else:
+        print("\nUsing default parameters (no config file specified)")
     
     print("=" * 70)
     print("SYNTHETIC DATASET GENERATION")
@@ -287,7 +342,8 @@ def main():
         output_dir=args.output_dir,
         base_seed=args.base_seed,
         archetypes=archetypes_to_generate,
-        verbose=not args.quiet
+        verbose=not args.quiet,
+        config_params=config_params_by_category
     )
     
     # Print summary

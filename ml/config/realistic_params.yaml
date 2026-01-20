@@ -1,0 +1,139 @@
+# Realistic Hospital Supply Chain Parameter Configuration
+# All values traceable to ml/docs/REALISTIC_PARAMETERS_RESEARCH.md
+# Source quality: Tier 1 (FDA/USP/ASHP/PMC) or Tier 2 (industry reports) or marked as Assumption
+
+# Shelf Life by Category (days)
+# Source: Tier 2 (industry standards) + Assumption for category mapping
+shelf_life_days:
+  A: 730  # Stable demand - standard solid medications (2 years)
+  B: 730  # Low volume - standard solid medications (2 years)
+  C: 730  # Weekly pattern - standard solid medications (2 years)
+  D: 730  # Trending - standard solid medications (2 years)
+  E: 180  # Burst events - specialty/emergency items (6 months)
+  
+  # By hospital size (fallback if category not specified)
+  by_size:
+    small: 730
+    medium: 730
+    large: 730
+
+# Lead Time by Category (days from order to receipt)
+# Source: Tier 2 (industry reports: 2-7 days typical, 14 days specialty)
+lead_time_days:
+  A: 5    # Routine consumables
+  B: 5    # Routine consumables
+  C: 5    # Routine consumables
+  D: 7    # May need longer for trend planning
+  E: 2    # Emergency, fast response needed
+  
+  by_size:
+    small: 5
+    medium: 5
+    large: 5
+
+# Ordering Cadence by Category (days between order opportunities)
+# Source: Tier 2 (hospital best practices: weekly for high-turnover)
+order_cadence_days:
+  A: 7    # Weekly - stable demand allows optimization
+  B: 14   # Biweekly - low volume
+  C: 7    # Weekly - matches weekly pattern
+  D: 7    # Weekly - need to react to trends
+  E: 3    # Frequent - burst events require rapid response
+
+# Service Level Targets (probability of no stockout)
+# Source: Tier 1 (PMC article: 95-99% typical, 98% routine, 99.5% critical)
+service_level_target:
+  routine: 0.98      # Categories A, B, C, D (Z ≈ 2.05)
+  critical: 0.995    # Category E (Z = 2.576)
+  
+  by_category:
+    A: 0.98
+    B: 0.98
+    C: 0.98
+    D: 0.98
+    E: 0.995
+
+# Safety Stock Buffer Multiplier (× lead time demand)
+# Maps to service level: 98% ≈ Z=2.05 → buffer ≈ 1.2× for moderate CV
+# Source: Assumption (standard inventory theory)
+safety_stock_buffer_multiplier:
+  routine: 1.2    # 98% service level
+  critical: 1.5   # 99.5% service level
+  
+  by_category:
+    A: 1.2
+    B: 1.2
+    C: 1.2
+    D: 1.2
+    E: 1.5
+
+# Minimum Order Quantities (MOQ) by Category
+# Source: Assumption (no reliable public source - estimated from industry patterns)
+moq_units:
+  small_consumables: 200
+  high_volume: 500
+  by_category:
+    A: 200
+    B: 100      # Low volume - smaller MOQ to reduce waste
+    C: 200
+    D: 200
+    E: 50       # Burst events - need flexibility
+
+# Standard Pack Quantity (SPQ) / Minimum Order Increment
+# Source: Assumption (no reliable public source - estimated from case pack structures)
+spq_units:
+  default: 25
+  by_category:
+    A: 25
+    B: 10      # Low volume - smaller increments
+    C: 25
+    D: 25
+    E: 10      # Burst events - smaller increments
+
+# Shelf Life at Receipt (% remaining of full shelf life)
+# Source: Tier 2 (industry best practices: ≥75% typical)
+shelf_life_at_receipt_percent:
+  default: 0.75  # 75% remaining
+  min: 0.50      # 50% minimum acceptable
+  max: 1.00      # 100% (new items)
+
+# Minimum Remaining Shelf Life Policy (days)
+# Items with <X days remaining excluded from certain locations
+# Source: Assumption (no reliable public source - estimated from hospital best practices)
+min_remaining_shelf_life_days:
+  default: 90
+  range: [30, 180]
+
+# Consumption Method
+# Source: Tier 2 (hospital pharmacy best practices recommend FEFO)
+consumption_method: "FEFO"  # First-Expiry-First-Out (vs FIFO)
+
+# Expiry Check/Audit Frequency (days)
+# Source: Tier 2 (industry practices: monthly common, weekly for critical)
+expiry_audit_frequency_days:
+  routine: 30    # Monthly
+  critical: 7    # Weekly
+
+# Initial Stock Configuration
+initial_stock:
+  days_coverage: 10          # Reduced from 30 (Round 12 optimization)
+  ratio_to_avg_demand: 0.5
+
+# Ordering Constraints
+ordering_constraints:
+  enforce_moq: true          # Must order in MOQ multiples
+  enforce_spq: true          # Must order in SPQ increments
+  max_order_days_supply: 21  # Cap order size (from Priority 4 experiments)
+  
+  max_order_days_by_category:
+    A: 21
+    B: 14      # Low volume - smaller caps
+    C: 21
+    D: 21
+    E: 30      # Burst events - need larger buffers
+
+# Realistic Variation (for stochastic testing)
+variation:
+  lead_time_cv: 0.2            # 20% coefficient of variation
+  shelf_life_at_receipt_cv: 0.1  # ±10% variation in remaining shelf life
+  moq_flexibility: 0.1         # ±10% flexibility in MOQ enforcement

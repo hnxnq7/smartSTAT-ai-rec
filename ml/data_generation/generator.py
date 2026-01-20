@@ -4,7 +4,7 @@ Core generator functions for synthetic medication demand datasets.
 
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 from datetime import datetime, timedelta
 import random
 
@@ -226,22 +226,38 @@ def simulate_inventory(
     lead_time: int = 3,
     reorder_point_ratio: float = 0.3,
     initial_stock_ratio: float = 2.0,
-    archetype: Optional[str] = None  # PRIORITY 3: Category-specific multipliers
+    archetype: Optional[str] = None,  # PRIORITY 3: Category-specific multipliers
+    shelf_life_days: Optional[int] = None,  # Override shelf life from config
+    order_cadence_days: Optional[int] = None,  # Override order cadence from config
+    service_level_target: Optional[float] = None,  # Override service level from config
+    moq_units: Optional[int] = None,  # Override MOQ from config
+    spq_units: Optional[int] = None  # Override SPQ from config
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Simulate inventory flow based on usage.
+    
+    Args:
+        shelf_life_days: Shelf life in days (overrides size-based defaults)
+        order_cadence_days: Days between order opportunities (for ordering logic)
+        service_level_target: Target service level (0.95-0.999, maps to Z-score)
+        moq_units: Minimum order quantity (enforced if provided)
+        spq_units: Standard pack quantity / minimum order increment (enforced if provided)
     
     Returns:
         total_onsite_units, expired_units, newly_added_units, 
         ordered_units, non_expired_inventory
     """
-    # Size-based parameters
+    # Size-based parameters (defaults, overridden by config if provided)
     size_params = {
         "small": {"shelf_life_days": 180, "order_size_multiplier": 1.5},
         "medium": {"shelf_life_days": 210, "order_size_multiplier": 1.3},
         "large": {"shelf_life_days": 240, "order_size_multiplier": 1.2},
     }
-    params = size_params[hospital_size]
+    params = size_params[hospital_size].copy()
+    
+    # Override with config values if provided
+    if shelf_life_days is not None:
+        params["shelf_life_days"] = shelf_life_days
     
     n_days = len(dates)
     avg_daily_usage = np.mean(used_units)
@@ -372,7 +388,11 @@ def simulate_inventory(
             recent_consumption = avg_daily_usage
         
         # Adaptive reorder point based on recent consumption and dynamic ratio
-        expected_days_until_reorder = max(lead_time + 3, 7)  # At least 7 days
+        # Use order_cadence_days from config if provided, otherwise default to 7 days
+        if order_cadence_days is not None:
+            expected_days_until_reorder = max(lead_time + 3, order_cadence_days)
+        else:
+            expected_days_until_reorder = max(lead_time + 3, 7)  # At least 7 days
         # Use dynamic_reorder_point_ratio (Priority 2: dynamic safety stock)
         adaptive_reorder_point = int(recent_consumption * dynamic_reorder_point_ratio * expected_days_until_reorder)
         
@@ -431,6 +451,16 @@ def simulate_inventory(
         # Apply category-specific order cap
         max_order = int(recent_consumption * max_order_days_supply)
         adaptive_order_quantity = min(adaptive_order_quantity, max_order)
+        
+        # Apply MOQ constraint if provided
+        if moq_units is not None:
+            # Round up to nearest MOQ multiple
+            adaptive_order_quantity = ((adaptive_order_quantity + moq_units - 1) // moq_units) * moq_units
+        
+        # Apply SPQ constraint if provided
+        if spq_units is not None:
+            # Round up to nearest SPQ multiple
+            adaptive_order_quantity = ((adaptive_order_quantity + spq_units - 1) // spq_units) * spq_units
         
         # Ensure minimum order quantity (at least lead_time days)
         min_order = int(recent_consumption * lead_time)
@@ -608,7 +638,8 @@ def generate_scenario(
     hospital_size: str,
     seed: int,
     start_date: str = "2023-01-01",
-    end_date: str = "2025-12-31"
+    end_date: str = "2025-12-31",
+    config_params: Optional[Dict[str, Any]] = None  # Optional config parameters
 ) -> Tuple[pd.DataFrame, Dict]:
     """
     Generate a complete scenario with all required columns.
@@ -673,14 +704,34 @@ def generate_scenario(
     else:
         raise ValueError(f"Unknown archetype: {archetype}")
     
-    # Determine lead time (varies by size)
-    size_lead_times = {"small": (2, 4), "medium": (3, 5), "large": (4, 7)}
-    lead_time_range = size_lead_times[hospital_size]
-    lead_time = rng.randint(lead_time_range[0], lead_time_range[1])
+    # Determine lead time (varies by size, or use config if provided)
+    if config_params:
+        lead_time = config_params.get('lead_time_days', 5)
+        shelf_life_days = config_params.get('shelf_life_days', None)
+        order_cadence_days = config_params.get('order_cadence_days', None)
+        service_level_target = config_params.get('service_level_target', None)
+        moq_units = config_params.get('moq_units', None)
+        spq_units = config_params.get('spq_units', None)
+    else:
+        size_lead_times = {"small": (2, 4), "medium": (3, 5), "large": (4, 7)}
+        lead_time_range = size_lead_times[hospital_size]
+        lead_time = rng.randint(lead_time_range[0], lead_time_range[1])
+        shelf_life_days = None
+        order_cadence_days = None
+        service_level_target = None
+        moq_units = None
+        spq_units = None
     
     # Simulate inventory (PRIORITY 3: Pass archetype for category-specific multipliers)
+    # Pass config parameters if provided
     total_onsite, expired, newly_added, ordered, non_expired = simulate_inventory(
-        dates, used_units, rng, hospital_size, lead_time, archetype=archetype
+        dates, used_units, rng, hospital_size, lead_time, 
+        archetype=archetype,
+        shelf_life_days=shelf_life_days,
+        order_cadence_days=order_cadence_days,
+        service_level_target=service_level_target,
+        moq_units=moq_units,
+        spq_units=spq_units
     )
     
     # Create base DataFrame
