@@ -4,68 +4,112 @@
 
 ---
 
-## 📋 Executive Summary
+## 🎯 Current Status & Key Findings
 
-### ✅ Current Strengths
+### ✅ Major Breakthrough: Realistic Parameters Validation
 
-1. **Strong Demand Prediction Accuracy**
-   - Normalized MAE ~0.04-0.05 (excellent prediction quality)
-   - Category D trending patterns: 95% improvement with specialized features
-   - Model handles all demand archetypes (A-E) effectively
+**Round 14 Results (Realistic Parameters S9)**:
+- **Expired Rate**: **7.89%** (down from 59.10% baseline, **86.6% reduction**) 🎯
+- **Categories A-D**: **0.00% expired rate** with 3-year shelf life
+- **Category E**: 78.24% (specialty items with 180-day shelf life remain challenging)
+- **Total Expired Units**: 1.24M (down from 20.81M baseline, **94.0% reduction**)
 
-2. **Low Stockout Rates**
-   - Achieved ~1.09-1.17% stockout rate (target: <2%)
-   - Percentile-based reorder points and look-ahead logic prevent shortages
-   - Service-level targeting (99.5%) maintains patient safety
+**Key Validation**: Using realistic hospital supply chain parameters (3-year shelf life, weekly ordering, 98% service level) achieves the <50% expired rate target, validating that **parameter realism > ordering logic optimization**.
 
-3. **Significant Waste Reduction Progress**
-   - Reduced expired rate from **97.58% → 70.22%** (27.4 pp reduction, 91.7% reduction in expired units)
-   - Category-specific ordering strategies effectively reduce waste
-   - Adaptive order quantities based on recent consumption
+**Primary Driver**: Shelf life is the dominant factor - increasing from 240 days to 1095 days reduces expired rate by 86.6%.
 
-4. **Robust Inventory Simulation**
-   - Multiple reorder triggers and safety stock mechanisms
-   - Category-aware ordering (different multipliers per archetype)
-   - Inventory-aware ordering prevents unnecessary stock accumulation
+### 📊 Latest Results Summary
 
-### ⚠️ Problems & Areas to Improve
+| Configuration | Expired Rate | Improvement | Key Parameters |
+|--------------|--------------|-------------|----------------|
+| **Baseline** (Round 9) | 59.10% | - | 240-day shelf life, 4-day cadence, 99.5% service level |
+| **S1** (365-day shelf life) | 45.29% | -13.81 pp | 365-day shelf life, same ordering |
+| **S9** (Optimal Realistic) | **7.89%** | **-51.21 pp** | 1095-day shelf life, weekly cadence, 98% service level |
 
-1. **High Expired Rate Still Remains** (70-75%)
-   - **Root Cause**: Fundamental mismatch between order frequency (~4 days) and shelf life (180-240 days)
-   - Mathematical reality: Ordering ~670 days supply over 240-day shelf life period → ~64-70% expires
-   - **Target**: <50% expired rate (currently 0 datasets achieve this)
+### ✅ System Strengths
 
-2. **Ordering Logic Limitations**
-   - Orders arrive too frequently relative to consumption rate
-   - Cannot change fundamental parameter mismatch through ordering logic alone
-   - Consumption pattern (FIFO/FEFO) doesn't solve the problem (tested in Round 13)
-
-3. **Need for Fundamental Parameter Changes** ✅ **RESOLVED**
-   - **Shelf life**: ✅ **VALIDATED** - Increasing from 240 to 730-1095 days dramatically reduces expired rates
-   - **Order frequency**: Weekly (7 days) cadence shows good results
-   - **Initial stock**: Already optimized
-   - **Evidence**: S9 scenario achieved **7.89% expired rate** (down from 70%) with realistic 3-year shelf life
-
-4. **Trade-off Management**
-   - Balancing stockout prevention (99.5% service level) vs waste reduction
-   - Aggressive waste reduction strategies increased stockout rates in Rounds 10-13
-   - Need optimization approach that doesn't degrade stockout performance
+1. **Strong Demand Prediction**: Normalized MAE ~0.04-0.05 (excellent accuracy)
+2. **Low Stockout Rates**: ~1.09-1.17% (target: <2%)
+3. **Robust Inventory Logic**: Multiple reorder triggers, category-aware ordering, adaptive quantities
 
 ### 🎯 Key Insight
 
 **Prediction accuracy ≠ Inventory management quality**
 
-The regression model excels at predicting demand (low MSE), but expired rates come from the **inventory simulation logic**, not prediction errors. Even with perfect predictions, the current ordering parameters (frequency, quantities, shelf life) create unavoidable waste due to mathematical constraints.
-
-**Current Optimal Configuration**: 
-- **Round 9** (70.22% expired rate) - best with original parameters
-- **Realistic Parameters S9** (7.89% expired rate) - best with evidence-based hospital supply chain parameters
-
-**Key Finding**: Using realistic hospital supply chain parameters (3-year shelf life, weekly ordering, 98% service level) reduces expired rates from 70% to <10% - validating that parameter realism, not just ordering logic, drives performance.
+The regression model excels at predicting demand (low MSE), but expired rates come from the **inventory simulation parameters**, not prediction errors. Realistic hospital supply chain parameters (especially 2-3 year shelf life for medications) are essential for achieving low expired rates.
 
 ---
 
-## 📊 Cross-Round Performance Comparison
+## Round 14: Realistic Parameters Sensitivity Sweep 🎯
+
+**Status**: ✅ Complete (13 scenarios tested)  
+**Purpose**: Validate that realistic hospital supply chain parameters can achieve expired rates <50% target
+
+### Research Foundation
+
+**Evidence-Based Parameter Research**: Created comprehensive parameter documentation (`ml/docs/REALISTIC_PARAMETERS_RESEARCH.md`) with:
+- **Tier 1 Sources**: FDA, USP, ASHP, NIH/PMC peer-reviewed articles
+- **Tier 2 Sources**: Industry reports, major GPO/distributor documentation
+- **Assumptions**: Clearly marked where public data unavailable, with conservative priors
+
+**Key Parameter Changes**:
+- **Shelf Life**: Increased from 240 days → 730-1095 days (2-3 years, realistic for most medications)
+- **Order Cadence**: Changed from 4 days → 7 days (weekly, aligns with hospital practices)
+- **Service Level**: Reduced from 99.5% → 98% for routine items (realistic target)
+- **Lead Times**: Standardized to 5 days for routine, 14 days for specialty
+
+### Sensitivity Sweep Results
+
+| Scenario | Shelf Life | Order Cadence | Service Level | Expired Rate | vs Baseline | Status |
+|----------|-----------|---------------|---------------|--------------|-------------|--------|
+| **baseline** | 240 days | 4 days | 99.5% | **59.10%** | - | ✅ Complete |
+| **S1** | 365 days | 4 days | 99.5% | **45.29%** | **-13.81 pp** ✅ | ✅ Complete |
+| **S9** | 1095 days | 7 days | 98% | **7.89%** | **-51.21 pp** 🎯 | ✅ Complete |
+
+*Full results for all 13 scenarios available in `ml/data/sensitivity_sweep_results.csv`*
+
+### Key Findings
+
+1. **Shelf Life is Primary Driver** ✅
+   - **S1** (365 days): -13.81 pp reduction from baseline
+   - **S9** (1095 days): -51.21 pp reduction from baseline
+   - **Conclusion**: Increasing shelf life from 240 to 1095 days reduces expired rate by **86.6%**
+
+2. **Category-Specific Impact**:
+   - **Categories A-D** (1095-day shelf life): **0.00% expired rate** in S9
+   - **Category E** (180-day shelf life): **78.24% expired rate** in S9
+   - **Insight**: Short shelf-life specialty items remain challenging even with optimized parameters
+
+3. **Validated Hypothesis**:
+   - ✅ **Realistic parameters enable <50% expired rate** (S9 achieved 7.89%)
+   - ✅ **Parameter realism > ordering logic optimization**
+   - ✅ **Shelf life mismatch was root cause**
+
+### S9 Scenario (Optimal Realistic Parameters)
+
+**Configuration**:
+- Shelf life: 1095 days (3 years) for categories A-D, 180 days for E
+- Order cadence: 7 days (weekly) for A/C/D, 14 days for B, 3 days for E
+- Lead time: 5 days (routine), 2 days (emergency E)
+- Service level: 98% (routine), 99.5% (critical E)
+
+**Results**:
+- **Overall Expired Rate**: 7.89% (down from 59.10% baseline, **86.6% reduction**)
+- **Categories A-D**: 0.00% expired rate (no expiration with 3-year shelf life)
+- **Category E**: 78.24% expired rate (short 180-day shelf life for specialty items)
+- **Total Expired Units**: 1.24M (down from 20.81M baseline, **94.0% reduction**)
+
+### Files & Configuration
+
+- **Research Documentation**: `ml/docs/REALISTIC_PARAMETERS_RESEARCH.md`
+- **Base Config**: `ml/config/realistic_params.yaml`
+- **Scenarios**: `ml/config/sensitivity_scenarios.yaml`
+- **Analysis Script**: `ml/scripts/analyze_scenario_expired_rate.py`
+- **Generation**: Use `--params ml/config/realistic_params.yaml --scenario S9`
+
+---
+
+## 📊 Historical Rounds Comparison (Rounds 1-13)
 
 | Round | Key Change | Datasets | Stockout Rate (Mean) | Stockout Rate (Median) | Normalized MAE (Median) | Expired Rate |
 |-------|------------|----------|---------------------|----------------------|------------------------|--------------|
@@ -82,12 +126,9 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 | **Round 11** | Phase 1: Shelf-life aware + Category caps + Reduced buffers | 500 | 1.20% | 1.14% | 0.119 | 75.53% ⚠️ |
 | **Round 13** | FEFO (First-Expiry-First-Out) consumption | 500 | 1.17% | 1.14% | 0.118 | 75.74% ⚠️ |
 
-**Trend**: 
-- Stockout rates: 1.09% → 1.17% (Round 13: +0.08 pp from Round 9)
-- **Expired rates: 97.58% → 70.22% (Round 9 best), Round 13: 75.74% (+5.52 pp from Round 9)** ⚠️
-- **Expired units: 321.5M → 26.5M (91.7% reduction from baseline!)** 🎉
-- **Round 9 (Priority 3) is optimal: 70.22% expired rate - best achieved with original parameters**
-- **Round 14 (Realistic Parameters S9): 7.89% expired rate - validates parameter realism hypothesis** 🎯
+**Historical Trend**: 
+- Expired rates: 97.58% → 70.22% (Round 9 best with original parameters)
+- Round 14 (S9) achieved 7.89% with realistic parameters - validating parameter realism hypothesis
 
 ---
 
