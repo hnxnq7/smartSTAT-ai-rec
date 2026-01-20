@@ -10,11 +10,11 @@
 
 **Round 14 Results (Realistic Parameters S9)**:
 - **Expired Rate**: **7.89%** (down from 59.10% baseline, **86.6% reduction**) 🎯
-- **Categories A-D**: **0.00% expired rate** with 3-year shelf life
 - **Category E**: 78.24% (specialty items with 180-day shelf life remain challenging)
+- **Note**: Categories A-D show 0.00% expired rate with 3-year shelf life, but this is expected given the 1-year test period (items can't expire within test window)
 - **Total Expired Units**: 1.24M (down from 20.81M baseline, **94.0% reduction**)
 
-**Key Validation**: Using realistic hospital supply chain parameters (3-year shelf life, weekly ordering, 98% service level) achieves the <50% expired rate target, validating that **parameter realism > ordering logic optimization**.
+**Key Validation**: Using realistic hospital supply chain parameters (3-year shelf life, weekly ordering, 98% service level) achieves the <50% expired rate target, validating that **parameter realism > ordering logic optimization**. The overall 7.89% expired rate demonstrates significant improvement, though this is primarily driven by Category E (specialty items with short shelf life).
 
 **Primary Driver**: Shelf life is the dominant factor - increasing from 240 days to 1095 days reduces expired rate by 86.6%.
 
@@ -167,9 +167,9 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - **Conclusion**: Increasing shelf life from 240 to 1095 days reduces expired rate by **86.6%**
 
 **2. Category-Specific Impact**:
-- **Categories A-D** (1095-day shelf life): **0.00% expired rate** in S9
-- **Category E** (180-day shelf life, burst events): **78.24% expired rate** in S9
-- **Insight**: Short shelf-life specialty items remain challenging even with optimized parameters
+   - **Categories A-D** (1095-day shelf life): 0.00% expired rate in S9 (expected - shelf life exceeds 1-year test period)
+   - **Category E** (180-day shelf life, burst events): **78.24% expired rate** in S9
+   - **Insight**: Short shelf-life specialty items remain challenging even with optimized parameters. The 0% result for A-D is not meaningful given the test period length.
 
 **3. Validated Hypothesis**:
 - ✅ **Realistic parameters enable <50% expired rate** (S9 achieved 7.89%)
@@ -186,12 +186,14 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 **Results**:
 - **Overall Expired Rate**: 7.89% (down from 59.10% baseline, **86.6% reduction**)
-- **Categories A-D**: 0.00% expired rate (no expiration with 3-year shelf life)
+- **Categories A-D**: 0.00% expired rate (expected - 3-year shelf life exceeds 1-year test period, so items can't expire within dataset)
 - **Category E**: 78.24% expired rate (short 180-day shelf life for specialty items)
 - **Total Expired Units**: 1.24M (down from 20.81M baseline, **94.0% reduction**)
 
 **Interpretation**: 
-- For standard medications/disposables with realistic 2-3 year shelf lives, expiration becomes negligible
+- The overall 7.89% expired rate is driven entirely by Category E (specialty items with 180-day shelf life)
+- Categories A-D show 0% because the 1095-day shelf life is longer than the 365-day test period - not a meaningful result
+- The key finding is that realistic 3-year shelf life parameters enable very low expired rates, though full validation requires longer test periods or simulations extending beyond shelf life
 - Specialty/short-shelf-life items (Category E) remain challenging and may need different strategies
 
 ### Next Steps
