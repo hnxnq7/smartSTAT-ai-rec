@@ -9,12 +9,13 @@
 ### ✅ Major Breakthrough: Realistic Parameters Validation
 
 **Round 14 Results (Realistic Parameters Sensitivity Sweep)**:
-- **Best Result**: **S6 achieved 25.42%** expired rate (down from 60.86% baseline, **58.2% reduction**) 🎯
-- **Key Finding**: Realistic parameters (730-day shelf life, weekly ordering, 98% service level) enable <50% expired rate target
+- **Best Result**: **S14 (Code Cart with Par-Driven Ordering) achieved 4.46%** expired rate (down from 60.86% baseline, **92.7% reduction**) 🎯
+- **Second Best**: S6 achieved 25.42% expired rate (730-day shelf life, 14-day lead time)
+- **Key Finding**: Par-driven ordering (maintain fixed par levels) is optimal for code cart medications, achieving <5% expired rate
+- **Code Cart Comparison**: S13 (forecast-driven) 40.58% → S14 (par-driven) 4.46% (-36.12 pp improvement)
 - **Shelf Life Impact**: Scenarios with 730+ day shelf life achieve ~45-46% expired rate vs 60.86% baseline
-- **Lead Time Surprise**: S6 (14-day lead time) performs best - longer lead times may force more careful ordering
 
-**Key Validation**: Using realistic hospital supply chain parameters achieves the <50% expired rate target, validating that **parameter realism > ordering logic optimization**.
+**Key Validation**: Using realistic hospital supply chain parameters achieves the <50% expired rate target. For code carts specifically, **par-driven ordering > forecast-driven ordering**, validating that maintaining fixed par levels regardless of forecast prevents over-ordering for low-volume items.
 
 **Primary Driver**: Shelf life is the dominant factor - increasing from 240 days to 730+ days reduces expired rate by 25-35 percentage points. Longer lead times (S6) also help by forcing more careful ordering.
 
@@ -23,9 +24,10 @@
 | Configuration | Expired Rate | Improvement | Key Parameters |
 |--------------|--------------|-------------|----------------|
 | **Baseline** (Round 9) | 60.86% | - | 240-day shelf life, 4-day cadence, 99.5% service level |
-| **S1** (365-day shelf life) | 57.99% | -2.87 pp | 365-day shelf life, same ordering |
-| **S6** (Long lead time) | **25.42%** | **-35.44 pp** | 730-day shelf life, 14-day lead time, weekly cadence |
+| **S14** (Code cart, par-driven) | **4.46%** | **-56.40 pp** 🎯 | 300-day effective shelf life, par-driven (30d par), monthly exchanges |
+| **S6** (Long lead time) | 25.42% | -35.44 pp | 730-day shelf life, 14-day lead time, weekly cadence |
 | **S3** (Full realistic) | 45.82% | -15.04 pp | 730-day shelf life, weekly cadence, 98% service level |
+| **S13** (Code cart, forecast) | 40.58% | -20.28 pp | 300-day effective shelf life, forecast-driven, monthly exchanges |
 
 ### ✅ System Strengths
 
@@ -43,8 +45,9 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 ## Round 14: Realistic Parameters Sensitivity Sweep 🎯
 
-**Status**: ✅ Complete (13 scenarios tested)  
+**Status**: ✅ Complete (14 scenarios tested: baseline + S1-S14)  
 **Purpose**: Validate that realistic hospital supply chain parameters can achieve expired rates <50% target
+**Latest**: S14 (Option C - Par-driven ordering) achieved 4.46% expired rate, validating par-driven approach for code carts
 
 ### Research Foundation
 
