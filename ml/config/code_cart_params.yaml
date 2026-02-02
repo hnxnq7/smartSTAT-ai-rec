@@ -1,0 +1,53 @@
+# Code Cart Medication Parameters (Option C - Full Implementation)
+# Based on real-world operational guidelines for code cart medications
+# See ml/docs/REALISTIC_PARAMETERS_RESEARCH.md for source details
+
+# Ordering Mode
+ordering_mode: "par_driven"  # vs "forecast_driven" (default)
+# Par-driven: Maintain fixed par level regardless of forecast
+# Forecast-driven: Use demand forecasting (current default behavior)
+
+# Effective Shelf Life Configuration
+shelf_life:
+  mode: "effective"  # vs "labeled" (default)
+  # Effective = labeled expiry - pull buffer
+  pull_buffer_days: 90  # 60-120 day range, conservative default
+  labeled_expiry_days: 365  # 12 months typical for ACLS meds
+  # Effective shelf life = 365 - 90 = 275 days (will be calculated)
+
+# Par Level Configuration (for par-driven ordering)
+par_level:
+  days_coverage: 30  # Maintain 30 days of stock (par level)
+  # Par level = avg_daily_usage * days_coverage
+  # Orders placed to restore inventory to par level when below threshold
+
+# Lead Time Configuration (Stochastic)
+lead_time:
+  distribution: "lognormal"  # vs "fixed" (default)
+  # Log-normal distribution for realistic long tail
+  median_days: 10  # Median of 7-21 day range
+  p95_days: 60  # 95th percentile (30-90+ days during shortages)
+  # Parameters for log-normal: mu = ln(median), sigma calculated from p95
+
+# Case Pack Constraints
+moq_enabled: true
+moq_units: 25  # Case pack size (10-50 unit range, middle value)
+spq_units: 25  # Standard pack quantity (same as case pack)
+
+# Service Level (High for Critical Code Cart Items)
+service_level_target:
+  routine: 0.995  # 99.5% for critical items
+  critical: 0.995
+
+# Order Cadence (Monthly Cart Exchanges)
+order_cadence_days: 30  # Monthly exchanges (not weekly)
+
+# Category-Specific Overrides (if needed)
+category_overrides:
+  # Can override any parameter per category if needed
+  # Example:
+  # E:
+  #   shelf_life:
+  #     labeled_expiry_days: 180
+  #     pull_buffer_days: 60
+  #     # Effective = 180 - 60 = 120 days

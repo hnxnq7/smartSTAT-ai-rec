@@ -141,4 +141,35 @@ def get_category_params(
     else:
         params['spq_units'] = spq if isinstance(spq, (int, float)) else 25
     
+    # Code Cart Parameters (Option C)
+    # Ordering mode
+    params['ordering_mode'] = config.get('ordering_mode', None)
+    
+    # Par level (for par-driven ordering)
+    par_level = config.get('par_level', {})
+    if isinstance(par_level, dict):
+        params['par_level_days'] = par_level.get('days_coverage', None)
+    else:
+        params['par_level_days'] = par_level if isinstance(par_level, (int, float)) else None
+    
+    # Shelf life mode (effective vs labeled)
+    shelf_life_config = config.get('shelf_life', {})
+    if isinstance(shelf_life_config, dict):
+        params['shelf_life_mode'] = shelf_life_config.get('mode', None)
+        params['pull_buffer_days'] = shelf_life_config.get('pull_buffer_days', None)
+    else:
+        params['shelf_life_mode'] = None
+        params['pull_buffer_days'] = None
+    
+    # Lead time distribution (stochastic)
+    lead_time_config = config.get('lead_time', {})
+    if isinstance(lead_time_config, dict):
+        params['lead_time_distribution'] = lead_time_config.get('distribution', None)
+        params['lead_time_median'] = lead_time_config.get('median_days', None)
+        params['lead_time_p95'] = lead_time_config.get('p95_days', None)
+    else:
+        params['lead_time_distribution'] = None
+        params['lead_time_median'] = None
+        params['lead_time_p95'] = None
+    
     return params

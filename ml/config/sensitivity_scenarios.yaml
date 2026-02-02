@@ -442,7 +442,60 @@ scenarios:
       C: 25
       D: 25
       E: 25
+      expected_result:
+        expired_rate: "5-25% realistic for code carts (vs <5% general inventory)"
+        stockout_rate: "May increase due to monthly cadence + case pack constraints"
+        notes: "Code cart use case: par-driven ordering not yet implemented (Option C), but testing parameter impact. Real-world code carts see 5-25% expiry due to low-use items + case packs + infrequent exchanges"
+
+  # S14: Code Cart Parameters with Par-Driven Ordering (Option C - Full Implementation)
+  S14:
+    description: "Code cart with par-driven ordering, effective shelf life, stochastic lead times"
+    shelf_life_days:
+      A: 300  # Effective shelf life (12mo labeled - 90d buffer = 275d, rounded to 300)
+      B: 300
+      C: 300
+      D: 300
+      E: 180  # Specialty items keep short shelf life
+    lead_time_days:
+      A: 10   # Median (will use stochastic lognormal distribution)
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 30   # Monthly cart exchanges
+      B: 30
+      C: 30
+      D: 30
+      E: 14
+    service_level_target:
+      routine: 0.995  # High for critical code cart items
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25   # Case pack size
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    # Code Cart Parameters (Option C)
+    ordering_mode: "par_driven"  # Par-driven ordering (maintain fixed par level)
+    par_level:
+      days_coverage: 30  # Maintain 30 days of stock
+    shelf_life:
+      mode: "effective"  # Use effective shelf life (labeled - buffer)
+      pull_buffer_days: 90  # 60-120 day range, conservative
+    lead_time:
+      distribution: "lognormal"  # Stochastic lead times with long tail
+      median_days: 10  # Median of 7-21 day range
+      p95_days: 60  # 95th percentile (30-90+ days during shortages)
     expected_result:
-      expired_rate: "5-25% realistic for code carts (vs <5% general inventory)"
-      stockout_rate: "May increase due to monthly cadence + case pack constraints"
-      notes: "Code cart use case: par-driven ordering not yet implemented (Option C), but testing parameter impact. Real-world code carts see 5-25% expiry due to low-use items + case packs + infrequent exchanges"
+      expired_rate: "5-15% target (improved from S13's 40.58% with par-driven ordering)"
+      stockout_rate: "Minimal change - par-driven maintains fixed levels"
+      notes: "Full Option C implementation: par-driven ordering should reduce Category B expiry (was 69.25% in S13) by maintaining fixed par levels regardless of forecast"

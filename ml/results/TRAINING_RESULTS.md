@@ -76,16 +76,19 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 | **S10** | Category-specific | 730/180 days | 7 days | 98% | **45.43%** | -15.43 pp | Heterogeneous |
 | **S11** | Very frequent (3d) | 730/180 days | 3 days | 98% | **45.77%** | -15.09 pp | Frequency test |
 | **S12** | Monthly ordering | 1095/180 days | 30 days | 98% | **56.13%** | -4.73 pp | Infrequent |
-| **S13** | Code cart params | 300/180 days | 30 days | 99.5% | **40.58%** | -20.28 pp | Code cart use case |
+| **S13** | Code cart params | 300/180 days | 30 days | 99.5% | **40.58%** | -20.28 pp | Code cart (forecast-driven) |
+| **S14** | Code cart + par-driven | 300/180 days | 30 days | 99.5% | **4.46%** | **-56.40 pp** 🎯 | **Code cart (par-driven)** |
 
-**Best Performing**: **S6 (25.42% expired rate)** - 730-day shelf life with 14-day lead time achieves lowest expired rate
+**Best Performing**: **S14 (4.46% expired rate)** - Code cart with par-driven ordering achieves lowest expired rate 🎯
+**Second Best**: **S6 (25.42% expired rate)** - 730-day shelf life with 14-day lead time
 
 **Key Insights**:
 - **Shelf life matters most**: Scenarios with 730+ day shelf life (S3, S4, S6-S11) achieve ~45-46% expired rate
 - **Lead time impact**: S6 (14-day lead time) performs best, suggesting longer lead times force more careful ordering
 - **S5 (short shelf life) performs worst**: 68.03% confirms short shelf life is the primary driver of expiration
 - **Long shelf life (1095 days) doesn't beat medium (730 days)**: S4 and S9 show similar results to S3, suggesting 2-year shelf life is sufficient for the test period
-- **S13 (Code Cart)**: 40.58% expired rate with 300-day effective shelf life and monthly exchanges. Category B (low-volume) worst at 69.25%, highlighting challenge of case packs + infrequent exchanges for slow movers
+- **S13 (Code Cart, forecast-driven)**: 40.58% expired rate with 300-day effective shelf life and monthly exchanges. Category B (low-volume) worst at 69.25%, highlighting challenge of case packs + infrequent exchanges for slow movers
+- **S14 (Code Cart, par-driven)**: **4.46% expired rate** - Par-driven ordering dramatically improves results! Category B reduced from 69.25% to 29.47%, Categories A/C/D near 0%, Category E at 15.72%
 
 *Full results available in `ml/data/sensitivity_sweep_results.csv`*
 
