@@ -404,3 +404,45 @@ scenarios:
       expired_rate: "Down ~25-35 pp → ~35-45%"
       stockout_rate: "May increase (~1.8-2.5%) - larger batches, less responsive"
       notes: "Less frequent ordering reduces costs but increases expiration risk even with long shelf life"
+
+  # S13: Code Cart Parameters (Option B - Quick Test)
+  S13:
+    description: "Code cart medications: effective shelf life (300 days = 12mo labeled - 60d buffer), monthly exchanges, case packs"
+    shelf_life_days:
+      A: 300  # Effective shelf life (12 months labeled - 60 day pull buffer)
+      B: 300
+      C: 300
+      D: 300
+      E: 180  # Specialty items keep short shelf life
+    lead_time_days:
+      A: 10   # Median of 7-21 day range (stochastic long tail not yet implemented)
+      B: 10
+      C: 10
+      D: 14   # Longer for trend planning
+      E: 7    # Emergency items faster
+    order_cadence_days:
+      A: 30   # Monthly cart exchanges (not weekly like general inventory)
+      B: 30
+      C: 30
+      D: 30
+      E: 14   # More frequent for emergency items
+    service_level_target:
+      routine: 0.995  # High service level for critical code cart items
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25   # Case pack size (middle of 10-50 unit range)
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25   # Case pack increment
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    expected_result:
+      expired_rate: "5-25% realistic for code carts (vs <5% general inventory)"
+      stockout_rate: "May increase due to monthly cadence + case pack constraints"
+      notes: "Code cart use case: par-driven ordering not yet implemented (Option C), but testing parameter impact. Real-world code carts see 5-25% expiry due to low-use items + case packs + infrequent exchanges"

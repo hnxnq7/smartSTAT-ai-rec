@@ -76,6 +76,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 | **S10** | Category-specific | 730/180 days | 7 days | 98% | **45.43%** | -15.43 pp | Heterogeneous |
 | **S11** | Very frequent (3d) | 730/180 days | 3 days | 98% | **45.77%** | -15.09 pp | Frequency test |
 | **S12** | Monthly ordering | 1095/180 days | 30 days | 98% | **56.13%** | -4.73 pp | Infrequent |
+| **S13** | Code cart params | 300/180 days | 30 days | 99.5% | **40.58%** | -20.28 pp | Code cart use case |
 
 **Best Performing**: **S6 (25.42% expired rate)** - 730-day shelf life with 14-day lead time achieves lowest expired rate
 
@@ -84,6 +85,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - **Lead time impact**: S6 (14-day lead time) performs best, suggesting longer lead times force more careful ordering
 - **S5 (short shelf life) performs worst**: 68.03% confirms short shelf life is the primary driver of expiration
 - **Long shelf life (1095 days) doesn't beat medium (730 days)**: S4 and S9 show similar results to S3, suggesting 2-year shelf life is sufficient for the test period
+- **S13 (Code Cart)**: 40.58% expired rate with 300-day effective shelf life and monthly exchanges. Category B (low-volume) worst at 69.25%, highlighting challenge of case packs + infrequent exchanges for slow movers
 
 *Full results available in `ml/data/sensitivity_sweep_results.csv`*
 

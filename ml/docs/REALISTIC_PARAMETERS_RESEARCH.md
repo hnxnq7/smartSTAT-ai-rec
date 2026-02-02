@@ -35,6 +35,67 @@
 
 ---
 
+## Specialized Use Case: Code Cart Medications (Crash Carts)
+
+**Context**: Code cart medications (ACLS meds, emergency injectables) have distinct operational characteristics that differ from general hospital inventory. This section captures real-world guidelines for modeling code cart-specific scenarios.
+
+### Key Characteristics
+
+**1. Effective Shelf Life (vs Labeled Expiry)**
+- **Labeled shelf life**: 12-36 months for common ACLS meds (epinephrine, amiodarone, atropine, calcium, magnesium)
+- **Effective shelf life**: Labeled expiry minus 60-120 day "pull buffer"
+  - **Modeling rule**: `effective_shelf_life = labeled_expiry - pull_buffer` where `pull_buffer = 60-120 days`
+  - **Rationale**: Hospitals apply conservative internal buffers; single-use ampoules/vials often removed before true expiration during routine cart exchanges
+  - **Practical range**: 10-34 months effective (300-1,020 days) depending on item and pull buffer policy
+
+**2. Ordering Constraints (Largest Expiry Driver)**
+- **Case packs / MOQs**: Common; many injectables purchased in case quantities (10-50 units) with no partial ordering
+- **Par-driven stocking**: Carts stocked to fixed policy/ACLS lists rather than forecasted usage
+  - **Implication**: Orders driven by par level maintenance, not demand forecasting
+  - **Modeling**: Enforce ordering in case-pack multiples; apply par overrides that maintain minimum on-hand regardless of forecast
+- **Ordering cadence**:
+  - Central pharmacy replenishment: Weekly/biweekly
+  - **Code cart exchanges**: Monthly or quarterly (not weekly)
+  - Some hospitals swap entire drug trays on schedule
+  - **Modeling**: Use monthly/quarterly cadence for cart exchanges, not weekly
+
+**3. Lead Times (External + Internal Processing)**
+- **Normal supplier delivery**: 3-7 days
+- **Typical operational range** (including hospital processing): 7-21 days
+- **Shortages/allocations**: 30-90+ days
+- **Modeling rule**: Sample from stochastic distribution with long tail
+  - Median: 7-10 days
+  - 95th percentile: 30-90 days
+  - **Recommendation**: Use log-normal or gamma distribution, not fixed values
+
+**4. Real-World Expiry/Waste Rates (Calibration Benchmark)**
+- **Hospital-wide expired inventory**: ~1-5% of on-hand (AHRMM framing)
+- **Code cart specific**: Higher unit-level expiry, especially for low-use, single-use meds
+  - Expired or missing items are common Joint Commission findings
+- **Simulation calibration target**: **5-25% unit-level expiry for code cart meds** is realistic
+  - Depends on: pack size, par rigidity, exchange cadence
+  - Lower end (5-10%): Well-managed carts with frequent exchanges, flexible par policies
+  - Higher end (15-25%): Rigid par policies, infrequent exchanges, large case packs
+
+### Modeling Implications
+
+**For Code Cart Scenarios**:
+1. **Effective shelf life**: Use labeled expiry minus 60-120 day buffer (not full labeled expiry)
+2. **Ordering logic**: Par-driven (maintain fixed par level) rather than forecast-driven
+3. **Order cadence**: Monthly/quarterly for cart exchanges (not weekly)
+4. **MOQ/SPQ**: Enforce case pack constraints (10-50 units typical)
+5. **Lead time**: Stochastic with long tail (median 7-10 days, 95th percentile 30-90 days)
+6. **Calibration target**: 5-25% expired rate is realistic (vs <5% for general inventory)
+
+**Potential Integration Options**:
+- **Option A**: New category (e.g., "Category F: Code Cart") with code cart-specific parameters
+- **Option B**: New scenario (e.g., "S13: Code Cart Parameters") overriding defaults
+- **Option C**: New config file (`code_cart_params.yaml`) for specialized use cases
+
+**Source Quality**: Real-world operational guidelines (Tier 2 - industry practice, not peer-reviewed but from credible operational experience)
+
+---
+
 ## Sanity Check Math: Current 70% vs Realistic Parameters
 
 ### Current Situation (Round 9: 70.22% expired rate)
