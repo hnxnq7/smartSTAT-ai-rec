@@ -463,11 +463,11 @@ scenarios:
       D: 14
       E: 7
     order_cadence_days:
-      A: 30   # Monthly cart exchanges
-      B: 30
-      C: 30
-      D: 30
-      E: 14
+      A: 7    # Weekly cart exchanges (hybrid approach - more frequent than monthly)
+      B: 7
+      C: 7
+      D: 7
+      E: 7    # Weekly for all categories
     service_level_target:
       routine: 0.995  # High for critical code cart items
       critical: 0.995

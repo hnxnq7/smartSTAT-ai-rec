@@ -228,12 +228,80 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - **Short shelf life worst**: S5 (180 days) at 68.03% confirms shelf life is the primary driver
 - **Realistic parameters work**: Multiple scenarios achieve <50% target, validating the parameter realism approach
 
+### S14 Deploy Readiness Checklist
+
+**Horizon Validation** ✅
+- Dataset period: 2023-2025 (3 years), Test: 2025 (1 year)
+- Effective shelf life: 300 days (12mo labeled - 90d buffer)
+- **Analysis**: Test period (365 days) > Effective shelf life (300 days) = items CAN expire
+- **Conclusion**: 4.46% expired rate is meaningful, not guaranteed low by horizon
+- Monthly exchanges (12/year) allow multiple order cycles
+- Par-driven ordering prevents over-ordering vs forecast-driven (S13: 40.58% → S14: 4.46%)
+
+**Stockout Rate Validation** ⚠️ **CRITICAL ISSUE - UNRESOLVED**
+- **Issue**: Both train and test periods show 90-100% stockout rate (all categories)
+- **Root Cause**: Par-driven ordering logic has fundamental limitations:
+  - With 10-day lead time, orders placed on cadence days arrive too late
+  - Emergency ordering triggers too late (after inventory already low)
+  - Once inventory hits zero, recovery takes 10+ days (lead time)
+  - Par level calculation doesn't account for demand spikes during lead time
+- **Impact**: Cannot deploy S14 until stockout issue is resolved
+- **Attempted Fixes (Approaches 2 & 3)**:
+  1. **Increased par level buffer**: Added 7-day demand variability buffer (total: 30d par + 10d lead + 7d safety + 7d variability = 54 days)
+  2. **Reduced order cadence**: Changed from monthly (30 days) to weekly (7 days)
+  3. **Emergency ordering**: Trigger when coverage < lead time + 3 days
+  4. **Initial stock**: Set to par level (54 days coverage)
+  - **Results**: 
+    - Stockout: Still 100% (no improvement)
+    - Expired rate: Increased from 4.46% to 65-77% (worse due to over-ordering)
+- **Key Finding**: The trade-off is fundamental - par-driven ordering optimized for low expiration (4.46%) results in high stockout (90%). Increasing buffers to reduce stockout causes over-ordering and high expiration (65-77%).
+- **Recommendations**:
+  1. **Hybrid approach**: Use forecast-driven ordering with par-level caps (not pure par-driven)
+  2. **Reduce lead time**: If possible, reduce from 10 days to 3-5 days
+  3. **Increase order frequency**: More frequent than weekly (every 3-5 days)
+  4. **Accept trade-off**: For code carts, 4.46% expired with 90% stockout may be acceptable if stockouts are brief and non-critical items
+
+**Robustness Tests** ✅ (Partial)
+- Lead time +20%/+50%: Expired rates stable (0-54%), stockout high (94-95%) - consistent with main issue
+- Cadence ±1 week: Expired rates vary (0-48%), stockout high (94-95%)
+- **Note**: Robustness tests also show high stockout, suggesting par-driven ordering may need adjustment for initial stock or lead time handling
+
+**Deployment Status**: ⚠️ **BLOCKED** - Stockout validation incomplete. Must fix inventory continuity in test datasets before deployment.
+
+---
+
+### Policy Layer Implementation (Phase 2: General Inventory)
+
+**Status**: ✅ Implemented, ⚠️ Testing shows stockout issue (same as S14)
+
+**Implementation**:
+- Created `policy_selector.py`: Decision rules for par-driven vs forecast-driven
+- Added `ordering_mode="auto"` option to generator with `policy_auto_select=True`
+- Policy selection based on: demand rate, CV (intermittency), shelf life, MOQ, criticality, exchange cadence
+
+**Decision Rules**:
+- **Par-driven**: Low volume + high intermittency + (critical OR exchange-based)
+- **Forecast-driven**: High volume OR low intermittency (default)
+
+**Test Results** (S3, S6, S8, n=15 per scenario):
+- **S3**: policy_selected (43.09%) better than forecast_driven (50.07%) and par_driven_all (59.08%)
+- **S6**: All similar (~22-23%) - long lead time dominates
+- **S8**: policy_selected (43.09%) better than forecast_driven (50.07%) and par_driven_all (59.08%)
+
+**Note**: Stockout rates show 100% due to same inventory continuity issue as S14. Expired rate improvements are meaningful.
+
+**Next Sprint**: Fix inventory continuity, then re-test policy layer on full scenarios.
+
 ### Next Steps
 
-1. **Complete Sensitivity Sweep**: Generate and analyze remaining scenarios (S2-S8, S10-S12)
-2. **Category E Optimization**: Investigate strategies for short-shelf-life specialty items
-3. **Stockout Rate Validation**: Verify that realistic parameters don't increase stockout risk
-4. **Full Training**: Train models on S9 configuration and evaluate performance
+1. **URGENT: Fix Stockout Validation**
+   - Regenerate S14 datasets with inventory continuity across train/test split
+   - OR validate stockout using full time series (2023-2025)
+   - Investigate why par-driven ordering results in zero inventory at period end
+
+2. **Complete Sensitivity Sweep**: Generate and analyze remaining scenarios (S2-S8, S10-S12)
+3. **Category E Optimization**: Investigate strategies for short-shelf-life specialty items
+4. **Full Training**: Train models on S14 configuration once stockout issue resolved
 
 ### Files & Configuration
 

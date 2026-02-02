@@ -9,6 +9,13 @@ from datetime import datetime, timedelta
 import random
 import math
 
+# Policy selection (optional import to avoid circular dependency)
+try:
+    from ml.data_generation.policy_selector import get_policy_metadata
+    HAS_POLICY_SELECTOR = True
+except ImportError:
+    HAS_POLICY_SELECTOR = False
+
 
 class SeededRandom:
     """Seeded random number generator for reproducibility."""
@@ -257,8 +264,9 @@ def simulate_inventory(
     service_level_target: Optional[float] = None,  # Override service level from config
     moq_units: Optional[int] = None,  # Override MOQ from config
     spq_units: Optional[int] = None,  # Override SPQ from config
-    ordering_mode: Optional[str] = None,  # "par_driven" or "forecast_driven" (default)
+    ordering_mode: Optional[str] = None,  # "par_driven" or "forecast_driven" or "auto" (default)
     par_level_days: Optional[int] = None,  # Par level in days coverage (for par-driven)
+    policy_auto_select: bool = False,  # If True and ordering_mode="auto", select policy automatically
     shelf_life_mode: Optional[str] = None,  # "effective" or "labeled" (default)
     pull_buffer_days: Optional[int] = None,  # Pull buffer for effective shelf life
     lead_time_distribution: Optional[str] = None,  # "lognormal" or "fixed" (default)
@@ -300,8 +308,29 @@ def simulate_inventory(
     n_days = len(dates)
     avg_daily_usage = np.mean(used_units)
     
+    # Policy selection (if auto mode enabled)
+    effective_ordering_mode = ordering_mode
+    if ordering_mode == "auto" and policy_auto_select and HAS_POLICY_SELECTOR:
+        # Calculate demand characteristics for policy selection
+        std_usage = np.std(used_units) if len(used_units) > 1 else 0.0
+        cv_demand = (std_usage / avg_daily_usage) if avg_daily_usage > 0 else 0.0
+        
+        # Determine criticality from archetype (E = critical, others = routine)
+        criticality = "critical" if archetype == "E" else "routine"
+        
+        # Get policy metadata
+        policy_meta = get_policy_metadata(
+            avg_daily_usage=avg_daily_usage,
+            used_units_array=used_units,
+            shelf_life_days=params["shelf_life_days"],
+            moq_units=moq_units,
+            criticality=criticality,
+            exchange_cadence_days=order_cadence_days,
+        )
+        effective_ordering_mode = policy_meta["policy"]
+    
     # Determine ordering mode (default to forecast_driven)
-    use_par_driven = (ordering_mode == "par_driven")
+    use_par_driven = (effective_ordering_mode == "par_driven")
     if use_par_driven and par_level_days is None:
         par_level_days = 30  # Default par level: 30 days coverage
     
@@ -312,6 +341,23 @@ def simulate_inventory(
             lead_time_median = float(lead_time)  # Use provided lead_time as median
         if lead_time_p95 is None:
             lead_time_p95 = lead_time_median * 3.0  # Default: 3x median for p95
+    
+    # For par-driven: Calculate par level ONCE at start (use median lead time for consistency)
+    if use_par_driven:
+        # Use median lead time for par level calculation (not stochastic per-order)
+        par_lead_time = int(lead_time_median) if use_stochastic_lead_time and lead_time_median else lead_time
+        # Increased safety buffer: lead time + 7 days base + 7 days demand variability buffer
+        # This accounts for demand spikes and lead time variability (reduced from 14 to 7 to avoid over-ordering)
+        safety_buffer_days = 7
+        demand_variability_buffer_days = 7  # Additional buffer for demand variability (reduced to balance stockout vs expiration)
+        total_coverage_days = par_level_days + par_lead_time + safety_buffer_days + demand_variability_buffer_days
+        # Use avg_daily_usage for par level (will be adjusted with recent consumption when ordering)
+        base_par_level_units = int(avg_daily_usage * total_coverage_days)
+        # Store for use in loop
+        par_lead_time_for_par = par_lead_time
+    else:
+        base_par_level_units = None
+        par_lead_time_for_par = None
     
     # Initialize
     total_onsite = np.zeros(n_days, dtype=int)
@@ -327,7 +373,20 @@ def simulate_inventory(
     batches = []
     
     # Initial stock
-    initial_stock = int(avg_daily_usage * initial_stock_ratio * 30)  # ~30 days coverage
+    # For par-driven: Start with par level to avoid immediate stockouts
+    if use_par_driven and par_level_days is not None:
+        # Use current_lead_time (will be set below, but use lead_time as fallback)
+        effective_lead_time = lead_time
+        if use_stochastic_lead_time and lead_time_median is not None:
+            effective_lead_time = int(lead_time_median)
+        # Start with par level (includes lead time + safety buffer + demand variability buffer)
+        safety_buffer_days = 7
+        demand_variability_buffer_days = 7  # Additional buffer for demand variability (reduced to balance stockout vs expiration)
+        total_coverage_days = par_level_days + effective_lead_time + safety_buffer_days + demand_variability_buffer_days
+        initial_stock = int(avg_daily_usage * total_coverage_days)
+    else:
+        initial_stock = int(avg_daily_usage * initial_stock_ratio * 30)  # ~30 days coverage
+    
     batches.append((0, initial_stock, params["shelf_life_days"]))
     total_onsite[0] = initial_stock
     non_expired[0] = initial_stock
@@ -448,22 +507,48 @@ def simulate_inventory(
         # PAR-DRIVEN ORDERING MODE (Option C)
         if use_par_driven:
             # Par-driven: Maintain fixed par level regardless of forecast
-            par_level_units = int(avg_daily_usage * par_level_days)
+            # Use base par level calculated at start, but adjust for recent consumption if higher
+            usage_for_par = max(recent_consumption, avg_daily_usage * 0.95)  # Use recent or 95% of avg (whichever higher)
+            # Scale base par level by usage ratio (but don't go below base)
+            usage_ratio = max(1.0, usage_for_par / avg_daily_usage) if avg_daily_usage > 0 else 1.0
+            par_level_units = int(base_par_level_units * usage_ratio)
             
-            # Check if we should order (only on order cadence days)
+            # Check if we should order
+            # For par-driven: Order immediately when below par (don't wait for cadence)
+            # But respect minimum time between orders (cadence) to avoid too frequent ordering
             should_order = False
-            if order_cadence_days is None or day % order_cadence_days == 0:
-                # Order if current inventory is below par level
-                if non_expired[day] < par_level_units:
+            
+            # Calculate total available inventory (current + pending)
+            total_pending = sum(pending_orders.values()) if pending_orders else 0
+            total_available = non_expired[day] + total_pending
+            
+            # Check if inventory is below par level
+            if total_available < par_level_units:
+                # Calculate days of coverage
+                days_coverage = non_expired[day] / (recent_consumption + 1e-6) if recent_consumption > 0 else 0
+                
+                # Emergency: If coverage is less than lead time + buffer, order immediately
+                # Use par_lead_time_for_par (median) for threshold, not current_lead_time (stochastic)
+                # Reduced buffer to trigger emergency ordering earlier
+                emergency_threshold = par_lead_time_for_par + 3  # Lead time + 3 day buffer (reduced to trigger earlier)
+                is_emergency = (days_coverage < emergency_threshold) or (non_expired[day] <= 0)
+                
+                if is_emergency:
+                    # Emergency: Order immediately regardless of cadence
+                    should_order = True
+                elif order_cadence_days is None or day % order_cadence_days == 0:
+                    # Routine: Only order on cadence days if above emergency threshold
                     should_order = True
             
             if should_order:
                 # Calculate order quantity to restore to par level
-                order_quantity = par_level_units - non_expired[day]
+                order_quantity = par_level_units - total_available
+                order_quantity = max(0, order_quantity)  # Ensure non-negative
                 
-                # Account for pending orders
-                total_pending = sum(pending_orders.values()) if pending_orders else 0
-                order_quantity = max(0, order_quantity - total_pending)
+                # If we're at zero or very low, ensure we order at least enough to cover lead time + buffer
+                if non_expired[day] <= 0 or days_coverage < par_lead_time_for_par:
+                    min_order_for_lead_time = int(recent_consumption * (par_lead_time_for_par + 7))  # Lead time + 7 day buffer
+                    order_quantity = max(order_quantity, min_order_for_lead_time)
                 
                 # Apply MOQ constraint if provided
                 if moq_units is not None and order_quantity > 0:
