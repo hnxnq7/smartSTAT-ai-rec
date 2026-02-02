@@ -202,7 +202,13 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 ### Best Performing Scenarios
 
-**S6 (Long Lead Time) - Best Result: 25.42% expired rate**
+**S14 (Code Cart with Par-Driven Ordering) - Best Result: 4.46% expired rate** 🎯
+- **Configuration**: 300-day effective shelf life, par-driven ordering (30-day par level), monthly exchanges, stochastic lead times
+- **Key Insight**: Par-driven ordering maintains fixed par levels regardless of forecast, preventing over-ordering for low-volume items
+- **Improvement**: -56.40 pp from baseline (92.7% reduction), -36.12 pp from S13 (forecast-driven code cart)
+- **Category Breakdown**: A/C/D near 0%, B at 29.47% (down from 69.25% in S13), E at 15.72% (down from 58.70% in S13)
+
+**S6 (Long Lead Time) - 25.42% expired rate**
 - **Configuration**: 730-day shelf life, 14-day lead time (routine), weekly cadence, 98% service level
 - **Key Insight**: Longer lead times force more careful ordering, reducing over-ordering despite requiring larger safety stock
 - **Improvement**: -35.44 pp from baseline (58.2% reduction)
@@ -213,6 +219,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - **Improvement**: -15.04 pp from baseline (24.7% reduction)
 
 **Interpretation**:
+- **Par-driven ordering is highly effective**: S14's 4.46% validates that maintaining fixed par levels (vs forecast-driven) is optimal for code carts
 - **Shelf life impact**: 730-day shelf life enables ~45-46% expired rate across multiple scenarios
 - **Lead time surprise**: Longer lead times (S6) perform better than expected - constraints force optimization
 - **Short shelf life worst**: S5 (180 days) at 68.03% confirms shelf life is the primary driver
