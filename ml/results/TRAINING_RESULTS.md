@@ -7,14 +7,16 @@
 ## 🎯 Current Status & Key Findings
 
 ### Recent Updates (Concise)
-- **Policy-layer test (capped/hybrid)**: Ran `test_policy_layer.py` for S3/S6/S8/S14_POLICY with `forecast_capped` mode. Stockout means (%): S3 7.38/9.03/6.26/0.00, S6 17.26/19.76/13.72/0.00, S8 7.38/9.03/6.26/0.00, S14_POLICY 20.40/22.80/14.63/0.31 (order: forecast, forecast_capped, policy_selected, par_driven).
-- **Stockout bug fix**: Inventory arrivals were overwritten each day in `simulate_inventory`, causing false 100% stockouts. Fix applied.
-- **S14 (par-driven) revalidation**: Mean stockout **0.19%** (target <2%), max **9.93%** (Category B tail risk).
-- **S14_POLICY (auto policy) revalidation**: Mean stockout **18.10%**, max **39.61%**.
-- **Policy instrumentation**: Policy selection recorded per SKU in metadata; S14_POLICY mix = **82% forecast-driven / 18% par-driven**.
-- **Policy test (S14_POLICY, A–E, n=25)**: forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**.
+| Update | Details |
+| --- | --- |
+| Policy-layer test (capped/hybrid) | Ran `test_policy_layer.py` for S3/S6/S8/S14_POLICY with `forecast_capped` mode. Stockout means (%): S3 7.38/9.03/6.26/0.00, S6 17.26/19.76/13.72/0.00, S8 7.38/9.03/6.26/0.00, S14_POLICY 20.40/22.80/14.63/0.31 (order: forecast, forecast_capped, policy_selected, par_driven). |
+| Stockout bug fix | Inventory arrivals were overwritten each day in `simulate_inventory`, causing false 100% stockouts. Fix applied. |
+| S14 (par-driven) revalidation | Mean stockout **0.19%** (target <2%), max **9.93%** (Category B tail risk). |
+| S14_POLICY (auto policy) revalidation | Mean stockout **18.10%**, max **39.61%**. |
+| Policy instrumentation | Policy selection recorded per SKU in metadata; S14_POLICY mix = **82% forecast-driven / 18% par-driven**. |
+| Policy test (S14_POLICY, A–E, n=25) | forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**. |
 
-### ✅ Major Breakthrough: Realistic Parameters Validation
+### Major Breakthrough: Realistic Parameters Validation
 
 **Round 14 Results (Realistic Parameters Sensitivity Sweep)**:
 - **Best Result**: **S14 (Code Cart with Par-Driven Ordering) achieved 4.46%** expired rate (down from 60.86% baseline, **92.7% reduction**) 🎯
