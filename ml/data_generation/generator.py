@@ -401,6 +401,11 @@ def simulate_inventory(
     dynamic_reorder_point_ratio = reorder_point_ratio  # Will adjust based on stockouts
     
     for day in range(n_days):
+        # Update stock at start of day (before usage)
+        if day > 0:
+            total_onsite[day] = total_onsite[day - 1]
+            non_expired[day] = non_expired[day - 1]
+        
         # Process arrivals (newly_added from pending orders)
         if day in pending_orders:
             quantity = pending_orders.pop(day)
@@ -409,11 +414,6 @@ def simulate_inventory(
             batches.append((day, quantity, expiry_day))
             total_onsite[day] += quantity
             non_expired[day] += quantity
-        
-        # Update stock at start of day (before usage)
-        if day > 0:
-            total_onsite[day] = total_onsite[day - 1]
-            non_expired[day] = non_expired[day - 1]
         
         # Process expiration (batches that expire today)
         expired_today = 0
@@ -896,6 +896,7 @@ def generate_scenario(
         spq_units = config_params.get('spq_units', None)
         # Code Cart Parameters (Option C)
         ordering_mode = config_params.get('ordering_mode', None)
+        policy_auto_select = config_params.get('policy_auto_select', False)
         par_level_days = config_params.get('par_level_days', None)
         shelf_life_mode = config_params.get('shelf_life_mode', None)
         pull_buffer_days = config_params.get('pull_buffer_days', None)
@@ -912,12 +913,30 @@ def generate_scenario(
         moq_units = None
         spq_units = None
         ordering_mode = None
+        policy_auto_select = False
         par_level_days = None
         shelf_life_mode = None
         pull_buffer_days = None
         lead_time_distribution = None
         lead_time_median = None
         lead_time_p95 = None
+
+    policy_meta = None
+    if ordering_mode == "auto" and policy_auto_select and HAS_POLICY_SELECTOR:
+        default_shelf_life = {"small": 180, "medium": 210, "large": 240}
+        shelf_life_for_policy = shelf_life_days if shelf_life_days is not None else default_shelf_life[hospital_size]
+        if shelf_life_mode == "effective" and pull_buffer_days is not None:
+            shelf_life_for_policy = max(1, shelf_life_for_policy - pull_buffer_days)
+        avg_daily_usage = float(np.mean(used_units)) if len(used_units) > 0 else 0.0
+        criticality = "critical" if archetype == "E" else "routine"
+        policy_meta = get_policy_metadata(
+            avg_daily_usage=avg_daily_usage,
+            used_units_array=used_units,
+            shelf_life_days=int(shelf_life_for_policy),
+            moq_units=moq_units,
+            criticality=criticality,
+            exchange_cadence_days=order_cadence_days,
+        )
     
     # Simulate inventory (PRIORITY 3: Pass archetype for category-specific multipliers)
     # Pass config parameters if provided (including code cart parameters)
@@ -931,6 +950,7 @@ def generate_scenario(
         spq_units=spq_units,
         ordering_mode=ordering_mode,
         par_level_days=par_level_days,
+        policy_auto_select=policy_auto_select,
         shelf_life_mode=shelf_life_mode,
         pull_buffer_days=pull_buffer_days,
         lead_time_distribution=lead_time_distribution,
@@ -973,5 +993,18 @@ def generate_scenario(
         'max_used_test': int(test_used.max()),
         **gen_params
     }
+    
+    if policy_meta:
+        metadata.update({
+            'policy_selected': policy_meta.get('policy'),
+            'policy_reasoning': "; ".join(policy_meta.get('reasoning', [])),
+            'policy_avg_daily_usage': policy_meta.get('metadata', {}).get('avg_daily_usage'),
+            'policy_cv_demand': policy_meta.get('metadata', {}).get('cv_demand'),
+            'policy_is_low_volume': policy_meta.get('metadata', {}).get('is_low_volume'),
+            'policy_is_high_intermittency': policy_meta.get('metadata', {}).get('is_high_intermittency'),
+            'policy_is_short_shelf_life': policy_meta.get('metadata', {}).get('is_short_shelf_life'),
+            'policy_is_exchange_based': policy_meta.get('metadata', {}).get('is_exchange_based'),
+            'policy_criticality': policy_meta.get('metadata', {}).get('criticality'),
+        })
     
     return df, metadata

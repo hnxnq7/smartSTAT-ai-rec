@@ -1028,6 +1028,14 @@ To reduce expired rates, we need to:
 - Round 8: `ml/data/synthetic_bank_priority2/`
 - Round 9-13: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
 
+
+### Recent Updates (Concise)
+- **Stockout bug fix**: Inventory arrivals were overwritten each day in `simulate_inventory`, causing false 100% stockouts. Fix applied.
+- **S14 (par-driven) revalidation**: Mean stockout **0.19%** (target <2%), max **9.93%** (Category B tail risk).
+- **S14_POLICY (auto policy) revalidation**: Mean stockout **18.10%**, max **39.61%**.
+- **Policy instrumentation**: Policy selection recorded per SKU in metadata; S14_POLICY mix = **82% forecast-driven / 18% par-driven**.
+- **Policy test (S14_POLICY, A–E, n=25)**: forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**.
+
 ### Analysis Tools
 - Waste analysis: `python3 ml/analyze_waste.py`
 - Re-evaluation: `python3 ml/reevaluate_models.py`

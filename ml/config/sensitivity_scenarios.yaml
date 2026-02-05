@@ -499,3 +499,57 @@ scenarios:
       expired_rate: "5-15% target (improved from S13's 40.58% with par-driven ordering)"
       stockout_rate: "Minimal change - par-driven maintains fixed levels"
       notes: "Full Option C implementation: par-driven ordering should reduce Category B expiry (was 69.25% in S13) by maintaining fixed par levels regardless of forecast"
+
+  # S14_POLICY: Code Cart Parameters with Policy Layer (Auto Par vs Forecast)
+  S14_POLICY:
+    description: "Code cart with policy layer (auto select par vs forecast), effective shelf life, stochastic lead times"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 7
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    # Code Cart Parameters (Policy Layer)
+    ordering_mode: "auto"
+    policy_auto_select: true
+    par_level:
+      days_coverage: 30
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+    expected_result:
+      expired_rate: "Lower than S14 for high-volume SKUs; similar for low-volume"
+      stockout_rate: "Potentially lower if forecast-driven selected for high-volume"
+      notes: "Policy layer chooses par-driven for low-volume/intermittent SKUs and forecast-driven for higher volume, aiming to reduce stockouts without over-ordering"

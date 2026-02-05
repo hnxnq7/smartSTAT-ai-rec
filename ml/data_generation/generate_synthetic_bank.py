@@ -217,6 +217,21 @@ def print_summary(manifest_df: pd.DataFrame, output_dir: Path) -> None:
     print("\nBy Archetype and Size:")
     print(manifest_df.groupby(['archetype', 'hospital_size']).size().unstack(fill_value=0))
     
+    if 'policy_selected' in manifest_df.columns:
+        print("\nPolicy Selection Mix:")
+        policy_counts = manifest_df['policy_selected'].fillna("unknown").value_counts()
+        for policy, count in policy_counts.items():
+            pct = (count / len(manifest_df) * 100) if len(manifest_df) > 0 else 0
+            print(f"  {policy}: {count} ({pct:.1f}%)")
+        
+        policy_by_arch = (
+            manifest_df.groupby(['archetype', 'policy_selected'])
+            .size()
+            .unstack(fill_value=0)
+        )
+        print("\nPolicy Mix by Archetype:")
+        print(policy_by_arch)
+    
     # Count files (organized by archetype)
     total_train = 0
     total_test = 0
