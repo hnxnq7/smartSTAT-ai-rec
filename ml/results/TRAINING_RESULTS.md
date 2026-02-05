@@ -6,6 +6,14 @@
 
 ## 🎯 Current Status & Key Findings
 
+### Recent Updates (Concise)
+- **Policy-layer test (capped/hybrid)**: Ran `test_policy_layer.py` for S3/S6/S8/S14_POLICY with `forecast_capped` mode. Stockout means (%): S3 7.38/9.03/6.26/0.00, S6 17.26/19.76/13.72/0.00, S8 7.38/9.03/6.26/0.00, S14_POLICY 20.40/22.80/14.63/0.31 (order: forecast, forecast_capped, policy_selected, par_driven).
+- **Stockout bug fix**: Inventory arrivals were overwritten each day in `simulate_inventory`, causing false 100% stockouts. Fix applied.
+- **S14 (par-driven) revalidation**: Mean stockout **0.19%** (target <2%), max **9.93%** (Category B tail risk).
+- **S14_POLICY (auto policy) revalidation**: Mean stockout **18.10%**, max **39.61%**.
+- **Policy instrumentation**: Policy selection recorded per SKU in metadata; S14_POLICY mix = **82% forecast-driven / 18% par-driven**.
+- **Policy test (S14_POLICY, A–E, n=25)**: forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**.
+
 ### ✅ Major Breakthrough: Realistic Parameters Validation
 
 **Round 14 Results (Realistic Parameters Sensitivity Sweep)**:
@@ -17,7 +25,7 @@
 
 **Key Validation**: Using realistic hospital supply chain parameters achieves the <50% expired rate target. For code carts specifically, **par-driven ordering > forecast-driven ordering**, validating that maintaining fixed par levels regardless of forecast prevents over-ordering for low-volume items.
 
-**Primary Driver**: Shelf life is the dominant factor - increasing from 240 days to 730+ days reduces expired rate by 25-35 percentage points. Longer lead times (S6) also help by forcing more careful ordering.
+**Primary Driver**: Shelf life is the dominant factor - increasing from 240 days to 730+ days reduces expired rate by 25-35 percentage points. In our current simulator, longer lead times correlate with lower expiry, likely due to indirect effects on ordering behavior; treat this as a second-order effect and validate carefully.
 
 ### 📊 Latest Results Summary
 
@@ -87,7 +95,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 **Key Insights**:
 - **Shelf life matters most**: Scenarios with 730+ day shelf life (S3, S4, S6-S11) achieve ~45-46% expired rate
-- **Lead time impact**: S6 (14-day lead time) performs best, suggesting longer lead times force more careful ordering
+- **Lead time impact**: In the current simulator, longer lead times correlate with lower expiry; treat this as a second-order effect and validate carefully.
 - **S5 (short shelf life) performs worst**: 68.03% confirms short shelf life is the primary driver of expiration
 - **Long shelf life (1095 days) doesn't beat medium (730 days)**: S4 and S9 show similar results to S3, suggesting 2-year shelf life is sufficient for the test period
 - **S13 (Code Cart, forecast-driven)**: 40.58% expired rate with 300-day effective shelf life and monthly exchanges. Category B (low-volume) worst at 69.25%, highlighting challenge of case packs + infrequent exchanges for slow movers
@@ -136,73 +144,6 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 ---
 
-## 📊 Historical Rounds Comparison (Rounds 1-13)
-
-| Round | Key Change | Datasets | Stockout Rate (Mean) | Stockout Rate (Median) | Normalized MAE (Median) | Expired Rate |
-|-------|------------|----------|---------------------|----------------------|------------------------|--------------|
-| **Round 1** | Baseline | 550 | 1.20% | 1.14% | 0.106 | N/A |
-| **Round 2** | Category D: Trend features | 100 (D only) | 1.17% | 1.17% | 0.23 | N/A |
-| **Round 3** | All: Trend features + num_leaves 63 | 400 | 1.19% | 1.14% | 0.068 | N/A |
-| **Round 4** | Asymmetric loss (2:1 penalty) | 500 | 1.25% | 1.14% | 0.129 | 97.58% |
-| **Round 5** | Improved inventory simulation | 500 | 1.17% | 1.14% | 0.129 | 97.58% |
-| **Round 6** | Priority 1: Adaptive ordering (eval only) | 500 | 1.13% | 1.14% | 0.129 | 97.58%* |
-| **Round 7** | Priority 1: In data generation | 500 | 1.18% | 1.14% | 0.138 | **76.44%** ✅ |
-| **Round 8** | Priority 1 + Priority 2: Dynamic safety stock | 500 | 1.18% | 1.14% | 0.138 | 76.56% |
-| **Round 9** | Priority 3: Category-specific multipliers | 550 | 1.09% | 1.14% | 0.105 | **70.22%** ✅ |
-| **Round 10** | Priority 4: Reduced cap + Consume inventory first | 500 | 1.18% | 1.14% | 0.112 | 76.74% ⚠️ |
-| **Round 11** | Phase 1: Shelf-life aware + Category caps + Reduced buffers | 500 | 1.20% | 1.14% | 0.119 | 75.53% ⚠️ |
-| **Round 13** | FEFO (First-Expiry-First-Out) consumption | 500 | 1.17% | 1.14% | 0.118 | 75.74% ⚠️ |
-
-**Historical Trend**: 
-- Expired rates: 97.58% → 70.22% (Round 9 best with original parameters)
-- Round 14 (S9) achieved 7.89% with realistic parameters - validating parameter realism hypothesis
-
----
-
-## Round 14: Realistic Parameters Sensitivity Sweep 🎯
-
-**Status**: ✅ In Progress (3/13 scenarios completed: baseline, S1, S9)  
-**Purpose**: Validate that realistic hospital supply chain parameters (shelf life, lead times, ordering cadence) can achieve expired rates <50% target
-
-### Research Foundation
-
-**Evidence-Based Parameter Research**: Created comprehensive parameter documentation (`ml/docs/REALISTIC_PARAMETERS_RESEARCH.md`) with:
-- **Tier 1 Sources**: FDA, USP, ASHP, NIH/PMC peer-reviewed articles
-- **Tier 2 Sources**: Industry reports, major GPO/distributor documentation
-- **Assumptions**: Clearly marked where public data unavailable, with conservative priors
-
-**Key Parameter Changes**:
-- **Shelf Life**: Increased from 240 days → 730-1095 days (2-3 years, realistic for most medications)
-- **Order Cadence**: Changed from 4 days → 7 days (weekly, aligns with hospital practices)
-- **Service Level**: Reduced from 99.5% → 98% for routine items (realistic target)
-- **Lead Times**: Standardized to 5 days for routine, 14 days for specialty
-
-### Sensitivity Sweep Results (Partial - In Progress)
-
-| Scenario | Shelf Life | Order Cadence | Service Level | Expired Rate | vs Baseline | Status |
-|----------|-----------|---------------|---------------|--------------|-------------|--------|
-| **baseline** | 240 days | 4 days | 99.5% | **59.10%** | - | ✅ Complete |
-| **S1** | 365 days | 4 days | 99.5% | **45.29%** | **-13.81 pp** ✅ | ✅ Complete |
-| **S9** | 1095 days | 7 days | 98% | **7.89%** | **-51.21 pp** 🎯 | ✅ Complete |
-| S2-S8, S10-S12 | Various | Various | Various | TBD | TBD | ⏳ Generating |
-
-### Key Findings
-
-**1. Shelf Life is Primary Driver** ✅
-- **S1** (365 days): -13.81 pp reduction from baseline (59.10% → 45.29%)
-- **S9** (1095 days): -51.21 pp reduction from baseline (59.10% → 7.89%)
-- **Conclusion**: Increasing shelf life from 240 to 1095 days reduces expired rate by **86.6%**
-
-**2. Category-Specific Impact**:
-   - **Categories A-D** (1095-day shelf life): 0.00% expired rate in S9 (expected - shelf life exceeds 1-year test period)
-   - **Category E** (180-day shelf life, burst events): **78.24% expired rate** in S9
-   - **Insight**: Short shelf-life specialty items remain challenging even with optimized parameters. The 0% result for A-D is not meaningful given the test period length.
-
-**3. Validated Hypothesis**:
-- ✅ **Realistic parameters enable <50% expired rate** (S9 achieved 7.89%)
-- ✅ **Parameter realism > ordering logic optimization** (S9 beats Round 9's 70.22%)
-- ✅ **Shelf life mismatch was root cause** (3-year shelf life eliminates expiration for most items)
-
 ### Best Performing Scenarios
 
 **S14 (Code Cart with Par-Driven Ordering) - Best Result: 4.46% expired rate** 🎯
@@ -213,7 +154,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 
 **S6 (Long Lead Time) - 25.42% expired rate**
 - **Configuration**: 730-day shelf life, 14-day lead time (routine), weekly cadence, 98% service level
-- **Key Insight**: Longer lead times force more careful ordering, reducing over-ordering despite requiring larger safety stock
+- **Key Insight**: In the current simulator, longer lead times correlate with lower expiry, likely due to indirect effects on ordering behavior; treat as a second-order effect and validate carefully.
 - **Improvement**: -35.44 pp from baseline (58.2% reduction)
 
 **S3 (Full Realistic) - 45.82% expired rate**
@@ -224,7 +165,7 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 **Interpretation**:
 - **Par-driven ordering is highly effective**: S14's 4.46% validates that maintaining fixed par levels (vs forecast-driven) is optimal for code carts
 - **Shelf life impact**: 730-day shelf life enables ~45-46% expired rate across multiple scenarios
-- **Lead time surprise**: Longer lead times (S6) perform better than expected - constraints force optimization
+- **Lead time surprise**: Longer lead times (S6) perform better than expected in the current simulator; likely an indirect ordering effect that needs validation.
 - **Short shelf life worst**: S5 (180 days) at 68.03% confirms shelf life is the primary driver
 - **Realistic parameters work**: Multiple scenarios achieve <50% target, validating the parameter realism approach
 
@@ -238,41 +179,22 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - Monthly exchanges (12/year) allow multiple order cycles
 - Par-driven ordering prevents over-ordering vs forecast-driven (S13: 40.58% → S14: 4.46%)
 
-**Stockout Rate Validation** ⚠️ **CRITICAL ISSUE - UNRESOLVED**
-- **Issue**: Both train and test periods show 90-100% stockout rate (all categories)
-- **Root Cause**: Par-driven ordering logic has fundamental limitations:
-  - With 10-day lead time, orders placed on cadence days arrive too late
-  - Emergency ordering triggers too late (after inventory already low)
-  - Once inventory hits zero, recovery takes 10+ days (lead time)
-  - Par level calculation doesn't account for demand spikes during lead time
-- **Impact**: Cannot deploy S14 until stockout issue is resolved
-- **Attempted Fixes (Approaches 2 & 3)**:
-  1. **Increased par level buffer**: Added 7-day demand variability buffer (total: 30d par + 10d lead + 7d safety + 7d variability = 54 days)
-  2. **Reduced order cadence**: Changed from monthly (30 days) to weekly (7 days)
-  3. **Emergency ordering**: Trigger when coverage < lead time + 3 days
-  4. **Initial stock**: Set to par level (54 days coverage)
-  - **Results**: 
-    - Stockout: Still 100% (no improvement)
-    - Expired rate: Increased from 4.46% to 65-77% (worse due to over-ordering)
-- **Key Finding**: The trade-off is fundamental - par-driven ordering optimized for low expiration (4.46%) results in high stockout (90%). Increasing buffers to reduce stockout causes over-ordering and high expiration (65-77%).
-- **Recommendations**:
-  1. **Hybrid approach**: Use forecast-driven ordering with par-level caps (not pure par-driven)
-  2. **Reduce lead time**: If possible, reduce from 10 days to 3-5 days
-  3. **Increase order frequency**: More frequent than weekly (every 3-5 days)
-  4. **Accept trade-off**: For code carts, 4.46% expired with 90% stockout may be acceptable if stockouts are brief and non-critical items
+**Stockout Rate Validation** ⚠️ **TAIL RISK REMAINS**
+- **Fix Applied**: Inventory arrivals were being overwritten; corrected in `simulate_inventory`.
+- **S14 Results (post-fix)**: Mean **0.19%**, median **0.00%**, max **9.93%** (Category B tail).
+- **Interpretation**: Average performance meets target, but worst-case tail needs mitigation (low-volume SKUs).
 
-**Robustness Tests** ✅ (Partial)
-- Lead time +20%/+50%: Expired rates stable (0-54%), stockout high (94-95%) - consistent with main issue
-- Cadence ±1 week: Expired rates vary (0-48%), stockout high (94-95%)
-- **Note**: Robustness tests also show high stockout, suggesting par-driven ordering may need adjustment for initial stock or lead time handling
+**Robustness Tests** ✅ (Updated)
+- Lead time +20%/+50%: Stockout ~0% (A/B) in quick tests.
+- Cadence ±1 week: Stockout remains low (A/B), with small spikes in B.
 
-**Deployment Status**: ⚠️ **BLOCKED** - Stockout validation incomplete. Must fix inventory continuity in test datasets before deployment.
+**Deployment Status**: ⚠️ **CONDITIONALLY OK** - Mean stockout meets target, tail risk remains.
 
 ---
 
 ### Policy Layer Implementation (Phase 2: General Inventory)
 
-**Status**: ✅ Implemented, ⚠️ Testing shows stockout issue (same as S14)
+**Status**: ✅ Implemented, ⚠️ Stockout still high in S14_POLICY (mean 18.10%)
 
 **Implementation**:
 - Created `policy_selector.py`: Decision rules for par-driven vs forecast-driven
@@ -283,25 +205,18 @@ The regression model excels at predicting demand (low MSE), but expired rates co
 - **Par-driven**: Low volume + high intermittency + (critical OR exchange-based)
 - **Forecast-driven**: High volume OR low intermittency (default)
 
-**Test Results** (S3, S6, S8, n=15 per scenario):
-- **S3**: policy_selected (43.09%) better than forecast_driven (50.07%) and par_driven_all (59.08%)
-- **S6**: All similar (~22-23%) - long lead time dominates
-- **S8**: policy_selected (43.09%) better than forecast_driven (50.07%) and par_driven_all (59.08%)
+**Test Results**:
+- **S14_POLICY (A–E, n=25)**: forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**.
+- **Selection Mix (S14_POLICY generation)**: 82% forecast-driven / 18% par-driven (B mostly par-driven).
 
-**Note**: Stockout rates show 100% due to same inventory continuity issue as S14. Expired rate improvements are meaningful.
-
-**Next Sprint**: Fix inventory continuity, then re-test policy layer on full scenarios.
+**Note**: Policy auto-selection improves stockout vs forecast-only but still worse than par-driven for code carts.
 
 ### Next Steps
 
-1. **URGENT: Fix Stockout Validation**
-   - Regenerate S14 datasets with inventory continuity across train/test split
-   - OR validate stockout using full time series (2023-2025)
-   - Investigate why par-driven ordering results in zero inventory at period end
-
-2. **Complete Sensitivity Sweep**: Generate and analyze remaining scenarios (S2-S8, S10-S12)
-3. **Category E Optimization**: Investigate strategies for short-shelf-life specialty items
-4. **Full Training**: Train models on S14 configuration once stockout issue resolved
+1. **Reduce tail stockout (B/E)**: Increase par coverage or tighten cadence; relax MOQ/SPQ where needed.
+2. **Complete sensitivity sweep**: Generate and analyze remaining scenarios (S2-S8, S10-S12).
+3. **Category E optimization**: Strategies for short-shelf-life specialty items.
+4. **Full training**: Train models on S14 configuration once tail stockout risk is acceptable.
 
 ### Files & Configuration
 
@@ -1029,16 +944,85 @@ To reduce expired rates, we need to:
 - Round 9-13: `ml/data/synthetic_bank/` (organized by archetype: A/, B/, C/, D/, E/)
 
 
-### Recent Updates (Concise)
-- **Stockout bug fix**: Inventory arrivals were overwritten each day in `simulate_inventory`, causing false 100% stockouts. Fix applied.
-- **S14 (par-driven) revalidation**: Mean stockout **0.19%** (target <2%), max **9.93%** (Category B tail risk).
-- **S14_POLICY (auto policy) revalidation**: Mean stockout **18.10%**, max **39.61%**.
-- **Policy instrumentation**: Policy selection recorded per SKU in metadata; S14_POLICY mix = **82% forecast-driven / 18% par-driven**.
-- **Policy test (S14_POLICY, A–E, n=25)**: forecast-driven stockout **20.40%**, policy-selected **12.93%**, par-driven **0.00%**.
+### Interpretation (Tightened)
+- **Lead time effects**: In the current simulator, longer lead times correlate with lower expiry, likely due to indirect effects on ordering behavior (cadence/reorder coupling). Treat this as a second-order effect and validate carefully; do not assume longer lead times reduce waste in real operations.
+
+### Phase 1: What We Learned
+1. Forecasting is not the bottleneck.
+2. Expiry is driven by policy + constraints, not MSE.
+3. One policy does not fit all inventory.
+
+### Phase 2: Inventory Naturally Splits Into Regimes
+| Regime | Best Policy |
+| --- | --- |
+| Code carts / exchange-based / intermittent | Par-driven |
+| High-volume / stable demand | Forecast-driven |
+| Short shelf-life specialty | Needs custom handling |
+
+### What I’d Recommend as Next Steps (Clean + Realistic)
+**Immediate**
+- Lock in S14 (par-driven) as code-cart baseline.
+- Document constraints + stockout tail risk (Category B).
+
+**Short term**
+- Formalize the policy layer.
+- Forecast-driven with par caps.
+- Or hybrid: forecast -> clipped by par.
+- Add policy-level metrics: avg on-hand, order frequency, recovery time after stockout.
 
 ### Analysis Tools
 - Waste analysis: `python3 ml/analyze_waste.py`
 - Re-evaluation: `python3 ml/reevaluate_models.py`
 - Results aggregation: `python3 ml/evaluate_results.py`
+
+---
+
+## Historical Details (Archived)
+
+### 📊 Historical Rounds Comparison (Rounds 1-13)
+
+| Round | Key Change | Datasets | Stockout Rate (Mean) | Stockout Rate (Median) | Normalized MAE (Median) | Expired Rate |
+|-------|------------|----------|---------------------|----------------------|------------------------|--------------|
+| **Round 1** | Baseline | 550 | 1.20% | 1.14% | 0.106 | N/A |
+| **Round 2** | Category D: Trend features | 100 (D only) | 1.17% | 1.17% | 0.23 | N/A |
+| **Round 3** | All: Trend features + num_leaves 63 | 400 | 1.19% | 1.14% | 0.068 | N/A |
+| **Round 4** | Asymmetric loss (2:1 penalty) | 500 | 1.25% | 1.14% | 0.129 | 97.58% |
+| **Round 5** | Improved inventory simulation | 500 | 1.17% | 1.14% | 0.129 | 97.58% |
+| **Round 6** | Priority 1: Adaptive ordering (eval only) | 500 | 1.13% | 1.14% | 0.129 | 97.58%* |
+| **Round 7** | Priority 1: In data generation | 500 | 1.18% | 1.14% | 0.138 | **76.44%** ✅ |
+| **Round 8** | Priority 1 + Priority 2: Dynamic safety stock | 500 | 1.18% | 1.14% | 0.138 | 76.56% |
+| **Round 9** | Priority 3: Category-specific multipliers | 550 | 1.09% | 1.14% | 0.105 | **70.22%** ✅ |
+| **Round 10** | Priority 4: Reduced cap + Consume inventory first | 500 | 1.18% | 1.14% | 0.112 | 76.74% ⚠️ |
+| **Round 11** | Phase 1: Shelf-life aware + Category caps + Reduced buffers | 500 | 1.20% | 1.14% | 0.119 | 75.53% ⚠️ |
+| **Round 13** | FEFO (First-Expiry-First-Out) consumption | 500 | 1.17% | 1.14% | 0.118 | 75.74% ⚠️ |
+
+**Historical Trend**:
+- Expired rates: 97.58% → 70.22% (Round 9 best with original parameters)
+- Round 14 (S9) achieved 7.89% with realistic parameters - validating parameter realism hypothesis
+
+### Round 14: Realistic Parameters Sensitivity Sweep (Earlier Snapshot)
+
+**Status**: ✅ In Progress (3/13 scenarios completed: baseline, S1, S9)  
+**Purpose**: Validate that realistic hospital supply chain parameters (shelf life, lead times, ordering cadence) can achieve expired rates <50% target
+
+**Key Parameter Changes**:
+- **Shelf Life**: Increased from 240 days → 730-1095 days (2-3 years, realistic for most medications)
+- **Order Cadence**: Changed from 4 days → 7 days (weekly, aligns with hospital practices)
+- **Service Level**: Reduced from 99.5% → 98% for routine items (realistic target)
+- **Lead Times**: Standardized to 5 days for routine, 14 days for specialty
+
+**Sensitivity Sweep Results (Partial - In Progress)**:
+
+| Scenario | Shelf Life | Order Cadence | Service Level | Expired Rate | vs Baseline | Status |
+|----------|-----------|---------------|---------------|--------------|-------------|--------|
+| **baseline** | 240 days | 4 days | 99.5% | **59.10%** | - | ✅ Complete |
+| **S1** | 365 days | 4 days | 99.5% | **45.29%** | **-13.81 pp** ✅ | ✅ Complete |
+| **S9** | 1095 days | 7 days | 98% | **7.89%** | **-51.21 pp** 🎯 | ✅ Complete |
+| S2-S8, S10-S12 | Various | Various | Various | TBD | TBD | ⏳ Generating |
+
+**Key Findings**:
+- **Shelf Life is Primary Driver** ✅
+- **Category E remains hard** (short shelf life, burst events)
+- **Parameter realism > ordering logic optimization**
 
 ---

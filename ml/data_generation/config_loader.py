@@ -144,6 +144,7 @@ def get_category_params(
     # Code Cart Parameters (Option C)
     # Ordering mode
     params['ordering_mode'] = config.get('ordering_mode', None)
+    params['policy_auto_select'] = config.get('policy_auto_select', False)  # Enable auto policy selection
     
     # Par level (for par-driven ordering)
     par_level = config.get('par_level', {})
@@ -151,6 +152,9 @@ def get_category_params(
         params['par_level_days'] = par_level.get('days_coverage', None)
     else:
         params['par_level_days'] = par_level if isinstance(par_level, (int, float)) else None
+    
+    # Forecast-driven par cap (optional)
+    params['par_cap_enabled'] = config.get('par_cap_enabled', False)
     
     # Shelf life mode (effective vs labeled)
     shelf_life_config = config.get('shelf_life', {})

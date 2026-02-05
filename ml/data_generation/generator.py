@@ -267,6 +267,7 @@ def simulate_inventory(
     ordering_mode: Optional[str] = None,  # "par_driven" or "forecast_driven" or "auto" (default)
     par_level_days: Optional[int] = None,  # Par level in days coverage (for par-driven)
     policy_auto_select: bool = False,  # If True and ordering_mode="auto", select policy automatically
+    par_cap_enabled: bool = False,  # If True, cap forecast-driven orders by par level
     shelf_life_mode: Optional[str] = None,  # "effective" or "labeled" (default)
     pull_buffer_days: Optional[int] = None,  # Pull buffer for effective shelf life
     lead_time_distribution: Optional[str] = None,  # "lognormal" or "fixed" (default)
@@ -326,12 +327,14 @@ def simulate_inventory(
             moq_units=moq_units,
             criticality=criticality,
             exchange_cadence_days=order_cadence_days,
+            par_cap_enabled=par_cap_enabled,
         )
         effective_ordering_mode = policy_meta["policy"]
     
     # Determine ordering mode (default to forecast_driven)
     use_par_driven = (effective_ordering_mode == "par_driven")
-    if use_par_driven and par_level_days is None:
+    par_cap_enabled = par_cap_enabled or (effective_ordering_mode == "forecast_capped")
+    if (use_par_driven or par_cap_enabled) and par_level_days is None:
         par_level_days = 30  # Default par level: 30 days coverage
     
     # Determine lead time distribution
@@ -342,8 +345,8 @@ def simulate_inventory(
         if lead_time_p95 is None:
             lead_time_p95 = lead_time_median * 3.0  # Default: 3x median for p95
     
-    # For par-driven: Calculate par level ONCE at start (use median lead time for consistency)
-    if use_par_driven:
+    # For par-driven or par-capped: Calculate par level ONCE at start (use median lead time for consistency)
+    if use_par_driven or par_cap_enabled:
         # Use median lead time for par level calculation (not stochastic per-order)
         par_lead_time = int(lead_time_median) if use_stochastic_lead_time and lead_time_median else lead_time
         # Increased safety buffer: lead time + 7 days base + 7 days demand variability buffer
@@ -644,6 +647,28 @@ def simulate_inventory(
                 # Round up to nearest SPQ multiple
                 adaptive_order_quantity = ((adaptive_order_quantity + spq_units - 1) // spq_units) * spq_units
             
+            # Optional par cap for forecast-driven ordering
+            if par_cap_enabled and base_par_level_units is not None:
+                # Use same par logic as par-driven (scaled by recent consumption)
+                usage_for_par = max(recent_consumption, avg_daily_usage * 0.95)
+                usage_ratio = max(1.0, usage_for_par / avg_daily_usage) if avg_daily_usage > 0 else 1.0
+                par_level_units = int(base_par_level_units * usage_ratio)
+                
+                total_pending = sum(pending_orders.values()) if pending_orders else 0
+                total_available = non_expired[day] + total_pending
+                cap_amount = max(0, par_level_units - total_available)
+                
+                if cap_amount <= 0:
+                    adaptive_order_quantity = 0
+                elif adaptive_order_quantity > cap_amount:
+                    adaptive_order_quantity = cap_amount
+                
+                # Ensure we don't exceed the cap after MOQ/SPQ by rounding down
+                if moq_units is not None and adaptive_order_quantity > 0:
+                    adaptive_order_quantity = (adaptive_order_quantity // moq_units) * moq_units
+                if spq_units is not None and adaptive_order_quantity > 0:
+                    adaptive_order_quantity = (adaptive_order_quantity // spq_units) * spq_units
+            
             # Ensure minimum order quantity (at least lead_time days)
             min_order = int(recent_consumption * current_lead_time)
             adaptive_order_quantity = max(adaptive_order_quantity, min_order)
@@ -814,6 +839,46 @@ def add_time_series_features(
     return df
 
 
+def calculate_policy_metrics(
+    non_expired: np.ndarray,
+    ordered_units: np.ndarray
+) -> Dict[str, float]:
+    """Compute policy-level metrics for a scenario."""
+    n_days = len(non_expired)
+    if n_days == 0:
+        return {
+            'avg_on_hand_units': 0.0,
+            'order_frequency': 0.0,
+            'avg_stockout_recovery_days': 0.0,
+            'max_stockout_recovery_days': 0.0
+        }
+    
+    avg_on_hand = float(np.mean(non_expired))
+    order_frequency = float((ordered_units > 0).sum() / n_days)
+    
+    # Recovery time after stockout: average length of consecutive stockout streaks
+    streaks = []
+    current = 0
+    for val in non_expired:
+        if val <= 0:
+            current += 1
+        elif current > 0:
+            streaks.append(current)
+            current = 0
+    if current > 0:
+        streaks.append(current)
+    
+    avg_recovery = float(np.mean(streaks)) if streaks else 0.0
+    max_recovery = float(max(streaks)) if streaks else 0.0
+    
+    return {
+        'avg_on_hand_units': avg_on_hand,
+        'order_frequency': order_frequency,
+        'avg_stockout_recovery_days': avg_recovery,
+        'max_stockout_recovery_days': max_recovery
+    }
+
+
 def generate_scenario(
     scenario_id: str,
     archetype: str,
@@ -897,6 +962,7 @@ def generate_scenario(
         # Code Cart Parameters (Option C)
         ordering_mode = config_params.get('ordering_mode', None)
         policy_auto_select = config_params.get('policy_auto_select', False)
+        par_cap_enabled = config_params.get('par_cap_enabled', False)
         par_level_days = config_params.get('par_level_days', None)
         shelf_life_mode = config_params.get('shelf_life_mode', None)
         pull_buffer_days = config_params.get('pull_buffer_days', None)
@@ -914,6 +980,7 @@ def generate_scenario(
         spq_units = None
         ordering_mode = None
         policy_auto_select = False
+        par_cap_enabled = False
         par_level_days = None
         shelf_life_mode = None
         pull_buffer_days = None
@@ -951,6 +1018,7 @@ def generate_scenario(
         ordering_mode=ordering_mode,
         par_level_days=par_level_days,
         policy_auto_select=policy_auto_select,
+        par_cap_enabled=par_cap_enabled,
         shelf_life_mode=shelf_life_mode,
         pull_buffer_days=pull_buffer_days,
         lead_time_distribution=lead_time_distribution,
@@ -994,9 +1062,12 @@ def generate_scenario(
         **gen_params
     }
     
+    policy_metrics = calculate_policy_metrics(non_expired, ordered)
+    metadata.update(policy_metrics)
+    
     if policy_meta:
         metadata.update({
-            'policy_selected': policy_meta.get('policy'),
+            'policy_selected': effective_ordering_mode,
             'policy_reasoning': "; ".join(policy_meta.get('reasoning', [])),
             'policy_avg_daily_usage': policy_meta.get('metadata', {}).get('avg_daily_usage'),
             'policy_cv_demand': policy_meta.get('metadata', {}).get('cv_demand'),

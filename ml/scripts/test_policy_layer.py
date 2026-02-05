@@ -27,12 +27,13 @@ def test_scenario_policy_comparison(
     
     results = {
         'forecast_driven': {'expired': [], 'stockout': []},
+        'forecast_capped': {'expired': [], 'stockout': []},
         'policy_selected': {'expired': [], 'stockout': []},
         'par_driven_all': {'expired': [], 'stockout': []}
     }
     
     archetypes = archetypes or ['A', 'B', 'C']  # Default for speed
-    policy_selection_counts = {'par_driven': 0, 'forecast_driven': 0}
+    policy_selection_counts = {'par_driven': 0, 'forecast_driven': 0, 'forecast_capped': 0}
     
     for archetype in archetypes:
         category_params = get_category_params(merged_config, archetype)
@@ -80,12 +81,21 @@ def test_scenario_policy_comparison(
                 ordering_mode="forecast_driven",
             )
             
-            # Test 2: Policy-selected (auto)
+            # Test 2: Forecast-driven with par caps
+            _, expired_cap, _, _, non_expired_cap = simulate_inventory(
+                dates, used_units, rng, "medium",
+                **common_kwargs,
+                ordering_mode="forecast_capped",
+                par_cap_enabled=True,
+            )
+            
+            # Test 3: Policy-selected (auto)
             _, expired2, _, _, non_expired2 = simulate_inventory(
                 dates, used_units, rng, "medium",
                 **common_kwargs,
                 ordering_mode="auto",
-                policy_auto_select=True
+                policy_auto_select=True,
+                par_cap_enabled=True,
             )
             
             # Policy selection mix (auto only)
@@ -97,10 +107,13 @@ def test_scenario_policy_comparison(
                 moq_units=category_params.get('moq_units', None),
                 criticality="critical" if archetype == "E" else "routine",
                 exchange_cadence_days=category_params.get('order_cadence_days', 7),
+                par_cap_enabled=True,
             )
+            if policy_meta["policy"] not in policy_selection_counts:
+                policy_selection_counts[policy_meta["policy"]] = 0
             policy_selection_counts[policy_meta["policy"]] += 1
             
-            # Test 3: Par-driven all
+            # Test 4: Par-driven all
             _, expired3, _, _, non_expired3 = simulate_inventory(
                 dates, used_units, rng, "medium",
                 **common_kwargs,
@@ -120,10 +133,11 @@ def test_scenario_policy_comparison(
             
             for i, (expired_test, non_expired_test) in enumerate([
                 (expired_test1, non_expired_test1),
+                (expired_cap, non_expired_cap),
                 (expired_test2, non_expired_test2),
                 (expired_test3, non_expired_test3)
             ]):
-                mode = ['forecast_driven', 'policy_selected', 'par_driven_all'][i]
+                mode = ['forecast_driven', 'forecast_capped', 'policy_selected', 'par_driven_all'][i]
                 total_expired = expired_test.sum()
                 total_used = used_test.sum()
                 expired_rate = (total_expired / (total_expired + total_used) * 100) if (total_expired + total_used) > 0 else 0
@@ -136,7 +150,7 @@ def test_scenario_policy_comparison(
     # Summary
     print(f"\n{scenario_name} Policy Comparison (n={n_samples * len(archetypes)}):")
     print("-" * 70)
-    for mode in ['forecast_driven', 'policy_selected', 'par_driven_all']:
+    for mode in ['forecast_driven', 'forecast_capped', 'policy_selected', 'par_driven_all']:
         expired_mean = np.mean(results[mode]['expired'])
         expired_std = np.std(results[mode]['expired'])
         stockout_mean = np.mean(results[mode]['stockout'])
@@ -145,7 +159,7 @@ def test_scenario_policy_comparison(
               f"stockout={stockout_mean:.2f}% (max={stockout_max:.2f}%)")
     
     print("\nPolicy selection mix (auto):")
-    total_selected = policy_selection_counts['par_driven'] + policy_selection_counts['forecast_driven']
+    total_selected = sum(policy_selection_counts.values())
     if total_selected > 0:
         for policy, count in policy_selection_counts.items():
             pct = count / total_selected * 100
@@ -202,7 +216,7 @@ def main():
     print("-" * 70)
     
     for scenario in scenarios:
-        for mode in ['forecast_driven', 'policy_selected', 'par_driven_all']:
+        for mode in ['forecast_driven', 'forecast_capped', 'policy_selected', 'par_driven_all']:
             expired = np.mean(all_results[scenario][mode]['expired'])
             stockout = np.mean(all_results[scenario][mode]['stockout'])
             print(f"{scenario:<10} {mode:<20} {expired:>6.2f}%         {stockout:>6.2f}%")
