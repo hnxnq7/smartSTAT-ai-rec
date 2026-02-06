@@ -500,6 +500,252 @@ scenarios:
       stockout_rate: "Minimal change - par-driven maintains fixed levels"
       notes: "Full Option C implementation: par-driven ordering should reduce Category B expiry (was 69.25% in S13) by maintaining fixed par levels regardless of forecast"
 
+  # S14_BCADENCE_5: Category B tighter cadence (5 days)
+  S14_BCADENCE_5:
+    description: "S14 with Category B order cadence = 5 days"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 5
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    ordering_mode: "par_driven"
+    par_level:
+      days_coverage: 30
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+
+  # S14_BCADENCE_3: Category B tighter cadence (3 days)
+  S14_BCADENCE_3:
+    description: "S14 with Category B order cadence = 3 days"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 3
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    ordering_mode: "par_driven"
+    par_level:
+      days_coverage: 30
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+
+  # S14_BPARFLOOR_7: Category B par floor (lead time + 7 days)
+  S14_BPARFLOOR_7:
+    description: "S14 with Category B par floor = lead time + 7 days"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 7
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    ordering_mode: "par_driven"
+    par_level:
+      days_coverage: 30
+    par_floor_buffer_days:
+      B: 7
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+
+  # S14_BPARFLOOR_10: Category B par floor (lead time + 10 days)
+  S14_BPARFLOOR_10:
+    description: "S14 with Category B par floor = lead time + 10 days"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 7
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    ordering_mode: "par_driven"
+    par_level:
+      days_coverage: 30
+    par_floor_buffer_days:
+      B: 10
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+
+  # S14_BPARFLOOR_14: Category B par floor (lead time + 14 days)
+  S14_BPARFLOOR_14:
+    description: "S14 with Category B par floor = lead time + 14 days"
+    shelf_life_days:
+      A: 300
+      B: 300
+      C: 300
+      D: 300
+      E: 180
+    lead_time_days:
+      A: 10
+      B: 10
+      C: 10
+      D: 14
+      E: 7
+    order_cadence_days:
+      A: 7
+      B: 7
+      C: 7
+      D: 7
+      E: 7
+    service_level_target:
+      routine: 0.995
+      critical: 0.995
+    moq_enabled: true
+    moq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    spq_units:
+      A: 25
+      B: 25
+      C: 25
+      D: 25
+      E: 25
+    ordering_mode: "par_driven"
+    par_level:
+      days_coverage: 30
+    par_floor_buffer_days:
+      B: 14
+    shelf_life:
+      mode: "effective"
+      pull_buffer_days: 90
+    lead_time:
+      distribution: "lognormal"
+      median_days: 10
+      p95_days: 60
+
   # S14_POLICY: Code Cart Parameters with Policy Layer (Auto Par vs Forecast)
   S14_POLICY:
     description: "Code cart with policy layer (auto select par vs forecast), effective shelf life, stochastic lead times"

@@ -268,6 +268,7 @@ def simulate_inventory(
     par_level_days: Optional[int] = None,  # Par level in days coverage (for par-driven)
     policy_auto_select: bool = False,  # If True and ordering_mode="auto", select policy automatically
     par_cap_enabled: bool = False,  # If True, cap forecast-driven orders by par level
+    par_floor_buffer_days: Optional[int] = None,  # Category-specific par floor buffer (days)
     shelf_life_mode: Optional[str] = None,  # "effective" or "labeled" (default)
     pull_buffer_days: Optional[int] = None,  # Pull buffer for effective shelf life
     lead_time_distribution: Optional[str] = None,  # "lognormal" or "fixed" (default)
@@ -344,6 +345,11 @@ def simulate_inventory(
             lead_time_median = float(lead_time)  # Use provided lead_time as median
         if lead_time_p95 is None:
             lead_time_p95 = lead_time_median * 3.0  # Default: 3x median for p95
+
+    # Category-specific par floor for par-driven (after lead time settings)
+    if use_par_driven and par_floor_buffer_days is not None:
+        effective_lead_time = int(lead_time_median) if use_stochastic_lead_time and lead_time_median else lead_time
+        par_level_days = max(par_level_days, effective_lead_time + int(par_floor_buffer_days))
     
     # For par-driven or par-capped: Calculate par level ONCE at start (use median lead time for consistency)
     if use_par_driven or par_cap_enabled:
@@ -964,6 +970,7 @@ def generate_scenario(
         policy_auto_select = config_params.get('policy_auto_select', False)
         par_cap_enabled = config_params.get('par_cap_enabled', False)
         par_level_days = config_params.get('par_level_days', None)
+        par_floor_buffer_days = config_params.get('par_floor_buffer_days', None)
         shelf_life_mode = config_params.get('shelf_life_mode', None)
         pull_buffer_days = config_params.get('pull_buffer_days', None)
         lead_time_distribution = config_params.get('lead_time_distribution', None)
@@ -982,6 +989,7 @@ def generate_scenario(
         policy_auto_select = False
         par_cap_enabled = False
         par_level_days = None
+        par_floor_buffer_days = None
         shelf_life_mode = None
         pull_buffer_days = None
         lead_time_distribution = None
@@ -1019,6 +1027,7 @@ def generate_scenario(
         par_level_days=par_level_days,
         policy_auto_select=policy_auto_select,
         par_cap_enabled=par_cap_enabled,
+        par_floor_buffer_days=par_floor_buffer_days,
         shelf_life_mode=shelf_life_mode,
         pull_buffer_days=pull_buffer_days,
         lead_time_distribution=lead_time_distribution,

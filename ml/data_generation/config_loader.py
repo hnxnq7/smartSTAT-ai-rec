@@ -156,6 +156,15 @@ def get_category_params(
     # Forecast-driven par cap (optional)
     params['par_cap_enabled'] = config.get('par_cap_enabled', False)
     
+    # Par floor buffer (category-specific, in days)
+    par_floor_buffer = config.get('par_floor_buffer_days', {})
+    if isinstance(par_floor_buffer, dict) and category in par_floor_buffer:
+        params['par_floor_buffer_days'] = par_floor_buffer.get(category)
+    elif isinstance(par_floor_buffer, (int, float)):
+        params['par_floor_buffer_days'] = par_floor_buffer
+    else:
+        params['par_floor_buffer_days'] = None
+    
     # Shelf life mode (effective vs labeled)
     shelf_life_config = config.get('shelf_life', {})
     if isinstance(shelf_life_config, dict):
