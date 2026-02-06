@@ -203,6 +203,9 @@ def train_and_evaluate_dataset(
     expired_units_data = test_df["expired_units"].iloc[:len(y_test)] if 'expired_units' in test_df.columns else None
     non_expired_data = test_df["non_expired_inventory"].iloc[:len(y_test)] if 'non_expired_inventory' in test_df.columns else None
     
+    # PRIORITY 3: Get category from dataset_id for category-specific multipliers
+    category = dataset_id[0] if dataset_id and len(dataset_id) > 0 else None
+    
     inventory_metrics = compute_inventory_metrics_simple(
         test_dates_for_stockout,
         daily_actual,
@@ -211,6 +214,7 @@ def train_and_evaluate_dataset(
         lead_time=lead_time,
         expired_units_actual=expired_units_data,
         non_expired_inventory_actual=non_expired_data,
+        category=category,  # PRIORITY 3: Pass category for multipliers
     )
     metrics.update(inventory_metrics)
     

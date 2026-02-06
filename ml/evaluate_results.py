@@ -56,6 +56,12 @@ def load_all_metrics(models_dir: Path, horizon: int, objective: str) -> pd.DataF
                 # Keep raw metrics for reference
                 "mae": data["metrics"].get("mae"),
                 "rmse": data["metrics"].get("rmse"),
+                # Waste metrics (Priority 1+)
+                "expired_units_total": data["metrics"].get("expired_units_total"),
+                "expired_rate": data["metrics"].get("expired_rate"),
+                "non_expired_negative_days": data["metrics"].get("non_expired_negative_days", 0),
+                "avg_non_expired_inventory": data["metrics"].get("avg_non_expired_inventory"),
+                "total_days": data["metrics"].get("total_days"),
             })
         except Exception as e:
             print(f"Error loading {metrics_file}: {e}")

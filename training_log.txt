@@ -1,0 +1,1125 @@
+Training on 50 datasets: ['A1', 'A10', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'B1', 'B10', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'C1', 'C10', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'D1', 'D10', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'E1', 'E10', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'E9']
+
+============================================================
+Dataset: A1, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[35]	train's rmse: 17.0819	val's rmse: 36.2639
+
+Evaluating on test set...
+MAE: 29.34, RMSE: 36.24, MAPE: 3.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A1/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A1/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A1/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A1/metrics_h14_l2.json
+
+============================================================
+Dataset: A10, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 27.4395	val's rmse: 31.8387
+
+Evaluating on test set...
+MAE: 16.61, RMSE: 21.91, MAPE: 2.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A10/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A10/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A10/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A10/metrics_h14_l2.json
+
+============================================================
+Dataset: A2, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 34.347	val's rmse: 25.752
+
+Evaluating on test set...
+MAE: 24.95, RMSE: 30.02, MAPE: 2.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A2/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A2/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A2/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A2/metrics_h14_l2.json
+
+============================================================
+Dataset: A3, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[29]	train's rmse: 19.0193	val's rmse: 42.4758
+
+Evaluating on test set...
+MAE: 23.22, RMSE: 29.46, MAPE: 3.4%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A3/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A3/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A3/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A3/metrics_h14_l2.json
+
+============================================================
+Dataset: A4, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 23.1032	val's rmse: 23.16
+
+Evaluating on test set...
+MAE: 23.91, RMSE: 29.15, MAPE: 3.7%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A4/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A4/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A4/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A4/metrics_h14_l2.json
+
+============================================================
+Dataset: A5, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[8]	train's rmse: 29.5094	val's rmse: 28.1834
+
+Evaluating on test set...
+MAE: 31.06, RMSE: 38.86, MAPE: 3.4%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A5/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A5/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A5/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A5/metrics_h14_l2.json
+
+============================================================
+Dataset: A6, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 10.046	val's rmse: 22.5921
+Early stopping, best iteration is:
+[65]	train's rmse: 12.2895	val's rmse: 21.9027
+
+Evaluating on test set...
+MAE: 27.74, RMSE: 33.63, MAPE: 3.9%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A6/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A6/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A6/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A6/metrics_h14_l2.json
+
+============================================================
+Dataset: A7, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 20.5971	val's rmse: 28.9062
+
+Evaluating on test set...
+MAE: 19.81, RMSE: 23.98, MAPE: 3.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A7/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A7/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A7/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A7/metrics_h14_l2.json
+
+============================================================
+Dataset: A8, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[5]	train's rmse: 29.6617	val's rmse: 36.8422
+
+Evaluating on test set...
+MAE: 31.76, RMSE: 37.23, MAPE: 5.0%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A8/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A8/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A8/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A8/metrics_h14_l2.json
+
+============================================================
+Dataset: A9, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[30]	train's rmse: 13.5895	val's rmse: 41.6884
+
+Evaluating on test set...
+MAE: 23.26, RMSE: 29.22, MAPE: 3.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A9/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A9/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A9/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/A9/metrics_h14_l2.json
+
+============================================================
+Dataset: B1, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[3]	train's rmse: 6.11105	val's rmse: 2.65449
+
+Evaluating on test set...
+MAE: 3.34, RMSE: 4.18, MAPE: 80.4%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B1/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B1/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B1/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B1/metrics_h14_l2.json
+
+============================================================
+Dataset: B10, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 5.40056	val's rmse: 11.1508
+
+Evaluating on test set...
+MAE: 2.82, RMSE: 3.52, MAPE: 62.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B10/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B10/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B10/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B10/metrics_h14_l2.json
+
+============================================================
+Dataset: B2, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 2.27263	val's rmse: 1.36657
+
+Evaluating on test set...
+MAE: 1.98, RMSE: 4.33, MAPE: 62.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B2/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B2/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B2/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B2/metrics_h14_l2.json
+
+============================================================
+Dataset: B3, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 4.32699	val's rmse: 2.32893
+
+Evaluating on test set...
+MAE: 2.74, RMSE: 4.07, MAPE: 115.0%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B3/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B3/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B3/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B3/metrics_h14_l2.json
+
+============================================================
+Dataset: B4, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 1.55554	val's rmse: 2.6718
+Early stopping, best iteration is:
+[94]	train's rmse: 1.61704	val's rmse: 2.62989
+
+Evaluating on test set...
+MAE: 5.71, RMSE: 8.42, MAPE: 48.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B4/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B4/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B4/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B4/metrics_h14_l2.json
+
+============================================================
+Dataset: B5, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[4]	train's rmse: 1.84588	val's rmse: 2.09389
+
+Evaluating on test set...
+MAE: 2.11, RMSE: 3.14, MAPE: 74.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B5/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B5/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B5/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B5/metrics_h14_l2.json
+
+============================================================
+Dataset: B6, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[4]	train's rmse: 3.80775	val's rmse: 1.55938
+
+Evaluating on test set...
+MAE: 1.63, RMSE: 2.01, MAPE: 90.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B6/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B6/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B6/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B6/metrics_h14_l2.json
+
+============================================================
+Dataset: B7, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[42]	train's rmse: 1.52837	val's rmse: 9.42902
+
+Evaluating on test set...
+MAE: 1.65, RMSE: 2.29, MAPE: 94.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B7/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B7/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B7/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B7/metrics_h14_l2.json
+
+============================================================
+Dataset: B8, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[3]	train's rmse: 4.20786	val's rmse: 3.57203
+
+Evaluating on test set...
+MAE: 3.86, RMSE: 5.84, MAPE: 121.9%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B8/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B8/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B8/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B8/metrics_h14_l2.json
+
+============================================================
+Dataset: B9, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 0.913385	val's rmse: 7.4612
+Early stopping, best iteration is:
+[145]	train's rmse: 0.778586	val's rmse: 7.40715
+
+Evaluating on test set...
+MAE: 4.76, RMSE: 7.63, MAPE: 96.0%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B9/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B9/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B9/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/B9/metrics_h14_l2.json
+
+============================================================
+Dataset: C1, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 6.62863	val's rmse: 21.2712
+Early stopping, best iteration is:
+[66]	train's rmse: 8.23487	val's rmse: 20.9638
+
+Evaluating on test set...
+MAE: 12.91, RMSE: 16.48, MAPE: 5.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C1/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C1/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C1/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C1/metrics_h14_l2.json
+
+============================================================
+Dataset: C10, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[49]	train's rmse: 5.5319	val's rmse: 14.4606
+
+Evaluating on test set...
+MAE: 10.37, RMSE: 13.65, MAPE: 9.4%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C10/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C10/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C10/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C10/metrics_h14_l2.json
+
+============================================================
+Dataset: C2, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 8.2275	val's rmse: 10.6452
+
+Evaluating on test set...
+MAE: 9.19, RMSE: 11.74, MAPE: 7.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C2/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C2/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C2/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C2/metrics_h14_l2.json
+
+============================================================
+Dataset: C3, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[4]	train's rmse: 13.1776	val's rmse: 25.1904
+
+Evaluating on test set...
+MAE: 10.40, RMSE: 12.80, MAPE: 6.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C3/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C3/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C3/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C3/metrics_h14_l2.json
+
+============================================================
+Dataset: C4, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[10]	train's rmse: 14.7669	val's rmse: 14.0986
+
+Evaluating on test set...
+MAE: 10.89, RMSE: 14.08, MAPE: 6.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C4/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C4/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C4/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C4/metrics_h14_l2.json
+
+============================================================
+Dataset: C5, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[35]	train's rmse: 8.90055	val's rmse: 23.0788
+
+Evaluating on test set...
+MAE: 14.49, RMSE: 17.85, MAPE: 7.2%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C5/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C5/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C5/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C5/metrics_h14_l2.json
+
+============================================================
+Dataset: C6, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[3]	train's rmse: 10.3092	val's rmse: 9.47101
+
+Evaluating on test set...
+MAE: 8.43, RMSE: 10.65, MAPE: 7.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C6/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C6/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C6/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C6/metrics_h14_l2.json
+
+============================================================
+Dataset: C7, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[40]	train's rmse: 7.10556	val's rmse: 12.8646
+
+Evaluating on test set...
+MAE: 12.71, RMSE: 14.99, MAPE: 7.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C7/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C7/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C7/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C7/metrics_h14_l2.json
+
+============================================================
+Dataset: C8, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[11]	train's rmse: 13.0979	val's rmse: 11.0905
+
+Evaluating on test set...
+MAE: 12.88, RMSE: 16.04, MAPE: 6.3%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C8/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C8/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C8/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C8/metrics_h14_l2.json
+
+============================================================
+Dataset: C9, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[24]	train's rmse: 11.1523	val's rmse: 9.54894
+
+Evaluating on test set...
+MAE: 10.85, RMSE: 13.99, MAPE: 4.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C9/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C9/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C9/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/C9/metrics_h14_l2.json
+
+============================================================
+Dataset: D1, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 3.97192	val's rmse: 15.6165
+Early stopping, best iteration is:
+[80]	train's rmse: 4.4561	val's rmse: 15.4561
+
+Evaluating on test set...
+MAE: 12.27, RMSE: 15.09, MAPE: 9.0%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D1/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D1/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D1/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D1/metrics_h14_l2.json
+
+============================================================
+Dataset: D10, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 4.76093	val's rmse: 13.8674
+[200]	train's rmse: 2.92754	val's rmse: 13.8669
+Early stopping, best iteration is:
+[155]	train's rmse: 3.61929	val's rmse: 13.7897
+
+Evaluating on test set...
+MAE: 10.78, RMSE: 13.91, MAPE: 8.0%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D10/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D10/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D10/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D10/metrics_h14_l2.json
+
+============================================================
+Dataset: D2, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 4.7181	val's rmse: 14.0003
+Early stopping, best iteration is:
+[50]	train's rmse: 7.60208	val's rmse: 12.8144
+
+Evaluating on test set...
+MAE: 13.35, RMSE: 17.24, MAPE: 6.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D2/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D2/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D2/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D2/metrics_h14_l2.json
+
+============================================================
+Dataset: D3, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 50.4837	val's rmse: 17.5225
+
+Evaluating on test set...
+MAE: 32.60, RMSE: 38.69, MAPE: 24.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D3/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D3/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D3/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D3/metrics_h14_l2.json
+
+============================================================
+Dataset: D4, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 3.98753	val's rmse: 6.77681
+Early stopping, best iteration is:
+[55]	train's rmse: 5.36765	val's rmse: 6.69292
+
+Evaluating on test set...
+MAE: 9.02, RMSE: 10.95, MAPE: 7.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D4/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D4/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D4/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D4/metrics_h14_l2.json
+
+============================================================
+Dataset: D5, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 4.52539	val's rmse: 14.0716
+Early stopping, best iteration is:
+[130]	train's rmse: 3.90001	val's rmse: 14.0144
+
+Evaluating on test set...
+MAE: 14.55, RMSE: 18.40, MAPE: 8.8%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D5/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D5/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D5/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D5/metrics_h14_l2.json
+
+============================================================
+Dataset: D6, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[16]	train's rmse: 25.3771	val's rmse: 15.5733
+
+Evaluating on test set...
+MAE: 22.18, RMSE: 27.85, MAPE: 11.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D6/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D6/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D6/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D6/metrics_h14_l2.json
+
+============================================================
+Dataset: D7, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[38]	train's rmse: 7.90368	val's rmse: 14.1382
+
+Evaluating on test set...
+MAE: 11.31, RMSE: 14.98, MAPE: 9.2%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D7/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D7/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D7/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D7/metrics_h14_l2.json
+
+============================================================
+Dataset: D8, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 4.8799	val's rmse: 11.8336
+[200]	train's rmse: 3.13877	val's rmse: 11.3317
+Early stopping, best iteration is:
+[163]	train's rmse: 3.66605	val's rmse: 11.2314
+
+Evaluating on test set...
+MAE: 10.26, RMSE: 13.44, MAPE: 9.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D8/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D8/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D8/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D8/metrics_h14_l2.json
+
+============================================================
+Dataset: D9, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 7.16772	val's rmse: 14.711
+Early stopping, best iteration is:
+[72]	train's rmse: 8.63956	val's rmse: 14.5395
+
+Evaluating on test set...
+MAE: 12.91, RMSE: 16.32, MAPE: 5.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D9/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D9/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D9/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/D9/metrics_h14_l2.json
+
+============================================================
+Dataset: E1, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[25]	train's rmse: 13.9782	val's rmse: 12.9974
+
+Evaluating on test set...
+MAE: 8.90, RMSE: 10.97, MAPE: 7.6%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E1/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E1/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E1/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E1/metrics_h14_l2.json
+
+============================================================
+Dataset: E10, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[1]	train's rmse: 30.8744	val's rmse: 15.2575
+
+Evaluating on test set...
+MAE: 16.06, RMSE: 19.10, MAPE: 17.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E10/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E10/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E10/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E10/metrics_h14_l2.json
+
+============================================================
+Dataset: E2, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 3.85949	val's rmse: 10.664
+Early stopping, best iteration is:
+[50]	train's rmse: 5.32859	val's rmse: 10.1477
+
+Evaluating on test set...
+MAE: 9.40, RMSE: 10.94, MAPE: 10.7%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E2/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E2/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E2/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E2/metrics_h14_l2.json
+
+============================================================
+Dataset: E3, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[46]	train's rmse: 12.4441	val's rmse: 39.3439
+
+Evaluating on test set...
+MAE: 11.91, RMSE: 20.15, MAPE: 12.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E3/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E3/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E3/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E3/metrics_h14_l2.json
+
+============================================================
+Dataset: E4, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 7.16664	val's rmse: 11.0088
+Early stopping, best iteration is:
+[79]	train's rmse: 8.2287	val's rmse: 10.9413
+
+Evaluating on test set...
+MAE: 17.78, RMSE: 24.50, MAPE: 10.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E4/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E4/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E4/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E4/metrics_h14_l2.json
+
+============================================================
+Dataset: E5, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+[100]	train's rmse: 9.54219	val's rmse: 11.4713
+Early stopping, best iteration is:
+[75]	train's rmse: 10.4553	val's rmse: 11.2825
+
+Evaluating on test set...
+MAE: 15.96, RMSE: 21.66, MAPE: 14.9%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E5/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E5/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E5/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E5/metrics_h14_l2.json
+
+============================================================
+Dataset: E6, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[34]	train's rmse: 8.9327	val's rmse: 9.22521
+
+Evaluating on test set...
+MAE: 20.16, RMSE: 27.77, MAPE: 10.1%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E6/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E6/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E6/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E6/metrics_h14_l2.json
+
+============================================================
+Dataset: E7, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[18]	train's rmse: 22.6532	val's rmse: 26.9738
+
+Evaluating on test set...
+MAE: 13.41, RMSE: 16.00, MAPE: 7.5%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E7/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E7/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E7/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E7/metrics_h14_l2.json
+
+============================================================
+Dataset: E8, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[45]	train's rmse: 15.1137	val's rmse: 12.4448
+
+Evaluating on test set...
+MAE: 14.43, RMSE: 20.59, MAPE: 16.4%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E8/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E8/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E8/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E8/metrics_h14_l2.json
+
+============================================================
+Dataset: E9, Horizon: 14, Objective: l2
+============================================================
+Train: 731 rows (2023-01-01 00:00:00 to 2024-12-31 00:00:00)
+Test: 365 rows (2025-01-01 00:00:00 to 2025-12-31 00:00:00)
+Features: 19 (total_onsite_units, expired_units, used_units, newly_added_units, ordered_units...)
+Train samples: 717, Test samples: 351
+Train split: 627, Validation: 90
+
+Training model...
+Training until validation scores don't improve for 50 rounds
+Early stopping, best iteration is:
+[41]	train's rmse: 10.5924	val's rmse: 11.1545
+
+Evaluating on test set...
+MAE: 13.15, RMSE: 16.58, MAPE: 9.7%
+Saved model to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E9/model_h14_l2.txt
+Saved feature importance to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E9/feature_importance_h14_l2.csv
+Saved predictions to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E9/predictions_h14_l2.csv
+Saved metrics to /Users/hnxnq712/CSFiles/smartSTAT/ml/models/E9/metrics_h14_l2.json
+
+================================================================================
+SUMMARY
+================================================================================
+Dataset    Horizon  MAE        RMSE       MAPE      
+--------------------------------------------------------------------------------
+A1         14       29.34      36.24      3.1%      
+A10        14       16.61      21.91      2.6%      
+A2         14       24.95      30.02      2.5%      
+A3         14       23.22      29.46      3.4%      
+A4         14       23.91      29.15      3.7%      
+A5         14       31.06      38.86      3.4%      
+A6         14       27.74      33.63      3.9%      
+A7         14       19.81      23.98      3.1%      
+A8         14       31.76      37.23      5.0%      
+A9         14       23.26      29.22      3.6%      
+B1         14       3.34       4.18       80.4%     
+B10        14       2.82       3.52       62.8%     
+B2         14       1.98       4.33       62.8%     
+B3         14       2.74       4.07       115.0%    
+B4         14       5.71       8.42       48.1%     
+B5         14       2.11       3.14       74.6%     
+B6         14       1.63       2.01       90.1%     
+B7         14       1.65       2.29       94.5%     
+B8         14       3.86       5.84       121.9%    
+B9         14       4.76       7.63       96.0%     
+C1         14       12.91      16.48      5.8%      
+C10        14       10.37      13.65      9.4%      
+C2         14       9.19       11.74      7.8%      
+C3         14       10.40      12.80      6.1%      
+C4         14       10.89      14.08      6.8%      
+C5         14       14.49      17.85      7.2%      
+C6         14       8.43       10.65      7.5%      
+C7         14       12.71      14.99      7.8%      
+C8         14       12.88      16.04      6.3%      
+C9         14       10.85      13.99      4.6%      
+D1         14       12.27      15.09      9.0%      
+D10        14       10.78      13.91      8.0%      
+D2         14       13.35      17.24      6.1%      
+D3         14       32.60      38.69      24.6%     
+D4         14       9.02       10.95      7.6%      
+D5         14       14.55      18.40      8.8%      
+D6         14       22.18      27.85      11.5%     
+D7         14       11.31      14.98      9.2%      
+D8         14       10.26      13.44      9.6%      
+D9         14       12.91      16.32      5.6%      
+E1         14       8.90       10.97      7.6%      
+E10        14       16.06      19.10      17.5%     
+E2         14       9.40       10.94      10.7%     
+E3         14       11.91      20.15      12.5%     
+E4         14       17.78      24.50      10.5%     
+E5         14       15.96      21.66      14.9%     
+E6         14       20.16      27.77      10.1%     
+E7         14       13.41      16.00      7.5%      
+E8         14       14.43      20.59      16.4%     
+E9         14       13.15      16.58      9.7%      
+================================================================================
+Results saved to: /Users/hnxnq712/CSFiles/smartSTAT/ml/models

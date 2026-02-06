@@ -1,0 +1,1024 @@
+======================================================================
+Re-evaluating 500 models with improved inventory simulation
+======================================================================
+Data directory: ml/data/synthetic_bank_organized
+Model directory: ml/models_all_500
+Horizon: 14
+Objective: asymmetric
+
+[1/500] Re-evaluating A001... Saved metrics to ml/models_all_500/A001/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[2/500] Re-evaluating A002... Saved metrics to ml/models_all_500/A002/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[3/500] Re-evaluating A003... Saved metrics to ml/models_all_500/A003/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[4/500] Re-evaluating A004... Saved metrics to ml/models_all_500/A004/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[5/500] Re-evaluating A005... Saved metrics to ml/models_all_500/A005/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[6/500] Re-evaluating A006... Saved metrics to ml/models_all_500/A006/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[7/500] Re-evaluating A007... Saved metrics to ml/models_all_500/A007/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[8/500] Re-evaluating A008... Saved metrics to ml/models_all_500/A008/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[9/500] Re-evaluating A009... Saved metrics to ml/models_all_500/A009/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[10/500] Re-evaluating A010... Saved metrics to ml/models_all_500/A010/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[11/500] Re-evaluating A011... Saved metrics to ml/models_all_500/A011/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[12/500] Re-evaluating A012... Saved metrics to ml/models_all_500/A012/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[13/500] Re-evaluating A013... Saved metrics to ml/models_all_500/A013/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[14/500] Re-evaluating A014... Saved metrics to ml/models_all_500/A014/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[15/500] Re-evaluating A015... Saved metrics to ml/models_all_500/A015/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[16/500] Re-evaluating A016... Saved metrics to ml/models_all_500/A016/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[17/500] Re-evaluating A017... Saved metrics to ml/models_all_500/A017/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[18/500] Re-evaluating A018... Saved metrics to ml/models_all_500/A018/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[19/500] Re-evaluating A019... Saved metrics to ml/models_all_500/A019/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[20/500] Re-evaluating A020... Saved metrics to ml/models_all_500/A020/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[21/500] Re-evaluating A021... Saved metrics to ml/models_all_500/A021/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[22/500] Re-evaluating A022... Saved metrics to ml/models_all_500/A022/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[23/500] Re-evaluating A023... Saved metrics to ml/models_all_500/A023/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[24/500] Re-evaluating A024... Saved metrics to ml/models_all_500/A024/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[25/500] Re-evaluating A025... Saved metrics to ml/models_all_500/A025/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[26/500] Re-evaluating A026... Saved metrics to ml/models_all_500/A026/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[27/500] Re-evaluating A027... Saved metrics to ml/models_all_500/A027/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[28/500] Re-evaluating A028... Saved metrics to ml/models_all_500/A028/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[29/500] Re-evaluating A029... Saved metrics to ml/models_all_500/A029/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[30/500] Re-evaluating A030... Saved metrics to ml/models_all_500/A030/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[31/500] Re-evaluating A031... Saved metrics to ml/models_all_500/A031/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[32/500] Re-evaluating A032... Saved metrics to ml/models_all_500/A032/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[33/500] Re-evaluating A033... Saved metrics to ml/models_all_500/A033/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[34/500] Re-evaluating A034... Saved metrics to ml/models_all_500/A034/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[35/500] Re-evaluating A035... Saved metrics to ml/models_all_500/A035/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[36/500] Re-evaluating A036... Saved metrics to ml/models_all_500/A036/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[37/500] Re-evaluating A037... Saved metrics to ml/models_all_500/A037/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[38/500] Re-evaluating A038... Saved metrics to ml/models_all_500/A038/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[39/500] Re-evaluating A039... Saved metrics to ml/models_all_500/A039/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[40/500] Re-evaluating A040... Saved metrics to ml/models_all_500/A040/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[41/500] Re-evaluating A041... Saved metrics to ml/models_all_500/A041/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[42/500] Re-evaluating A042... Saved metrics to ml/models_all_500/A042/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[43/500] Re-evaluating A043... Saved metrics to ml/models_all_500/A043/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[44/500] Re-evaluating A044... Saved metrics to ml/models_all_500/A044/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[45/500] Re-evaluating A045... Saved metrics to ml/models_all_500/A045/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[46/500] Re-evaluating A046... Saved metrics to ml/models_all_500/A046/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[47/500] Re-evaluating A047... Saved metrics to ml/models_all_500/A047/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[48/500] Re-evaluating A048... Saved metrics to ml/models_all_500/A048/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[49/500] Re-evaluating A049... Saved metrics to ml/models_all_500/A049/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[50/500] Re-evaluating A050... Saved metrics to ml/models_all_500/A050/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[51/500] Re-evaluating A051... Saved metrics to ml/models_all_500/A051/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[52/500] Re-evaluating A052... Saved metrics to ml/models_all_500/A052/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[53/500] Re-evaluating A053... Saved metrics to ml/models_all_500/A053/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[54/500] Re-evaluating A054... Saved metrics to ml/models_all_500/A054/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[55/500] Re-evaluating A055... Saved metrics to ml/models_all_500/A055/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[56/500] Re-evaluating A056... Saved metrics to ml/models_all_500/A056/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[57/500] Re-evaluating A057... Saved metrics to ml/models_all_500/A057/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[58/500] Re-evaluating A058... Saved metrics to ml/models_all_500/A058/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[59/500] Re-evaluating A059... Saved metrics to ml/models_all_500/A059/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[60/500] Re-evaluating A060... Saved metrics to ml/models_all_500/A060/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[61/500] Re-evaluating A061... Saved metrics to ml/models_all_500/A061/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[62/500] Re-evaluating A062... Saved metrics to ml/models_all_500/A062/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[63/500] Re-evaluating A063... Saved metrics to ml/models_all_500/A063/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[64/500] Re-evaluating A064... Saved metrics to ml/models_all_500/A064/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[65/500] Re-evaluating A065... Saved metrics to ml/models_all_500/A065/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[66/500] Re-evaluating A066... Saved metrics to ml/models_all_500/A066/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[67/500] Re-evaluating A067... Saved metrics to ml/models_all_500/A067/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[68/500] Re-evaluating A068... Saved metrics to ml/models_all_500/A068/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[69/500] Re-evaluating A069... Saved metrics to ml/models_all_500/A069/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[70/500] Re-evaluating A070... Saved metrics to ml/models_all_500/A070/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[71/500] Re-evaluating A071... Saved metrics to ml/models_all_500/A071/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[72/500] Re-evaluating A072... Saved metrics to ml/models_all_500/A072/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[73/500] Re-evaluating A073... Saved metrics to ml/models_all_500/A073/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[74/500] Re-evaluating A074... Saved metrics to ml/models_all_500/A074/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[75/500] Re-evaluating A075... Saved metrics to ml/models_all_500/A075/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[76/500] Re-evaluating A076... Saved metrics to ml/models_all_500/A076/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[77/500] Re-evaluating A077... Saved metrics to ml/models_all_500/A077/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[78/500] Re-evaluating A078... Saved metrics to ml/models_all_500/A078/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[79/500] Re-evaluating A079... Saved metrics to ml/models_all_500/A079/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[80/500] Re-evaluating A080... Saved metrics to ml/models_all_500/A080/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[81/500] Re-evaluating A081... Saved metrics to ml/models_all_500/A081/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[82/500] Re-evaluating A082... Saved metrics to ml/models_all_500/A082/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[83/500] Re-evaluating A083... Saved metrics to ml/models_all_500/A083/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[84/500] Re-evaluating A084... Saved metrics to ml/models_all_500/A084/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[85/500] Re-evaluating A085... Saved metrics to ml/models_all_500/A085/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[86/500] Re-evaluating A086... Saved metrics to ml/models_all_500/A086/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[87/500] Re-evaluating A087... Saved metrics to ml/models_all_500/A087/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[88/500] Re-evaluating A088... Saved metrics to ml/models_all_500/A088/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[89/500] Re-evaluating A089... Saved metrics to ml/models_all_500/A089/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[90/500] Re-evaluating A090... Saved metrics to ml/models_all_500/A090/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[91/500] Re-evaluating A091... Saved metrics to ml/models_all_500/A091/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[92/500] Re-evaluating A092... Saved metrics to ml/models_all_500/A092/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[93/500] Re-evaluating A093... Saved metrics to ml/models_all_500/A093/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[94/500] Re-evaluating A094... Saved metrics to ml/models_all_500/A094/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[95/500] Re-evaluating A095... Saved metrics to ml/models_all_500/A095/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[96/500] Re-evaluating A096... Saved metrics to ml/models_all_500/A096/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[97/500] Re-evaluating A097... Saved metrics to ml/models_all_500/A097/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[98/500] Re-evaluating A098... Saved metrics to ml/models_all_500/A098/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[99/500] Re-evaluating A099... Saved metrics to ml/models_all_500/A099/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[100/500] Re-evaluating A100... Saved metrics to ml/models_all_500/A100/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[101/500] Re-evaluating B001... Saved metrics to ml/models_all_500/B001/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[102/500] Re-evaluating B002... Saved metrics to ml/models_all_500/B002/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[103/500] Re-evaluating B003... Saved metrics to ml/models_all_500/B003/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[104/500] Re-evaluating B004... Saved metrics to ml/models_all_500/B004/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[105/500] Re-evaluating B005... Saved metrics to ml/models_all_500/B005/metrics_h14_asymmetric.json
+✓ Stockout: 2.28%
+[106/500] Re-evaluating B006... Saved metrics to ml/models_all_500/B006/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[107/500] Re-evaluating B007... Saved metrics to ml/models_all_500/B007/metrics_h14_asymmetric.json
+✓ Stockout: 3.13%
+[108/500] Re-evaluating B008... Saved metrics to ml/models_all_500/B008/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[109/500] Re-evaluating B009... Saved metrics to ml/models_all_500/B009/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[110/500] Re-evaluating B010... Saved metrics to ml/models_all_500/B010/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[111/500] Re-evaluating B011... Saved metrics to ml/models_all_500/B011/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[112/500] Re-evaluating B012... Saved metrics to ml/models_all_500/B012/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[113/500] Re-evaluating B013... Saved metrics to ml/models_all_500/B013/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[114/500] Re-evaluating B014... Saved metrics to ml/models_all_500/B014/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[115/500] Re-evaluating B015... Saved metrics to ml/models_all_500/B015/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[116/500] Re-evaluating B016... Saved metrics to ml/models_all_500/B016/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[117/500] Re-evaluating B017... Saved metrics to ml/models_all_500/B017/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[118/500] Re-evaluating B018... Saved metrics to ml/models_all_500/B018/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[119/500] Re-evaluating B019... Saved metrics to ml/models_all_500/B019/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[120/500] Re-evaluating B020... Saved metrics to ml/models_all_500/B020/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[121/500] Re-evaluating B021... Saved metrics to ml/models_all_500/B021/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[122/500] Re-evaluating B022... Saved metrics to ml/models_all_500/B022/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[123/500] Re-evaluating B023... Saved metrics to ml/models_all_500/B023/metrics_h14_asymmetric.json
+✓ Stockout: 2.56%
+[124/500] Re-evaluating B024... Saved metrics to ml/models_all_500/B024/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[125/500] Re-evaluating B025... Saved metrics to ml/models_all_500/B025/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[126/500] Re-evaluating B026... Saved metrics to ml/models_all_500/B026/metrics_h14_asymmetric.json
+✓ Stockout: 2.56%
+[127/500] Re-evaluating B027... Saved metrics to ml/models_all_500/B027/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[128/500] Re-evaluating B028... Saved metrics to ml/models_all_500/B028/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[129/500] Re-evaluating B029... Saved metrics to ml/models_all_500/B029/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[130/500] Re-evaluating B030... Saved metrics to ml/models_all_500/B030/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[131/500] Re-evaluating B031... Saved metrics to ml/models_all_500/B031/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[132/500] Re-evaluating B032... Saved metrics to ml/models_all_500/B032/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[133/500] Re-evaluating B033... Saved metrics to ml/models_all_500/B033/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[134/500] Re-evaluating B034... Saved metrics to ml/models_all_500/B034/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[135/500] Re-evaluating B035... Saved metrics to ml/models_all_500/B035/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[136/500] Re-evaluating B036... Saved metrics to ml/models_all_500/B036/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[137/500] Re-evaluating B037... Saved metrics to ml/models_all_500/B037/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[138/500] Re-evaluating B038... Saved metrics to ml/models_all_500/B038/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[139/500] Re-evaluating B039... Saved metrics to ml/models_all_500/B039/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[140/500] Re-evaluating B040... Saved metrics to ml/models_all_500/B040/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[141/500] Re-evaluating B041... Saved metrics to ml/models_all_500/B041/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[142/500] Re-evaluating B042... Saved metrics to ml/models_all_500/B042/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[143/500] Re-evaluating B043... Saved metrics to ml/models_all_500/B043/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[144/500] Re-evaluating B044... Saved metrics to ml/models_all_500/B044/metrics_h14_asymmetric.json
+✓ Stockout: 3.42%
+[145/500] Re-evaluating B045... Saved metrics to ml/models_all_500/B045/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[146/500] Re-evaluating B046... Saved metrics to ml/models_all_500/B046/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[147/500] Re-evaluating B047... Saved metrics to ml/models_all_500/B047/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[148/500] Re-evaluating B048... Saved metrics to ml/models_all_500/B048/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[149/500] Re-evaluating B049... Saved metrics to ml/models_all_500/B049/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[150/500] Re-evaluating B050... Saved metrics to ml/models_all_500/B050/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[151/500] Re-evaluating B051... Saved metrics to ml/models_all_500/B051/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[152/500] Re-evaluating B052... Saved metrics to ml/models_all_500/B052/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[153/500] Re-evaluating B053... Saved metrics to ml/models_all_500/B053/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[154/500] Re-evaluating B054... Saved metrics to ml/models_all_500/B054/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[155/500] Re-evaluating B055... Saved metrics to ml/models_all_500/B055/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[156/500] Re-evaluating B056... Saved metrics to ml/models_all_500/B056/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[157/500] Re-evaluating B057... Saved metrics to ml/models_all_500/B057/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[158/500] Re-evaluating B058... Saved metrics to ml/models_all_500/B058/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[159/500] Re-evaluating B059... Saved metrics to ml/models_all_500/B059/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[160/500] Re-evaluating B060... Saved metrics to ml/models_all_500/B060/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[161/500] Re-evaluating B061... Saved metrics to ml/models_all_500/B061/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[162/500] Re-evaluating B062... Saved metrics to ml/models_all_500/B062/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[163/500] Re-evaluating B063... Saved metrics to ml/models_all_500/B063/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[164/500] Re-evaluating B064... Saved metrics to ml/models_all_500/B064/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[165/500] Re-evaluating B065... Saved metrics to ml/models_all_500/B065/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[166/500] Re-evaluating B066... Saved metrics to ml/models_all_500/B066/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[167/500] Re-evaluating B067... Saved metrics to ml/models_all_500/B067/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[168/500] Re-evaluating B068... Saved metrics to ml/models_all_500/B068/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[169/500] Re-evaluating B069... Saved metrics to ml/models_all_500/B069/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[170/500] Re-evaluating B070... Saved metrics to ml/models_all_500/B070/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[171/500] Re-evaluating B071... Saved metrics to ml/models_all_500/B071/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[172/500] Re-evaluating B072... Saved metrics to ml/models_all_500/B072/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[173/500] Re-evaluating B073... Saved metrics to ml/models_all_500/B073/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[174/500] Re-evaluating B074... Saved metrics to ml/models_all_500/B074/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[175/500] Re-evaluating B075... Saved metrics to ml/models_all_500/B075/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[176/500] Re-evaluating B076... Saved metrics to ml/models_all_500/B076/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[177/500] Re-evaluating B077... Saved metrics to ml/models_all_500/B077/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[178/500] Re-evaluating B078... Saved metrics to ml/models_all_500/B078/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[179/500] Re-evaluating B079... Saved metrics to ml/models_all_500/B079/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[180/500] Re-evaluating B080... Saved metrics to ml/models_all_500/B080/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[181/500] Re-evaluating B081... Saved metrics to ml/models_all_500/B081/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[182/500] Re-evaluating B082... Saved metrics to ml/models_all_500/B082/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[183/500] Re-evaluating B083... Saved metrics to ml/models_all_500/B083/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[184/500] Re-evaluating B084... Saved metrics to ml/models_all_500/B084/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[185/500] Re-evaluating B085... Saved metrics to ml/models_all_500/B085/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[186/500] Re-evaluating B086... Saved metrics to ml/models_all_500/B086/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[187/500] Re-evaluating B087... Saved metrics to ml/models_all_500/B087/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[188/500] Re-evaluating B088... Saved metrics to ml/models_all_500/B088/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[189/500] Re-evaluating B089... Saved metrics to ml/models_all_500/B089/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[190/500] Re-evaluating B090... Saved metrics to ml/models_all_500/B090/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[191/500] Re-evaluating B091... Saved metrics to ml/models_all_500/B091/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[192/500] Re-evaluating B092... Saved metrics to ml/models_all_500/B092/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[193/500] Re-evaluating B093... Saved metrics to ml/models_all_500/B093/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[194/500] Re-evaluating B094... Saved metrics to ml/models_all_500/B094/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[195/500] Re-evaluating B095... Saved metrics to ml/models_all_500/B095/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[196/500] Re-evaluating B096... Saved metrics to ml/models_all_500/B096/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[197/500] Re-evaluating B097... Saved metrics to ml/models_all_500/B097/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[198/500] Re-evaluating B098... Saved metrics to ml/models_all_500/B098/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[199/500] Re-evaluating B099... Saved metrics to ml/models_all_500/B099/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[200/500] Re-evaluating B100... Saved metrics to ml/models_all_500/B100/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[201/500] Re-evaluating C001... Saved metrics to ml/models_all_500/C001/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[202/500] Re-evaluating C002... Saved metrics to ml/models_all_500/C002/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[203/500] Re-evaluating C003... Saved metrics to ml/models_all_500/C003/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[204/500] Re-evaluating C004... Saved metrics to ml/models_all_500/C004/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[205/500] Re-evaluating C005... Saved metrics to ml/models_all_500/C005/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[206/500] Re-evaluating C006... Saved metrics to ml/models_all_500/C006/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[207/500] Re-evaluating C007... Saved metrics to ml/models_all_500/C007/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[208/500] Re-evaluating C008... Saved metrics to ml/models_all_500/C008/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[209/500] Re-evaluating C009... Saved metrics to ml/models_all_500/C009/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[210/500] Re-evaluating C010... Saved metrics to ml/models_all_500/C010/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[211/500] Re-evaluating C011... Saved metrics to ml/models_all_500/C011/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[212/500] Re-evaluating C012... Saved metrics to ml/models_all_500/C012/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[213/500] Re-evaluating C013... Saved metrics to ml/models_all_500/C013/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[214/500] Re-evaluating C014... Saved metrics to ml/models_all_500/C014/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[215/500] Re-evaluating C015... Saved metrics to ml/models_all_500/C015/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[216/500] Re-evaluating C016... Saved metrics to ml/models_all_500/C016/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[217/500] Re-evaluating C017... Saved metrics to ml/models_all_500/C017/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[218/500] Re-evaluating C018... Saved metrics to ml/models_all_500/C018/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[219/500] Re-evaluating C019... Saved metrics to ml/models_all_500/C019/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[220/500] Re-evaluating C020... Saved metrics to ml/models_all_500/C020/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[221/500] Re-evaluating C021... Saved metrics to ml/models_all_500/C021/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[222/500] Re-evaluating C022... Saved metrics to ml/models_all_500/C022/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[223/500] Re-evaluating C023... Saved metrics to ml/models_all_500/C023/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[224/500] Re-evaluating C024... Saved metrics to ml/models_all_500/C024/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[225/500] Re-evaluating C025... Saved metrics to ml/models_all_500/C025/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[226/500] Re-evaluating C026... Saved metrics to ml/models_all_500/C026/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[227/500] Re-evaluating C027... Saved metrics to ml/models_all_500/C027/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[228/500] Re-evaluating C028... Saved metrics to ml/models_all_500/C028/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[229/500] Re-evaluating C029... Saved metrics to ml/models_all_500/C029/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[230/500] Re-evaluating C030... Saved metrics to ml/models_all_500/C030/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[231/500] Re-evaluating C031... Saved metrics to ml/models_all_500/C031/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[232/500] Re-evaluating C032... Saved metrics to ml/models_all_500/C032/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[233/500] Re-evaluating C033... Saved metrics to ml/models_all_500/C033/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[234/500] Re-evaluating C034... Saved metrics to ml/models_all_500/C034/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[235/500] Re-evaluating C035... Saved metrics to ml/models_all_500/C035/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[236/500] Re-evaluating C036... Saved metrics to ml/models_all_500/C036/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[237/500] Re-evaluating C037... Saved metrics to ml/models_all_500/C037/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[238/500] Re-evaluating C038... Saved metrics to ml/models_all_500/C038/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[239/500] Re-evaluating C039... Saved metrics to ml/models_all_500/C039/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[240/500] Re-evaluating C040... Saved metrics to ml/models_all_500/C040/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[241/500] Re-evaluating C041... Saved metrics to ml/models_all_500/C041/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[242/500] Re-evaluating C042... Saved metrics to ml/models_all_500/C042/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[243/500] Re-evaluating C043... Saved metrics to ml/models_all_500/C043/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[244/500] Re-evaluating C044... Saved metrics to ml/models_all_500/C044/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[245/500] Re-evaluating C045... Saved metrics to ml/models_all_500/C045/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[246/500] Re-evaluating C046... Saved metrics to ml/models_all_500/C046/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[247/500] Re-evaluating C047... Saved metrics to ml/models_all_500/C047/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[248/500] Re-evaluating C048... Saved metrics to ml/models_all_500/C048/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[249/500] Re-evaluating C049... Saved metrics to ml/models_all_500/C049/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[250/500] Re-evaluating C050... Saved metrics to ml/models_all_500/C050/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[251/500] Re-evaluating C051... Saved metrics to ml/models_all_500/C051/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[252/500] Re-evaluating C052... Saved metrics to ml/models_all_500/C052/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[253/500] Re-evaluating C053... Saved metrics to ml/models_all_500/C053/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[254/500] Re-evaluating C054... Saved metrics to ml/models_all_500/C054/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[255/500] Re-evaluating C055... Saved metrics to ml/models_all_500/C055/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[256/500] Re-evaluating C056... Saved metrics to ml/models_all_500/C056/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[257/500] Re-evaluating C057... Saved metrics to ml/models_all_500/C057/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[258/500] Re-evaluating C058... Saved metrics to ml/models_all_500/C058/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[259/500] Re-evaluating C059... Saved metrics to ml/models_all_500/C059/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[260/500] Re-evaluating C060... Saved metrics to ml/models_all_500/C060/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[261/500] Re-evaluating C061... Saved metrics to ml/models_all_500/C061/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[262/500] Re-evaluating C062... Saved metrics to ml/models_all_500/C062/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[263/500] Re-evaluating C063... Saved metrics to ml/models_all_500/C063/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[264/500] Re-evaluating C064... Saved metrics to ml/models_all_500/C064/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[265/500] Re-evaluating C065... Saved metrics to ml/models_all_500/C065/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[266/500] Re-evaluating C066... Saved metrics to ml/models_all_500/C066/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[267/500] Re-evaluating C067... Saved metrics to ml/models_all_500/C067/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[268/500] Re-evaluating C068... Saved metrics to ml/models_all_500/C068/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[269/500] Re-evaluating C069... Saved metrics to ml/models_all_500/C069/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[270/500] Re-evaluating C070... Saved metrics to ml/models_all_500/C070/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[271/500] Re-evaluating C071... Saved metrics to ml/models_all_500/C071/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[272/500] Re-evaluating C072... Saved metrics to ml/models_all_500/C072/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[273/500] Re-evaluating C073... Saved metrics to ml/models_all_500/C073/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[274/500] Re-evaluating C074... Saved metrics to ml/models_all_500/C074/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[275/500] Re-evaluating C075... Saved metrics to ml/models_all_500/C075/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[276/500] Re-evaluating C076... Saved metrics to ml/models_all_500/C076/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[277/500] Re-evaluating C077... Saved metrics to ml/models_all_500/C077/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[278/500] Re-evaluating C078... Saved metrics to ml/models_all_500/C078/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[279/500] Re-evaluating C079... Saved metrics to ml/models_all_500/C079/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[280/500] Re-evaluating C080... Saved metrics to ml/models_all_500/C080/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[281/500] Re-evaluating C081... Saved metrics to ml/models_all_500/C081/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[282/500] Re-evaluating C082... Saved metrics to ml/models_all_500/C082/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[283/500] Re-evaluating C083... Saved metrics to ml/models_all_500/C083/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[284/500] Re-evaluating C084... Saved metrics to ml/models_all_500/C084/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[285/500] Re-evaluating C085... Saved metrics to ml/models_all_500/C085/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[286/500] Re-evaluating C086... Saved metrics to ml/models_all_500/C086/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[287/500] Re-evaluating C087... Saved metrics to ml/models_all_500/C087/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[288/500] Re-evaluating C088... Saved metrics to ml/models_all_500/C088/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[289/500] Re-evaluating C089... Saved metrics to ml/models_all_500/C089/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[290/500] Re-evaluating C090... Saved metrics to ml/models_all_500/C090/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[291/500] Re-evaluating C091... Saved metrics to ml/models_all_500/C091/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[292/500] Re-evaluating C092... Saved metrics to ml/models_all_500/C092/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[293/500] Re-evaluating C093... Saved metrics to ml/models_all_500/C093/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[294/500] Re-evaluating C094... Saved metrics to ml/models_all_500/C094/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[295/500] Re-evaluating C095... Saved metrics to ml/models_all_500/C095/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[296/500] Re-evaluating C096... Saved metrics to ml/models_all_500/C096/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[297/500] Re-evaluating C097... Saved metrics to ml/models_all_500/C097/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[298/500] Re-evaluating C098... Saved metrics to ml/models_all_500/C098/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[299/500] Re-evaluating C099... Saved metrics to ml/models_all_500/C099/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[300/500] Re-evaluating C100... Saved metrics to ml/models_all_500/C100/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[301/500] Re-evaluating D001... Saved metrics to ml/models_all_500/D001/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[302/500] Re-evaluating D002... Saved metrics to ml/models_all_500/D002/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[303/500] Re-evaluating D003... Saved metrics to ml/models_all_500/D003/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[304/500] Re-evaluating D004... Saved metrics to ml/models_all_500/D004/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[305/500] Re-evaluating D005... Saved metrics to ml/models_all_500/D005/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[306/500] Re-evaluating D006... Saved metrics to ml/models_all_500/D006/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[307/500] Re-evaluating D007... Saved metrics to ml/models_all_500/D007/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[308/500] Re-evaluating D008... Saved metrics to ml/models_all_500/D008/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[309/500] Re-evaluating D009... Saved metrics to ml/models_all_500/D009/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[310/500] Re-evaluating D010... Saved metrics to ml/models_all_500/D010/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[311/500] Re-evaluating D011... Saved metrics to ml/models_all_500/D011/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[312/500] Re-evaluating D012... Saved metrics to ml/models_all_500/D012/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[313/500] Re-evaluating D013... Saved metrics to ml/models_all_500/D013/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[314/500] Re-evaluating D014... Saved metrics to ml/models_all_500/D014/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[315/500] Re-evaluating D015... Saved metrics to ml/models_all_500/D015/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[316/500] Re-evaluating D016... Saved metrics to ml/models_all_500/D016/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[317/500] Re-evaluating D017... Saved metrics to ml/models_all_500/D017/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[318/500] Re-evaluating D018... Saved metrics to ml/models_all_500/D018/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[319/500] Re-evaluating D019... Saved metrics to ml/models_all_500/D019/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[320/500] Re-evaluating D020... Saved metrics to ml/models_all_500/D020/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[321/500] Re-evaluating D021... Saved metrics to ml/models_all_500/D021/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[322/500] Re-evaluating D022... Saved metrics to ml/models_all_500/D022/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[323/500] Re-evaluating D023... Saved metrics to ml/models_all_500/D023/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[324/500] Re-evaluating D024... Saved metrics to ml/models_all_500/D024/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[325/500] Re-evaluating D025... Saved metrics to ml/models_all_500/D025/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[326/500] Re-evaluating D026... Saved metrics to ml/models_all_500/D026/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[327/500] Re-evaluating D027... Saved metrics to ml/models_all_500/D027/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[328/500] Re-evaluating D028... Saved metrics to ml/models_all_500/D028/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[329/500] Re-evaluating D029... Saved metrics to ml/models_all_500/D029/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[330/500] Re-evaluating D030... Saved metrics to ml/models_all_500/D030/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[331/500] Re-evaluating D031... Saved metrics to ml/models_all_500/D031/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[332/500] Re-evaluating D032... Saved metrics to ml/models_all_500/D032/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[333/500] Re-evaluating D033... Saved metrics to ml/models_all_500/D033/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[334/500] Re-evaluating D034... Saved metrics to ml/models_all_500/D034/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[335/500] Re-evaluating D035... Saved metrics to ml/models_all_500/D035/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[336/500] Re-evaluating D036... Saved metrics to ml/models_all_500/D036/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[337/500] Re-evaluating D037... Saved metrics to ml/models_all_500/D037/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[338/500] Re-evaluating D038... Saved metrics to ml/models_all_500/D038/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[339/500] Re-evaluating D039... Saved metrics to ml/models_all_500/D039/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[340/500] Re-evaluating D040... Saved metrics to ml/models_all_500/D040/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[341/500] Re-evaluating D041... Saved metrics to ml/models_all_500/D041/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[342/500] Re-evaluating D042... Saved metrics to ml/models_all_500/D042/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[343/500] Re-evaluating D043... Saved metrics to ml/models_all_500/D043/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[344/500] Re-evaluating D044... Saved metrics to ml/models_all_500/D044/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[345/500] Re-evaluating D045... Saved metrics to ml/models_all_500/D045/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[346/500] Re-evaluating D046... Saved metrics to ml/models_all_500/D046/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[347/500] Re-evaluating D047... Saved metrics to ml/models_all_500/D047/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[348/500] Re-evaluating D048... Saved metrics to ml/models_all_500/D048/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[349/500] Re-evaluating D049... Saved metrics to ml/models_all_500/D049/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[350/500] Re-evaluating D050... Saved metrics to ml/models_all_500/D050/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[351/500] Re-evaluating D051... Saved metrics to ml/models_all_500/D051/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[352/500] Re-evaluating D052... Saved metrics to ml/models_all_500/D052/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[353/500] Re-evaluating D053... Saved metrics to ml/models_all_500/D053/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[354/500] Re-evaluating D054... Saved metrics to ml/models_all_500/D054/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[355/500] Re-evaluating D055... Saved metrics to ml/models_all_500/D055/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[356/500] Re-evaluating D056... Saved metrics to ml/models_all_500/D056/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[357/500] Re-evaluating D057... Saved metrics to ml/models_all_500/D057/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[358/500] Re-evaluating D058... Saved metrics to ml/models_all_500/D058/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[359/500] Re-evaluating D059... Saved metrics to ml/models_all_500/D059/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[360/500] Re-evaluating D060... Saved metrics to ml/models_all_500/D060/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[361/500] Re-evaluating D061... Saved metrics to ml/models_all_500/D061/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[362/500] Re-evaluating D062... Saved metrics to ml/models_all_500/D062/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[363/500] Re-evaluating D063... Saved metrics to ml/models_all_500/D063/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[364/500] Re-evaluating D064... Saved metrics to ml/models_all_500/D064/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[365/500] Re-evaluating D065... Saved metrics to ml/models_all_500/D065/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[366/500] Re-evaluating D066... Saved metrics to ml/models_all_500/D066/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[367/500] Re-evaluating D067... Saved metrics to ml/models_all_500/D067/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[368/500] Re-evaluating D068... Saved metrics to ml/models_all_500/D068/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[369/500] Re-evaluating D069... Saved metrics to ml/models_all_500/D069/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[370/500] Re-evaluating D070... Saved metrics to ml/models_all_500/D070/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[371/500] Re-evaluating D071... Saved metrics to ml/models_all_500/D071/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[372/500] Re-evaluating D072... Saved metrics to ml/models_all_500/D072/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[373/500] Re-evaluating D073... Saved metrics to ml/models_all_500/D073/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[374/500] Re-evaluating D074... Saved metrics to ml/models_all_500/D074/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[375/500] Re-evaluating D075... Saved metrics to ml/models_all_500/D075/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[376/500] Re-evaluating D076... Saved metrics to ml/models_all_500/D076/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[377/500] Re-evaluating D077... Saved metrics to ml/models_all_500/D077/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[378/500] Re-evaluating D078... Saved metrics to ml/models_all_500/D078/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[379/500] Re-evaluating D079... Saved metrics to ml/models_all_500/D079/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[380/500] Re-evaluating D080... Saved metrics to ml/models_all_500/D080/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[381/500] Re-evaluating D081... Saved metrics to ml/models_all_500/D081/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[382/500] Re-evaluating D082... Saved metrics to ml/models_all_500/D082/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[383/500] Re-evaluating D083... Saved metrics to ml/models_all_500/D083/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[384/500] Re-evaluating D084... Saved metrics to ml/models_all_500/D084/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[385/500] Re-evaluating D085... Saved metrics to ml/models_all_500/D085/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[386/500] Re-evaluating D086... Saved metrics to ml/models_all_500/D086/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[387/500] Re-evaluating D087... Saved metrics to ml/models_all_500/D087/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[388/500] Re-evaluating D088... Saved metrics to ml/models_all_500/D088/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[389/500] Re-evaluating D089... Saved metrics to ml/models_all_500/D089/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[390/500] Re-evaluating D090... Saved metrics to ml/models_all_500/D090/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[391/500] Re-evaluating D091... Saved metrics to ml/models_all_500/D091/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[392/500] Re-evaluating D092... Saved metrics to ml/models_all_500/D092/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[393/500] Re-evaluating D093... Saved metrics to ml/models_all_500/D093/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[394/500] Re-evaluating D094... Saved metrics to ml/models_all_500/D094/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[395/500] Re-evaluating D095... Saved metrics to ml/models_all_500/D095/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[396/500] Re-evaluating D096... Saved metrics to ml/models_all_500/D096/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[397/500] Re-evaluating D097... Saved metrics to ml/models_all_500/D097/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[398/500] Re-evaluating D098... Saved metrics to ml/models_all_500/D098/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[399/500] Re-evaluating D099... Saved metrics to ml/models_all_500/D099/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[400/500] Re-evaluating D100... Saved metrics to ml/models_all_500/D100/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[401/500] Re-evaluating E001... Saved metrics to ml/models_all_500/E001/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[402/500] Re-evaluating E002... Saved metrics to ml/models_all_500/E002/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[403/500] Re-evaluating E003... Saved metrics to ml/models_all_500/E003/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[404/500] Re-evaluating E004... Saved metrics to ml/models_all_500/E004/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[405/500] Re-evaluating E005... Saved metrics to ml/models_all_500/E005/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[406/500] Re-evaluating E006... Saved metrics to ml/models_all_500/E006/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[407/500] Re-evaluating E007... Saved metrics to ml/models_all_500/E007/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[408/500] Re-evaluating E008... Saved metrics to ml/models_all_500/E008/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[409/500] Re-evaluating E009... Saved metrics to ml/models_all_500/E009/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[410/500] Re-evaluating E010... Saved metrics to ml/models_all_500/E010/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[411/500] Re-evaluating E011... Saved metrics to ml/models_all_500/E011/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[412/500] Re-evaluating E012... Saved metrics to ml/models_all_500/E012/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[413/500] Re-evaluating E013... Saved metrics to ml/models_all_500/E013/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[414/500] Re-evaluating E014... Saved metrics to ml/models_all_500/E014/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[415/500] Re-evaluating E015... Saved metrics to ml/models_all_500/E015/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[416/500] Re-evaluating E016... Saved metrics to ml/models_all_500/E016/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[417/500] Re-evaluating E017... Saved metrics to ml/models_all_500/E017/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[418/500] Re-evaluating E018... Saved metrics to ml/models_all_500/E018/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[419/500] Re-evaluating E019... Saved metrics to ml/models_all_500/E019/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[420/500] Re-evaluating E020... Saved metrics to ml/models_all_500/E020/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[421/500] Re-evaluating E021... Saved metrics to ml/models_all_500/E021/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[422/500] Re-evaluating E022... Saved metrics to ml/models_all_500/E022/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[423/500] Re-evaluating E023... Saved metrics to ml/models_all_500/E023/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[424/500] Re-evaluating E024... Saved metrics to ml/models_all_500/E024/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[425/500] Re-evaluating E025... Saved metrics to ml/models_all_500/E025/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[426/500] Re-evaluating E026... Saved metrics to ml/models_all_500/E026/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[427/500] Re-evaluating E027... Saved metrics to ml/models_all_500/E027/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[428/500] Re-evaluating E028... Saved metrics to ml/models_all_500/E028/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[429/500] Re-evaluating E029... Saved metrics to ml/models_all_500/E029/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[430/500] Re-evaluating E030... Saved metrics to ml/models_all_500/E030/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[431/500] Re-evaluating E031... Saved metrics to ml/models_all_500/E031/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[432/500] Re-evaluating E032... Saved metrics to ml/models_all_500/E032/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[433/500] Re-evaluating E033... Saved metrics to ml/models_all_500/E033/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[434/500] Re-evaluating E034... Saved metrics to ml/models_all_500/E034/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[435/500] Re-evaluating E035... Saved metrics to ml/models_all_500/E035/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[436/500] Re-evaluating E036... Saved metrics to ml/models_all_500/E036/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[437/500] Re-evaluating E037... Saved metrics to ml/models_all_500/E037/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[438/500] Re-evaluating E038... Saved metrics to ml/models_all_500/E038/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[439/500] Re-evaluating E039... Saved metrics to ml/models_all_500/E039/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[440/500] Re-evaluating E040... Saved metrics to ml/models_all_500/E040/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[441/500] Re-evaluating E041... Saved metrics to ml/models_all_500/E041/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[442/500] Re-evaluating E042... Saved metrics to ml/models_all_500/E042/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[443/500] Re-evaluating E043... Saved metrics to ml/models_all_500/E043/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[444/500] Re-evaluating E044... Saved metrics to ml/models_all_500/E044/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[445/500] Re-evaluating E045... Saved metrics to ml/models_all_500/E045/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[446/500] Re-evaluating E046... Saved metrics to ml/models_all_500/E046/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[447/500] Re-evaluating E047... Saved metrics to ml/models_all_500/E047/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[448/500] Re-evaluating E048... Saved metrics to ml/models_all_500/E048/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[449/500] Re-evaluating E049... Saved metrics to ml/models_all_500/E049/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[450/500] Re-evaluating E050... Saved metrics to ml/models_all_500/E050/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[451/500] Re-evaluating E051... Saved metrics to ml/models_all_500/E051/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[452/500] Re-evaluating E052... Saved metrics to ml/models_all_500/E052/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[453/500] Re-evaluating E053... Saved metrics to ml/models_all_500/E053/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[454/500] Re-evaluating E054... Saved metrics to ml/models_all_500/E054/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[455/500] Re-evaluating E055... Saved metrics to ml/models_all_500/E055/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[456/500] Re-evaluating E056... Saved metrics to ml/models_all_500/E056/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[457/500] Re-evaluating E057... Saved metrics to ml/models_all_500/E057/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[458/500] Re-evaluating E058... Saved metrics to ml/models_all_500/E058/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[459/500] Re-evaluating E059... Saved metrics to ml/models_all_500/E059/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[460/500] Re-evaluating E060... Saved metrics to ml/models_all_500/E060/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[461/500] Re-evaluating E061... Saved metrics to ml/models_all_500/E061/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[462/500] Re-evaluating E062... Saved metrics to ml/models_all_500/E062/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[463/500] Re-evaluating E063... Saved metrics to ml/models_all_500/E063/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[464/500] Re-evaluating E064... Saved metrics to ml/models_all_500/E064/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[465/500] Re-evaluating E065... Saved metrics to ml/models_all_500/E065/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[466/500] Re-evaluating E066... Saved metrics to ml/models_all_500/E066/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[467/500] Re-evaluating E067... Saved metrics to ml/models_all_500/E067/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[468/500] Re-evaluating E068... Saved metrics to ml/models_all_500/E068/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[469/500] Re-evaluating E069... Saved metrics to ml/models_all_500/E069/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[470/500] Re-evaluating E070... Saved metrics to ml/models_all_500/E070/metrics_h14_asymmetric.json
+✓ Stockout: 2.28%
+[471/500] Re-evaluating E071... Saved metrics to ml/models_all_500/E071/metrics_h14_asymmetric.json
+✓ Stockout: 2.28%
+[472/500] Re-evaluating E072... Saved metrics to ml/models_all_500/E072/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[473/500] Re-evaluating E073... Saved metrics to ml/models_all_500/E073/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[474/500] Re-evaluating E074... Saved metrics to ml/models_all_500/E074/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[475/500] Re-evaluating E075... Saved metrics to ml/models_all_500/E075/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[476/500] Re-evaluating E076... Saved metrics to ml/models_all_500/E076/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[477/500] Re-evaluating E077... Saved metrics to ml/models_all_500/E077/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[478/500] Re-evaluating E078... Saved metrics to ml/models_all_500/E078/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[479/500] Re-evaluating E079... Saved metrics to ml/models_all_500/E079/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[480/500] Re-evaluating E080... Saved metrics to ml/models_all_500/E080/metrics_h14_asymmetric.json
+✓ Stockout: 1.99%
+[481/500] Re-evaluating E081... Saved metrics to ml/models_all_500/E081/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[482/500] Re-evaluating E082... Saved metrics to ml/models_all_500/E082/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[483/500] Re-evaluating E083... Saved metrics to ml/models_all_500/E083/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[484/500] Re-evaluating E084... Saved metrics to ml/models_all_500/E084/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[485/500] Re-evaluating E085... Saved metrics to ml/models_all_500/E085/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[486/500] Re-evaluating E086... Saved metrics to ml/models_all_500/E086/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[487/500] Re-evaluating E087... Saved metrics to ml/models_all_500/E087/metrics_h14_asymmetric.json
+✓ Stockout: 2.28%
+[488/500] Re-evaluating E088... Saved metrics to ml/models_all_500/E088/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[489/500] Re-evaluating E089... Saved metrics to ml/models_all_500/E089/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[490/500] Re-evaluating E090... Saved metrics to ml/models_all_500/E090/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[491/500] Re-evaluating E091... Saved metrics to ml/models_all_500/E091/metrics_h14_asymmetric.json
+✓ Stockout: 0.85%
+[492/500] Re-evaluating E092... Saved metrics to ml/models_all_500/E092/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[493/500] Re-evaluating E093... Saved metrics to ml/models_all_500/E093/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[494/500] Re-evaluating E094... Saved metrics to ml/models_all_500/E094/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[495/500] Re-evaluating E095... Saved metrics to ml/models_all_500/E095/metrics_h14_asymmetric.json
+✓ Stockout: 1.42%
+[496/500] Re-evaluating E096... Saved metrics to ml/models_all_500/E096/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+[497/500] Re-evaluating E097... Saved metrics to ml/models_all_500/E097/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[498/500] Re-evaluating E098... Saved metrics to ml/models_all_500/E098/metrics_h14_asymmetric.json
+✓ Stockout: 1.14%
+[499/500] Re-evaluating E099... Saved metrics to ml/models_all_500/E099/metrics_h14_asymmetric.json
+✓ Stockout: 0.57%
+[500/500] Re-evaluating E100... Saved metrics to ml/models_all_500/E100/metrics_h14_asymmetric.json
+✓ Stockout: 1.71%
+
+======================================================================
+SUMMARY
+======================================================================
+Successfully re-evaluated: 500
+Failed: 0
+
+Results saved to: ml/results/results_improved_simulation.csv
+
+Stockout Rate Statistics:
+  Mean: 1.17%
+  Median: 1.14%
+  Min: 0.57%
+  Max: 3.42%
+  75th percentile: 1.42%
+  90th percentile: 1.71%
